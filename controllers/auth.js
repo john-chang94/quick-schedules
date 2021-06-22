@@ -1,5 +1,7 @@
+require('dotenv').config();
 const client = require('../config/db');
 const bcrypt = require('bcrypt');
+const jwt = require('jsonwebtoken');
 
 exports.createUser = async (req, res) => {
     try {
@@ -36,6 +38,66 @@ exports.createUser = async (req, res) => {
                     res.status(201).json({ success: true })
                 })
             })
+        }
+    } catch (err) {
+        res.status(500).send(err.message);
+    }
+}
+
+exports.signIn = async (req, res) => {
+    try {
+        const { email, password } = req.body;
+
+        // Check if user exists
+        const user = await client.query('SELECT * FROM users WHERE email = $1', [email]);
+        if (!user.rows.length) return res.status(400).send('Email does not exist');
+
+        // Check if hashed password is a match
+        const validPassword = await bcrypt.compare(password, user.rows[0].password);
+        if (!validPassword) return res.status(400).send('Invalid credentials');
+
+        // Generate token
+        const payload = { id: user.rows[0].u_id };
+        const token = jwt.sign(payload, process.env.JWT, { expiresIn: 60 * 60 * 24 });
+        
+        if (token) {
+            // Remove password from response user obj
+            delete user.rows[0].password;
+
+            res.status(200).json({
+                success: true,
+                user: user.rows[0],
+                token
+            })
+        }
+    } catch (err) {
+        res.status(500).send(err.message);
+    }
+}
+
+exports.authorizeToken = async (req, res, next) => {
+    try {
+        const token = req.header('token');
+
+        if (!token) return res.status(401).send('Unauthorized');
+        
+        const payload = jwt.verify(token, process.env.JWT);
+        req.id = payload.id; // payload.id comes from jwt.sign in signIn method
+    } catch (err) {
+        res.status(500).send(err.message);
+    }
+
+    next();
+}
+
+exports.verifyUser = async (req, res) => {
+    try {
+        const user = await client.query('SELECT * FROM users WHERE u_id = $1', [req.id]);
+
+        if (user.rows.length) {
+            delete user.rows[0].password;
+
+            res.status(200).send(user.rows[0]);
         }
     } catch (err) {
         res.status(500).send(err.message);
