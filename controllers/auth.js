@@ -13,8 +13,7 @@ exports.createUser = async (req, res) => {
             password,
             phone,
             hourly_pay,
-            started_at,
-            updated_at
+            started_at
         } = req.body;
 
         // Check if user exists
@@ -30,9 +29,9 @@ exports.createUser = async (req, res) => {
                     // If no errors, hash password and create new user
                     password = hash;
                     const newUser = await client.query(
-                        `INSERT INTO users (role_id, first_name, last_name, email, password, phone, hourly_pay, started_at, updated_at)
-                        VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9)`,
-                        [role_id, first_name, last_name, email, password, phone, hourly_pay, started_at, updated_at]
+                        `INSERT INTO users (role_id, first_name, last_name, email, password, phone, hourly_pay, started_at)
+                        VALUES ($1, $2, $3, $4, $5, $6, $7, $8)`,
+                        [role_id, first_name, last_name, email, password, phone, hourly_pay, started_at]
                     )
 
                     res.status(201).json({ success: true })
@@ -63,7 +62,7 @@ exports.signIn = async (req, res) => {
 
         // Generate token
         const payload = { id: user.rows[0].u_id };
-        const token = jwt.sign(payload, process.env.JWT, { expiresIn: 60 * 60 * 24 });
+        const token = jwt.sign(payload, process.env.JWT, { expiresIn: 60 * 60 * 24 * 7 }); // 7 days
 
         if (token) {
             // Remove password from response user obj

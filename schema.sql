@@ -2,7 +2,8 @@ CREATE DATABASE quick-schedules;
 
 CREATE TABLE roles (
     role_id SERIAL PRIMARY KEY,
-    title VARCHAR(50)
+    title VARCHAR(50),
+    is_admin BOOLEAN NOT NULL
 );
 
 CREATE TABLE users (

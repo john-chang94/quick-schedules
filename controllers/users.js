@@ -86,19 +86,92 @@ exports.editUserPassword = async (req, res) => {
     }
 }
 
-// Only admins can change this info
+// For admins only
 exports.editUserSystem = async (req, res) => {
     try {
         const { u_id } = req.params;
-        const { role_id, hourly_pay, started_at } = req.body;
+        const { role_id, hourly_pay, started_at, updated_at } = req.body;
 
         const user = await client.query(
             `UPDATE users
                 SET role_id = $1,
                 hourly_pay = $2,
-                started_at = $3
-            WHERE u_id = $4`,
-            [role_id, hourly_pay, started_at, u_id]
+                started_at = $3,
+                updated_at = $4
+            WHERE u_id = $5`,
+            [role_id, hourly_pay, started_at, updated_at, u_id]
+        )
+
+        res.status(200).json({ success: true });
+    } catch (err) {
+        res.status(500).send(err.message);
+    }
+}
+
+exports.deleteUser = async (req, res) => {
+    try {
+        const { u_id } = req.params;
+
+        const deletedUser = await client.query('DELETE FROM users WHERE u_id = $1', [u_id]);
+
+        res.status(200).json({ success: true });
+    } catch (err) {
+        res.status(500).send(err.message);
+    }
+}
+
+exports.addAdvailability = async (req, res) => {
+    try {
+        const { u_id, mon, tue, wed, thur, fri, sat, sun } = req.body;
+
+        const availability = await client.query(
+            `INSERT INTO availability (u_id, mon, tue, wed, thur, fri, sat, sun)
+            VALUES ($1, $2, $3, $4, $5, $6, $7, $8)`,
+            [u_id, mon, tue, wed, thur, fri, sat, sun]
+        )
+
+        res.status(201).json({ success: true });
+    } catch (err) {
+        res.status(500).send(err.message);
+    }
+}
+
+exports.editAvailability = async (req, res) => {
+    try {
+        const { u_id } = req.params;
+        const { mon, tue, wed, thur, fri, sat, sun, updated_at } = req.body;
+
+        const availability = await client.query(
+            `UPDATE availability
+                SET mon = $1
+                tue = $2,
+                wed = $3,
+                thur = $4,
+                fri = $5,
+                sat = $6,
+                sun = $7,
+                updated_at = $8
+            WHERE u_id = $9`,
+            [mon, tue, wed, thur, fri, sat, sun, updated_at, u_id]
+        )
+
+        res.status(200).json({ success: true });
+    } catch (err) {
+        res.status(500).send(err.message);
+    }
+}
+
+// For admins only
+exports.editAvailabilityNotes = async (req, res) => {
+    try {
+        const { u_id } = req.params;
+        const { notes } = req.body;
+        
+        const addNotes = await client.query(
+            `UPDATE availability
+                SET notes = $1,
+            WHERE u_id = $2`,
+            [u_id, notes]
         )
 
         res.status(200).json({ success: true });
