@@ -86,7 +86,7 @@ exports.editUserPassword = async (req, res) => {
     }
 }
 
-// For admins only
+// Admins only
 exports.editUserSystem = async (req, res) => {
     try {
         const { u_id } = req.params;
@@ -108,10 +108,14 @@ exports.editUserSystem = async (req, res) => {
     }
 }
 
+// Admins only
 exports.deleteUser = async (req, res) => {
     try {
         const { u_id } = req.params;
 
+        const foundUser = await client.query('SELECT * FROM users WHERE u_id = $1', [u_id]);
+        if (!foundUser.rows.length) return res.status(404).send('User does not exist');
+        
         const deletedUser = await client.query('DELETE FROM users WHERE u_id = $1', [u_id]);
 
         res.status(200).json({ success: true });
@@ -120,6 +124,7 @@ exports.deleteUser = async (req, res) => {
     }
 }
 
+// Admins only
 exports.addAdvailability = async (req, res) => {
     try {
         const { u_id, mon, tue, wed, thur, fri, sat, sun } = req.body;
@@ -136,6 +141,7 @@ exports.addAdvailability = async (req, res) => {
     }
 }
 
+// Admins only
 exports.editAvailability = async (req, res) => {
     try {
         const { u_id } = req.params;
@@ -161,7 +167,7 @@ exports.editAvailability = async (req, res) => {
     }
 }
 
-// For admins only
+// Admins only
 exports.editAvailabilityNotes = async (req, res) => {
     try {
         const { u_id } = req.params;

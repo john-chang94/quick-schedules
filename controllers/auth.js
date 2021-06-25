@@ -18,7 +18,7 @@ exports.createUser = async (req, res) => {
 
         // Check if user exists
         const foundUser = await client.query('SELECT * FROM users WHERE email = $1', [email])
-        if (foundUser.rows.length) return res.status(400).send('Email already exists');
+        if (foundUser.rows.length) return res.status(404).send('Email already exists');
 
         if (!foundUser.rows.length) {
             bcrypt.genSalt(10, (err, salt) => {
