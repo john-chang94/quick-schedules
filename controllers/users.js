@@ -1,6 +1,7 @@
 const client = require('../config/db');
 const bcrypt = require('bcrypt');
 
+// Admins only
 exports.getAllUsers = async (req, res) => {
     try {
         const users = await client.query('SELECT * FROM users');

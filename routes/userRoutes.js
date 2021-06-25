@@ -13,7 +13,7 @@ const {
     editAvailabilityNotes,
 } = require('../controllers/users');
 
-router.get('/users', authorizeToken, getAllUsers);
+router.get('/users', authorizeToken, isAdmin, getAllUsers);
 router.get('/users/:u_id', authorizeToken, getUserById);
 router.put('/users/:u_id', authorizeToken, editUserGeneral);
 router.put('/users/reset-pw/:u_id', authorizeToken, editUserPassword);
