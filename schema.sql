@@ -37,8 +37,16 @@ CREATE TABLE requests (
     r_id SERIAL PRIMARY KEY,
     u_id INT NOT NULL REFERENCES users(u_id),
     date DATE NOT NULL,
-    request VARCHAR(500)
+    notes VARCHAR(500),
+    status VARCHAR(50) DEFAULT 'Pending'
 );
+
+CREATE TABLE request_days (
+    rd_id SERIAL PRIMARY KEY,
+    u_id INT NOT NULL REFERENCES users(u_id),
+    r_id INT NOT NULL REFERENCES requests(r_id)
+    date DATE NOT NULL
+)
 
 CREATE TABLE presets (
     p_id SERIAL PRIMARY KEY,
