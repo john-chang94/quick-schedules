@@ -3,6 +3,7 @@ CREATE DATABASE quick-schedules;
 CREATE TABLE roles (
     role_id SERIAL PRIMARY KEY,
     title VARCHAR(50),
+    acn VARCHAR(5),
     is_admin BOOLEAN NOT NULL
 );
 
@@ -36,17 +37,16 @@ CREATE TABLE availability (
 CREATE TABLE requests (
     r_id SERIAL PRIMARY KEY,
     u_id INT NOT NULL REFERENCES users(u_id),
-    date DATE NOT NULL,
+    requested_at DATE NOT NULL,
     notes VARCHAR(500),
     status VARCHAR(50) DEFAULT 'Pending'
 );
 
 CREATE TABLE request_days (
     rd_id SERIAL PRIMARY KEY,
-    u_id INT NOT NULL REFERENCES users(u_id),
-    r_id INT NOT NULL REFERENCES requests(r_id)
-    date DATE NOT NULL
-)
+    r_id INT NOT NULL REFERENCES requests(r_id),
+    requested_date DATE NOT NULL
+);
 
 CREATE TABLE presets (
     p_id SERIAL PRIMARY KEY,

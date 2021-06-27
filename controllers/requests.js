@@ -22,7 +22,7 @@ exports.addRequestDays = async (req, res) => {
         const { u_id, r_id, date } = req.body;
 
         const addRequestDays = await client.query(
-            `INSERT INTO request_days (u_id, r_id, date)
+            `INSERT INTO request_days (u_id, r_id, requested_date)
             VALUES ($1, $2, $3)`,
             [u_id, r_id, date]
         )
@@ -33,32 +33,36 @@ exports.addRequestDays = async (req, res) => {
     }
 }
 
+exports.getRequestsByUserAndDate = async (req, res) => {
+    try {
+        const { u_id, date } = req.params;
+
+        const requests = await client.query(
+            `SELECT * FROM requests
+            WHERE u_id = $1 AND date >= $2`,
+            [u_id, date]
+        )
+
+        if (!requests.rows.length) return res.status(404).send('No records found');
+
+        res.status(200).json(requests.rows);
+    } catch (err) {
+        res.status(500).send(err.message);
+    }
+}
+
+// Admins only
 // Get requests by current date and later
 exports.getRequestsByDateAndLater = async (req, res) => {
     try {
-        const { currentDate, status } = req.params;
+        const { date } = req.params;
 
-        // Get requests by status
-        if (currentDate && status) {
-            const requests = await client.query(
-                `SELECT * FROM requests
-                WHERE date >= $1 AND status = $2`,
-                [currentDate, status]
-            )
+        // Get all requests
+        const requests = await client.query('SELECT * FROM requests WHERE date >= $1', [date]);
 
-            if (!requests.rows.length) return res.status(404).send('No records found');
+        if (!requests.rows.length) return res.status(404).send('No records found');
 
-            res.status(200).send(requests.rows);
-        }
-        else 
-        {
-            // Get all requests
-            const requests = await client.query('SELECT * FROM requests WHERE date >= $1', [currentDate]);
-
-            if (!requests.rows.length) return res.status(404).send('No records found');
-
-            res.status(200).send(requests.rows);
-        }
+        res.status(200).send(requests.rows);
     } catch (err) {
         res.status(500).send(err.message);
     }
