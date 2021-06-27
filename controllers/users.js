@@ -212,7 +212,7 @@ exports.getUserAvailabilityAndRequests = async (req, res) => {
             )
             SELECT a.first_name, a.last_name, a.acn, a.mon, a.tue, a.wed, a.thur,
                 a.fri, a.sat, a.sun, r.requested_dates
-            FROM availability AS a JOIN requests AS r
+            FROM availability AS a LEFT JOIN requests AS r
                 ON a.u_id = r.u_id`,
             [u_id, week_start, week_end]
         )

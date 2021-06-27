@@ -21,15 +21,16 @@ exports.createShift = async (req, res) => {
 exports.editShift = async (req, res) => {
     try {
         const { s_id } = req.params;
-        const { u_id, shift_start, shift_end } = req.body;
+        const { u_id, shift_start, shift_end, notes } = req.body;
 
         const shift = await client.query(
             `UPDATE shifts
             SET u_id = $1,
                 shift_start = $2,
-                shift_end = $3
-            WHERE s_id = $4`,
-            [u_id, shift_start, shift_end, s_id]
+                shift_end = $3,
+                notes = $4
+            WHERE s_id = $5`,
+            [u_id, shift_start, shift_end, notes, s_id]
         )
 
         res.status(200).json({ success: true });
@@ -75,8 +76,7 @@ exports.getShiftsByUser = async (req, res) => {
     }
 }
 
-// Admins only
-exports.getShiftsByWeek = async (req, res) => {
+exports.getShiftsByDates = async (req, res) => {
     try {
         const { shift_start, shift_end } = req.params;
 

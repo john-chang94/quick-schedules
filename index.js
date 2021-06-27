@@ -12,6 +12,7 @@ app.use('/', require('./routes/userRoutes'));
 app.use('/', require('./routes/presetRoutes'));
 app.use('/', require('./routes/shiftRoutes'));
 app.use('/', require('./routes/requestRoutes'));
+app.use('/', require('./routes/storeRoutes'));
 
 // const path = require('path');
 // app.get('*', (req, res) => {

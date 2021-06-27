@@ -68,7 +68,14 @@ CREATE TABLE shifts (
     s_id SERIAL PRIMARY KEY,
     u_id INT NOT NULL REFERENCES users(u_id),
     shift_start TIMESTAMP,
-    shift_end TIMESTAMP
+    shift_end TIMESTAMP,
+    notes VARCHAR(50)
+);
+
+CREATE TABLE store (
+    store_id SERIAL PRIMARY KEY,
+    store_open INT,
+    store_close INT
 );
 
 INSERT INTO roles (title)
