@@ -4,7 +4,8 @@ CREATE TABLE roles (
     role_id SERIAL PRIMARY KEY,
     title VARCHAR(50),
     acn VARCHAR(5),
-    is_admin BOOLEAN NOT NULL
+    is_admin BOOLEAN NOT NULL,
+    level INT
 );
 
 CREATE TABLE users (
