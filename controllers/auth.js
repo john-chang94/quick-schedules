@@ -54,7 +54,7 @@ exports.signIn = async (req, res) => {
             WHERE email = $1`,
             [email]
         );
-        if (!user.rows.length) return res.status(400).send('Email does not exist');
+        if (!user.rows.length) return res.status(400).send('Invalid credentials');
 
         // Check if hashed password is a match
         const validPassword = await bcrypt.compare(password, user.rows[0].password);

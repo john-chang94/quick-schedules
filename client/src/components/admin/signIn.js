@@ -24,23 +24,25 @@ export default function AdminSignIn() {
     }
 
     return (
-        <div>
-            <h2>Sign In</h2>
-            <form onSubmit={handleSignIn}>
-                <div>
-                    <label>Email</label>
-                    <input type="email" onChange={({ target }) => setEmail(target.value)} />
-                </div>
-                <div>
-                    <label>Password</label>
-                    <input type="password" onChange={({ target }) => setPassword(target.value)} />
-                </div>
-                <div>
-                    <button>Sign In</button>
-                </div>
-            </form>
+        <div className="w-100 flex flex-center vh-90">
+            <div>
+                <h2 className="mb-2">Sign In</h2>
+                <form onSubmit={handleSignIn} className="flex flex-col flex-center">
+                    <div className="mb-1">
+                        <p>Email</p>
+                        <input type="email" className="input-lg" onChange={({ target }) => setEmail(target.value)} />
+                    </div>
+                    <div className="mb-3">
+                        <p>Password</p>
+                        <input type="password" className="input-lg" onChange={({ target }) => setPassword(target.value)} />
+                    </div>
+                    <div>
+                        <button className="btn-lg pointer">Sign In</button>
+                    </div>
+                    {error ? <p className="mt-2 text-red">{error}</p> : null}
+                </form>
 
-            {error ? <p>{error}</p> : null}
+            </div>
         </div>
     )
 }
