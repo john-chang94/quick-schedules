@@ -1,10 +1,12 @@
-import { useState } from 'react';
+import { useState, useContext } from 'react';
 import { useHistory } from 'react-router';
 import * as ROUTES from '../constants/routes';
+import { UserContext } from '../contexts/userContext';
 import { signIn } from '../services/auth';
 
 export default function SignIn() {
     const history = useHistory();
+    const { setVerifiedUser } = useContext(UserContext);
 
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
@@ -19,8 +21,11 @@ export default function SignIn() {
         const res = await signIn(credentials);
 
         if (res.error) setError(res.error);
-        if (res.token) sessionStorage.setItem('token', res.token);
-        
+        if (res.token) {
+            sessionStorage.setItem('token', res.token);
+            setVerifiedUser(res.user); // Set verified user in context for header
+        }
+
         if (res.user.is_admin) history.push(ROUTES.ADMIN_HOME);
         else if (!res.user.is_admin) history.push(ROUTES.USER_HOME);
     }

@@ -1,7 +1,9 @@
 import './App.css';
-import { Suspense, useEffect } from 'react';
+import { Suspense, useEffect, useContext } from 'react';
 import { BrowserRouter as Router, Switch, Route } from 'react-router-dom';
 import * as ROUTES from './constants/routes';
+import { verifyUser } from './services/auth';
+import { UserContext } from './contexts/userContext';
 
 import Header from './components/header';
 import SignIn from './components/signIn';
@@ -10,15 +12,21 @@ import AdminHome from './components/admin/home';
 import AdminEmployees from './components/admin/employees';
 
 import UserHome from './components/user/home';
-import { verifyUser } from './services/auth';
 
 function App() {
+  const { setVerifiedUser } = useContext(UserContext);
+
   useEffect(() => {
-    const token = sessionStorage.getItem('token');
-    if (token) {
-      let tokenConfig = { headers: { 'token': token } };
-      verifyUser(tokenConfig);
+    async function getVerifiedUser() {
+      const token = sessionStorage.getItem('token');
+      if (token) {
+        let tokenConfig = { headers: { 'token': token } };
+        const verifiedUser = await verifyUser(tokenConfig);
+        setVerifiedUser(verifiedUser); // Set verified user in context for header
+      }
     }
+    
+    getVerifiedUser()
   }, [])
 
   return (
