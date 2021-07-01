@@ -19,14 +19,14 @@ export default function SignIn() {
         const res = await signIn(credentials);
 
         if (res.error) setError(res.error);
-
-        if (res.token) localStorage.setItem('token', res.token);
-        else if (res.user.is_admin) history.push(ROUTES.ADMIN_HOME);
+        if (res.token) sessionStorage.setItem('token', res.token);
+        
+        if (res.user.is_admin) history.push(ROUTES.ADMIN_HOME);
         else if (!res.user.is_admin) history.push(ROUTES.USER_HOME);
     }
 
     return (
-        <div className="w-100 flex flex-center vh-90">
+        <div className="w-100 flex flex-center vh-80">
             <div>
                 <h2 className="mb-2">Sign In</h2>
                 <form onSubmit={handleSignIn} className="flex flex-col flex-center">

@@ -8,3 +8,12 @@ export const signIn = async (credentials) => {
         return { error: err.response.data };
     }
 }
+
+export const verifyUser = async (token) => {
+    try {
+        const res = await axios.get('http://localhost:5000/auth/verify', token);
+        return res;
+    } catch (err) {
+        return { error: err.response };
+    }
+}

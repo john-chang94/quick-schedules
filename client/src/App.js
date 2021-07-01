@@ -1,5 +1,5 @@
 import './App.css';
-import { Suspense } from 'react';
+import { Suspense, useEffect } from 'react';
 import { BrowserRouter as Router, Switch, Route } from 'react-router-dom';
 import * as ROUTES from './constants/routes';
 
@@ -10,8 +10,17 @@ import AdminHome from './components/admin/home';
 import AdminEmployees from './components/admin/employees';
 
 import UserHome from './components/user/home';
+import { verifyUser } from './services/auth';
 
 function App() {
+  useEffect(() => {
+    const token = sessionStorage.getItem('token');
+    if (token) {
+      let tokenConfig = { headers: { 'token': token } };
+      verifyUser(tokenConfig);
+    }
+  }, [])
+
   return (
     <div>
       <Header />

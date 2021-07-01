@@ -751,8 +751,8 @@ nav {
   width: 100%;
 }
 
-.vh-90 {
-  height: calc(90vh);
+.vh-80 {
+  height: calc(80vh);
 }
 
 /* BUTTON STYLES */
