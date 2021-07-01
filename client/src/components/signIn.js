@@ -1,9 +1,9 @@
 import { useState } from 'react';
 import { useHistory } from 'react-router';
-import * as ROUTES from '../../constants/routes';
-import { signIn } from '../../services/auth';
+import * as ROUTES from '../constants/routes';
+import { signIn } from '../services/auth';
 
-export default function AdminSignIn() {
+export default function SignIn() {
     const history = useHistory();
 
     const [email, setEmail] = useState('');
@@ -19,8 +19,10 @@ export default function AdminSignIn() {
         const res = await signIn(credentials);
 
         if (res.error) setError(res.error);
+
+        if (res.token) localStorage.setItem('token', res.token);
         else if (res.user.is_admin) history.push(ROUTES.ADMIN_HOME);
-        else if (!res.user.is_admin) history.push(ROUTES.USER_SIGN_IN);
+        else if (!res.user.is_admin) history.push(ROUTES.USER_HOME);
     }
 
     return (
@@ -37,7 +39,7 @@ export default function AdminSignIn() {
                         <input type="password" className="input-lg" onChange={({ target }) => setPassword(target.value)} />
                     </div>
                     <div>
-                        <button className="btn-lg pointer">Sign In</button>
+                        <button className="btn-lg pointer" disabled={isInvalid}>Sign In</button>
                     </div>
                     {error ? <p className="mt-2 text-red">{error}</p> : null}
                 </form>

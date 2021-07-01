@@ -1,5 +1,4 @@
-export const USER_SIGN_IN = '/';
-export const ADMIN_SIGN_IN = '/admin';
+export const SIGN_IN = '/';
 
 export const ADMIN_HOME = '/admin/home';
 export const ADMIN_EMPLOYEES = '/admin/employees';

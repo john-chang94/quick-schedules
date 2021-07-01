@@ -65,11 +65,13 @@ exports.signIn = async (req, res) => {
         const token = jwt.sign(payload, process.env.JWT, { expiresIn: 60 * 60 * 24 * 7 }); // 7 days
 
         if (token) {
-            // Remove password from response user obj
-            delete user.rows[0].password;
+            const signedInUser = {
+                is_admin: user.rows[0].is_admin,
+                first_name: user.rows[0].first_name
+            }
 
             res.status(200).json({
-                user: user.rows[0],
+                user: signedInUser,
                 token
             })
         }
@@ -85,13 +87,16 @@ exports.verifyUser = async (req, res) => {
             `SELECT * FROM users JOIN roles
                 ON users.role_id = roles.role_id
             WHERE u_id = $1`,
-            [req.id]
+            [req.id] // req.id comes from authorizeToken middleware
         );
 
         if (user.rows.length) {
-            delete user.rows[0].password;
+            const verifiedUser = {
+                is_admin: user.rows[0].is_admin,
+                first_name: user.rows[0].first_name
+            }
 
-            res.status(200).json(user.rows[0]);
+            res.status(200).json(verifiedUser);
         }
     } catch (err) {
         res.status(500).send(err.message);
