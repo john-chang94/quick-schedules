@@ -21,13 +21,14 @@ export default function SignIn() {
         const res = await signIn(credentials);
 
         if (res.error) setError(res.error);
+
         if (res.token) {
             sessionStorage.setItem('token', res.token);
             setVerifiedUser(res.user); // Set verified user in context for header
-        }
 
-        if (res.user.is_admin) history.push(ROUTES.ADMIN_HOME);
-        else if (!res.user.is_admin) history.push(ROUTES.USER_HOME);
+            if (res.user.is_admin) history.push(ROUTES.ADMIN_HOME);
+            else if (!res.user.is_admin) history.push(ROUTES.USER_HOME);
+        }
     }
 
     return (

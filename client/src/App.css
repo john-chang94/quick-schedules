@@ -21,6 +21,9 @@ nav {
   height: 60px;
   background-color: gray;
   margin-bottom: 25px;
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
 }
 
 /* SPACING STYLES */

@@ -21,20 +21,21 @@ function App() {
       const token = sessionStorage.getItem('token');
       if (token) {
         let tokenConfig = { headers: { 'token': token } };
+        
         const verifiedUser = await verifyUser(tokenConfig);
         setVerifiedUser(verifiedUser); // Set verified user in context for header
       }
     }
-    
-    getVerifiedUser()
+
+    getVerifiedUser();
   }, [])
 
   return (
     <div>
-      <Header />
-      <div className="container">
-        <Router>
-          <Suspense fallback={<p>Loading...</p>}>
+      <Router>
+        <Suspense fallback={<p>Loading...</p>}>
+          <Header />
+          <div className="container">
             <Switch>
               <Route exact path={ROUTES.SIGN_IN} component={SignIn} />
 
@@ -43,9 +44,9 @@ function App() {
 
               <Route path={ROUTES.USER_HOME} component={UserHome} />
             </Switch>
-          </Suspense>
-        </Router>
-      </div>
+          </div>
+        </Suspense>
+      </Router>
     </div>
   );
 }
