@@ -4,7 +4,12 @@ const bcrypt = require('bcrypt');
 // Admins only
 exports.getAllUsers = async (req, res) => {
     try {
-        const users = await client.query('SELECT * FROM users');
+        const users = await client.query(
+            `SELECT u_id, title, acn, level, first_name, last_name, email, phone
+            FROM roles JOIN users
+                ON roles.role_id = users.role_id
+            ORDER BY level, first_name`
+        );
 
         if (!users.rows.length) return res.status(400).send('No users found');
 

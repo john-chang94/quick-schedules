@@ -8,11 +8,12 @@
   margin: 0 15%;
 }
 
-.pointer {
+.pointer:hover {
   cursor: pointer;
+  text-decoration: underline;
 }
 
-.pointer-no-u {
+.pointer-no-u:hover {
   cursor: pointer;
   text-decoration: none;
 }
@@ -25,6 +26,11 @@ nav {
   justify-content: flex-end;
   align-items: center;
 }
+
+/* #users-list > tbody > tr:hover {
+  cursor: pointer;
+  background-color: rgb(225, 225, 225);
+} */
 
 /* SPACING STYLES */
 
@@ -478,47 +484,51 @@ nav {
 
 /* COLOR STYLES */
 
-.text-white {
+.white {
   color: white;
 }
 
-.text-black {
+.off-white {
+  color: rgb(247, 247, 247);
+}
+
+.black {
   color: black;
 }
 
-.text-gray {
+.gray {
   color: gray;
 }
 
-.text-light-gray {
+.light-gray {
   color: rgb(201, 201, 201);
 }
 
-.text-dark-gray {
+.dark-gray {
   color: rgb(79, 79, 79);
 }
 
-.text-red {
+.red {
   color: red;
 }
 
-.text-orange {
+.orange {
   color: orange;
 }
 
-.text-yellow {
+.yellow {
   color: yellow;
 }
 
-.text-green {
+.green {
   color: green;
 }
 
-.text-blue {
+.blue {
   color: blue;
 }
 
-.text-purple {
+.purple {
   color: purple;
 }
 
@@ -567,6 +577,18 @@ nav {
 }
 
 /* TEXT STYLES */
+
+.text-center {
+  text-align: center;
+}
+
+.text-left {
+  text-align: left;
+}
+
+.text-right {
+  text-align: right;
+}
 
 .text-b {
   font-weight: bold;
@@ -763,8 +785,8 @@ nav {
 .btn-x-sm {
   width: 50px;
   border-radius: 5px;
-  box-shadow: 0 3px 10px rgb(179, 179, 179);
-  padding: 3px 0;
+  box-shadow: 0 3px 10px rgb(200, 200, 200);
+  padding: 5px 0;
   border: none;
   font-size: 14px;
 }
@@ -772,8 +794,8 @@ nav {
 .btn-sm {
   width: 75px;
   border-radius: 5px;
-  box-shadow: 0 4px 8px rgb(140, 140, 140);
-  padding: 3px 0;
+  box-shadow: 0 4px 8px rgb(200, 200, 200);
+  padding: 4px 0;
   border: none;
   font-size: 14px;
 }
@@ -781,8 +803,8 @@ nav {
 .btn-med {
   width: 100px;
   border-radius: 5px;
-  box-shadow: 0 4px 8px rgb(140, 140, 140);
-  padding: 4px 0;
+  box-shadow: 0 4px 8px rgb(200, 200, 200);
+  padding: 5px 0;
   border: none;
   font-size: 14px;
 }
@@ -790,8 +812,8 @@ nav {
 .btn-lg {
   width: 125px;
   border-radius: 5px;
-  box-shadow: 0 4px 8px rgb(140, 140, 140);
-  padding: 4px 0;
+  box-shadow: 0 4px 8px rgb(200, 200, 200);
+  padding: 5px 0;
   border: none;
   font-size: 14px;
 }
@@ -799,10 +821,14 @@ nav {
 .btn-x-lg {
   width: 150px;
   border-radius: 5px;
-  box-shadow: 0 4px 8px rgb(140, 140, 140);
-  padding: 5px 0;
+  box-shadow: 0 4px 8px rgb(200, 200, 200);
+  padding: 6px 0;
   border: none;
   font-size: 14px;
+}
+
+.btn-hovered:hover {
+  box-shadow: 0 4px 8px rgb(170, 170, 170);
 }
 
 /* FORM STYLES */
@@ -907,6 +933,14 @@ nav {
 
 .border-solid-1 {
   border: 1px solid gray;
+}
+
+.border-collapse {
+  border-collapse: collapse;
+}
+
+.border-smooth {
+  border-radius: 5px;
 }
 
 /* CARD STYLES */

@@ -19,10 +19,10 @@ export default function Header() {
                 verifiedUser &&
                 <div className="flex">
                     <div className="mr-5">
-                        <p>Welcome, {verifiedUser && verifiedUser.first_name}</p>
+                        <p className="off-white">Welcome, {verifiedUser && verifiedUser.first_name}</p>
                     </div>
-                    <div className="mr-8 pointer" onClick={handleSignOut}>
-                        <p>Sign Out <i className="fas fa-sign-out-alt text-6"></i></p>
+                    <div className="mr-8 pointer-no-u" onClick={handleSignOut}>
+                        <p className="off-white">Sign Out <i className="fas fa-sign-out-alt text-6"></i></p>
                     </div>
                 </div>
             }

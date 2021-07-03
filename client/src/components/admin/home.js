@@ -4,7 +4,7 @@ import * as ROUTES from '../../constants/routes';
 export default function AdminHome() {
     return (
         <div className="home">
-            <Link to={ROUTES.ADMIN_EMPLOYEES} className="text-black text-no-u">
+            <Link to={ROUTES.ADMIN_EMPLOYEES} className="black text-no-u">
                 <div className="border-solid-1 px-8">
                     <div className="flex flex-col flex-center">
                         <h2>Employees</h2>
@@ -14,7 +14,7 @@ export default function AdminHome() {
                     </div>
                 </div>
             </Link>
-            <Link to={ROUTES.ADMIN_SCHEDULES} className="text-black text-no-u">
+            <Link to={ROUTES.ADMIN_SCHEDULES} className="black text-no-u">
                 <div className="border-solid-1 px-8">
                     <div className="flex flex-col flex-center">
                         <h2>Schedules</h2>
@@ -24,7 +24,7 @@ export default function AdminHome() {
                     </div>
                 </div>
             </Link>
-            <Link to={ROUTES.ADMIN_REQUESTS} className="text-black text-no-u">
+            <Link to={ROUTES.ADMIN_REQUESTS} className="black text-no-u">
                 <div className="border-solid-1 px-8">
                     <div className="flex flex-col flex-center">
                         <h2>Requests</h2>
@@ -34,7 +34,7 @@ export default function AdminHome() {
                     </div>
                 </div>
             </Link>
-            <Link to={ROUTES.ADMIN_STORE} className="text-black text-no-u">
+            <Link to={ROUTES.ADMIN_STORE} className="black text-no-u">
                 <div className="border-solid-1 px-8">
                     <div className="flex flex-col flex-center">
                         <h2>Store</h2>

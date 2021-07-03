@@ -47,7 +47,7 @@ export default function SignIn() {
                     <div>
                         <button className="btn-lg pointer" disabled={isInvalid}>Sign In</button>
                     </div>
-                    {error ? <p className="mt-2 text-red">{error}</p> : null}
+                    {error ? <p className="mt-2 red">{error}</p> : null}
                 </form>
 
             </div>
