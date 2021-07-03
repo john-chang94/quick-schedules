@@ -7,6 +7,16 @@ import * as ROUTES from '../../constants/routes';
 export default function AdminEmployees() {
     const history = useHistory();
     const [users, setUsers] = useState(null);
+    const [width, setWidth] = useState(null);
+
+    const handleGetUser = (u_id) => {
+        history.push(`${ROUTES.ADMIN_EMPLOYEES}/${u_id}`);
+    }
+
+    const setWindowWidth = () => {
+        setWidth(window.innerWidth);
+    }
+    
 
     useEffect(() => {
         async function getUsers() {
@@ -17,9 +27,12 @@ export default function AdminEmployees() {
         getUsers();
     }, [])
 
-    const handleGetUser = (u_id) => {
-        history.push(`${ROUTES.ADMIN_EMPLOYEES}/${u_id}`);
-    }
+    useEffect(() => {
+        setWidth(window.innerWidth); // Set default width on page load
+        window.addEventListener('resize', setWindowWidth);
+
+        return () => window.removeEventListener('resize', setWindowWidth);
+    }, [])
 
     return (
         <div>
@@ -28,7 +41,7 @@ export default function AdminEmployees() {
                     <i className="fas fa-arrow-left"></i> Home
                 </Link>
             </div>
-            <div className="mt-8 mb-4 flex flex-center">
+            <div className="mt-6 mb-4 flex flex-center">
                 <button className="btn-x-lg btn-hovered pointer-no-u">
                     <p className="text-4"><i className="fas fa-plus"></i> New Employee</p>
                 </button>
@@ -54,7 +67,7 @@ export default function AdminEmployees() {
                                     ? { backgroundColor: 'rgb(240, 240, 240)'}
                                     : { backgroundColor: 'rbg(255, 255, 255)'}}
                                 >
-                                    <td className="p-3">{user.title}</td>
+                                    <td className="p-3">{width < 380 ? user.acn : user.title}</td>
                                     <td className="p-3">{user.first_name} {user.last_name}</td>
                                     <td className="p-3">{user.email}</td>
                                     <td className="p-3">{user.phone}</td>
