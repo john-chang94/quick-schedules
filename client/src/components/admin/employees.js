@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { useHistory } from 'react-router';
 import { Link } from 'react-router-dom';
-import { getAllUsers } from '../../services/users';
+import { fetchAllUsers } from '../../services/users';
 import * as ROUTES from '../../constants/routes';
 
 export default function AdminEmployees() {
@@ -20,7 +20,7 @@ export default function AdminEmployees() {
 
     useEffect(() => {
         async function getUsers() {
-            const users = await getAllUsers();
+            const users = await fetchAllUsers();
             setUsers(users);
         }
 

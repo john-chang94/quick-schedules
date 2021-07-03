@@ -32,17 +32,17 @@ export default function SignIn() {
     }
 
     return (
-        <div className="w-100 flex flex-center vh-80">
-            <div>
+        <div className="flex flex-center vh-80">
+            <div className="w-100">
                 <h2 className="mb-2">Sign In</h2>
                 <form onSubmit={handleSignIn} className="flex flex-col flex-center">
-                    <div className="mb-1">
+                    <div className="mb-1 w-100">
                         <p>Email</p>
-                        <input type="email" className="input-lg" onChange={({ target }) => setEmail(target.value)} />
+                        <input type="email" className="form-input" onChange={({ target }) => setEmail(target.value)} />
                     </div>
-                    <div className="mb-3">
+                    <div className="mb-3 w-100">
                         <p>Password</p>
-                        <input type="password" className="input-lg" onChange={({ target }) => setPassword(target.value)} />
+                        <input type="password" className="form-input" onChange={({ target }) => setPassword(target.value)} />
                     </div>
                     <div>
                         <button className="btn-lg btn-hovered pointer-no-u" disabled={isInvalid}>Sign In</button>

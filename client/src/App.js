@@ -4,6 +4,7 @@ import { BrowserRouter as Router, Switch, Route } from 'react-router-dom';
 import * as ROUTES from './constants/routes';
 import { verifyUser } from './services/auth';
 import { UserContext } from './contexts/userContext';
+import axios from 'axios';
 
 import Header from './components/header';
 import SignIn from './components/signIn';
