@@ -2,9 +2,8 @@ import './App.css';
 import { Suspense, useEffect, useContext } from 'react';
 import { BrowserRouter as Router, Switch, Route } from 'react-router-dom';
 import * as ROUTES from './constants/routes';
-import { verifyUser } from './services/auth';
+import { isAuthenticated, verifyUser } from './services/auth';
 import { UserContext } from './contexts/userContext';
-import axios from 'axios';
 
 import Header from './components/header';
 import SignIn from './components/signIn';
@@ -20,10 +19,8 @@ function App() {
 
   useEffect(() => {
     async function getVerifiedUser() {
-      const token = sessionStorage.getItem('token');
-      if (token) {
-        let tokenConfig = { headers: { 'token': token } };
-        
+      const tokenConfig = isAuthenticated();
+      if (tokenConfig) {
         const verifiedUser = await verifyUser(tokenConfig);
         setVerifiedUser(verifiedUser); // Set verified user in context for header
       }

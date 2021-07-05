@@ -3,6 +3,7 @@ import { useHistory } from 'react-router';
 import { Link } from 'react-router-dom';
 import { fetchAllUsers } from '../../services/users';
 import * as ROUTES from '../../constants/routes';
+import { isAuthenticated } from '../../services/auth';
 
 export default function AdminEmployees() {
     const history = useHistory();
@@ -16,12 +17,12 @@ export default function AdminEmployees() {
     const setWindowWidth = () => {
         setWidth(window.innerWidth);
     }
-    
 
     useEffect(() => {
         async function getUsers() {
-            const users = await fetchAllUsers();
-            setUsers(users);
+            const tokenConfig = isAuthenticated();
+            const users = await fetchAllUsers(tokenConfig);
+            if (users) setUsers(users);
         }
 
         getUsers();

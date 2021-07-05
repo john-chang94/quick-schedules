@@ -4,7 +4,8 @@ const jwt = require('jsonwebtoken');
 
 exports.authorizeToken = async (req, res, next) => {
     try {
-        const token = req.header('token');
+        const bearerHeader = req.headers['authorization'];
+        const token = bearerHeader.split(' ')[1];
 
         if (!token) return res.status(401).send('Unauthorized');
 

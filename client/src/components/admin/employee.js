@@ -2,8 +2,8 @@ import { useState, useEffect } from 'react';
 import { useParams } from 'react-router';
 import { Link } from 'react-router-dom';
 import * as ROUTES from '../../constants/routes';
+import { isAuthenticated } from '../../services/auth';
 import { fetchUser } from '../../services/users';
-import axios from 'axios';
 
 export default function AdminEmployee() {
     const { u_id } = useParams();
@@ -11,7 +11,8 @@ export default function AdminEmployee() {
 
     useEffect(() => {
         async function getUser() {
-            const user = await fetchUser(u_id);
+            const tokenConfig = isAuthenticated();
+            const user = await fetchUser(u_id, tokenConfig);
             setUser(user);
         }
 

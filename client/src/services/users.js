@@ -1,23 +1,17 @@
 import axios from 'axios';
 
-const token = sessionStorage.getItem('token');
-    // if (token) {
-        const tokenConfig = { 'token': token }
-        axios.defaults.headers = tokenConfig
-    // }
-
-export const fetchAllUsers = async () => {
+export const fetchAllUsers = async (tokenConfig) => {
     try {
-        const res = await axios.get('http://localhost:5000/users');
+        const res = await axios.get('http://localhost:5000/users', tokenConfig);
         return res.data;
     } catch (err) {
         return { error: err.response.data };
     }
 }
 
-export const fetchUser = async (u_id) => {
+export const fetchUser = async (u_id, tokenConfig) => {
     try {
-        const res = await axios.get(`http://localhost:5000/users/${u_id}`)
+        const res = await axios.get(`http://localhost:5000/users/${u_id}`, tokenConfig);
         return res.data;
     } catch (err) {
         return { error: err.response.data };
