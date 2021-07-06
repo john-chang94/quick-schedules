@@ -49,7 +49,6 @@ export default function SignIn() {
                     </div>
                     {error ? <p className="mt-2 red">{error}</p> : null}
                 </form>
-
             </div>
         </div>
     )

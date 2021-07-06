@@ -10,7 +10,7 @@ export default function AdminEmployees() {
     const [users, setUsers] = useState(null);
     const [width, setWidth] = useState(null);
 
-    const handleGetUser = (u_id) => {
+    const handleClickUser = (u_id) => {
         history.push(`${ROUTES.ADMIN_EMPLOYEES}/${u_id}`);
     }
 
@@ -63,7 +63,7 @@ export default function AdminEmployees() {
                                 <tr
                                     key={i}
                                     className="pointer"
-                                    onClick={() => handleGetUser(user.u_id)}
+                                    onClick={() => handleClickUser(user.u_id)}
                                     style={i % 2 === 0
                                     ? { backgroundColor: 'rgb(240, 240, 240)'}
                                     : { backgroundColor: 'rbg(255, 255, 255)'}}
