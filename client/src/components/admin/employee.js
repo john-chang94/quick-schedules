@@ -165,13 +165,12 @@ export default function AdminEmployee() {
         <div style={{ height: '280px' }} className="mx-2 flex flex-col justify-evenly">
             <div>
                 <p>Role</p>
-                <select defaultValue={user.role_id}>
+                <select defaultValue={user.role_id} onChange={({ target }) => setRoleId(parseInt(target.value))}>
                     {
                         roles && roles.map((role, i) => (
                             <option
                                 key={i}
                                 value={role.role_id}
-                                onClick={() => setRoleId(role.role_id)}
                             >
                                 {role.title}
                             </option>
