@@ -26,3 +26,21 @@ export const editPassword = async (u_id, body, tokenConfig) => {
         return { error: err.response.data };
     }
 }
+
+export const editUserGeneral = async (u_id, body, tokenConfig) => {
+    try {
+        const res = await axios.put(`http://localhost:5000/users/${u_id}`, body, tokenConfig);
+        return res.data;
+    } catch (err) {
+        return { error: err.response.data };
+    }
+}
+
+export const editUserInfo = async (u_id, body, tokenConfig) => {
+    try {
+        const res = await axios.put(`http://localhost:5000/users/system/${u_id}`, body, tokenConfig);
+        return res.data;
+    } catch (err) {
+        return { error: err.response.data };
+    }
+}

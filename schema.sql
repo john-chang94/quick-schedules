@@ -16,7 +16,7 @@ CREATE TABLE users (
     email VARCHAR(255) NOT NULL,
     password VARCHAR(255) NOT NULL,
     phone VARCHAR(50) NOT NULL,
-    hourly_pay DECIMAL NOT NULL,
+    hourly_pay MONEY NOT NULL,
     started_at DATE NOT NULL,
     updated_at DATE
 );

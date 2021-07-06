@@ -3,14 +3,16 @@ import { useParams } from 'react-router';
 import { Link } from 'react-router-dom';
 import * as ROUTES from '../../constants/routes';
 import { isAuthenticated } from '../../services/auth';
-import { editPassword, fetchUser } from '../../services/users';
+import { editPassword, editUserGeneral, editUserInfo, fetchUser } from '../../services/users';
 import { UserContext } from '../../contexts/userContext';
+import { fetchRoles } from '../../services/roles';
 
 export default function AdminEmployee() {
     const { u_id } = useParams();
     const { verifiedUser } = useContext(UserContext);
 
     const [user, setUser] = useState(null);
+    const [roles, setRoles] = useState(null);
     const [error, setError] = useState('');
 
     const [first_name, setFirstName] = useState('');
@@ -18,10 +20,9 @@ export default function AdminEmployee() {
     const [email, setEmail] = useState('');
     const [phone, setPhone] = useState('');
 
-    const [role, setRole] = useState('');
+    const [role_id, setRoleId] = useState('');
     const [hourly_pay, setHourlyPay] = useState('');
     const [started_at, setStartedAt] = useState('');
-    const [updated_at, setUpdatedAt] = useState('');
 
     const [showEditGeneral, setShowEditGeneral] = useState(false);
     const [showEditInfo, setShowEditInfo] = useState(false);
@@ -41,8 +42,38 @@ export default function AdminEmployee() {
         if (res.error) setError(res.error);
     }
 
+    const handleUpdateUserGeneral = async () => {
+        const tokenConfig = isAuthenticated();
+        const body = { first_name, last_name, email, phone };
+
+        const res = await editUserGeneral(u_id, body, tokenConfig);
+
+        if (res.error) {
+            setError(res.error);
+        } else {
+            setShowEditGeneral(false);
+            const user = await fetchUser(u_id, tokenConfig);
+            setUser(user);
+        }
+    }
+
+    const handleUpdateUserInfo = async () => {
+        const tokenConfig = isAuthenticated();
+        const body = { role_id, hourly_pay, started_at, updated_at: new Date(Date.now()).toLocaleDateString() };
+
+        const res = await editUserInfo(u_id, body, tokenConfig);
+
+        if (res.error) {
+            setError(res.error);
+        } else {
+            setShowEditInfo(false);
+            const user = await fetchUser(u_id, tokenConfig);
+            setUser(user);
+        }
+    }
+
     const renderUserGeneral = () => (
-        <div>
+        <div style={{ height: '200px' }} className="mx-2 flex flex-col justify-evenly">
             <div>
                 <h4>Name</h4>
                 <p>{user.first_name} {user.last_name}</p>
@@ -62,7 +93,7 @@ export default function AdminEmployee() {
     )
 
     const renderUserInfo = () => (
-        <div>
+        <div style={{ height: '250px' }} className="mx-2 flex flex-col justify-evenly">
             <div>
                 <h4>Role</h4>
                 <p>{user.title}</p>
@@ -86,86 +117,89 @@ export default function AdminEmployee() {
     )
 
     const renderEditGeneral = () => (
-        <div>
+        <div style={{ height: '330px' }} className="mx-2 flex flex-col justify-evenly">
             <div>
+                <p>First Name</p>
                 <input
                     type="text"
                     className="form-input"
-                    defaultValue={user.first_name}
+                    defaultValue={first_name}
                     onChange={({ target }) => setFirstName(target.value)}
                 />
             </div>
             <div>
+                <p>Last Name</p>
                 <input
                     type="text"
                     className="form-input"
-                    defaultValue={user.last_name}
+                    defaultValue={last_name}
                     onChange={({ target }) => setLastName(target.value)}
                 />
             </div>
             <div>
+                <p>Email</p>
                 <input
                     type="text"
                     className="form-input"
-                    defaultValue={user.email}
+                    defaultValue={email}
                     onChange={({ target }) => setEmail(target.value)}
                 />
             </div>
             <div>
+                <p>Phone</p>
                 <input
                     type="text"
                     className="form-input"
-                    defaultValue={user.phone}
+                    defaultValue={phone}
                     onChange={({ target }) => setPhone(target.value)}
                 />
             </div>
             <div>
-                <button>Save</button>
-                <button className="btn-med btn-hovered" onClick={() => setShowEditGeneral(false)}>Cancel</button>
+                <button className="btn-med btn-hovered" onClick={() => handleUpdateUserGeneral()}>Save</button>
+                <button className="btn-med btn-hovered ml-5" onClick={() => setShowEditGeneral(false)}>Cancel</button>
             </div>
         </div>
     )
 
     const renderEditInfo = () => (
-        <div>
+        <div style={{ height: '280px' }} className="mx-2 flex flex-col justify-evenly">
             <div>
-                <select>
-                    <option value=""></option>
+                <p>Role</p>
+                <select defaultValue={user.role_id}>
+                    {
+                        roles && roles.map((role, i) => (
+                            <option
+                                key={i}
+                                value={role.role_id}
+                                onClick={() => setRoleId(role.role_id)}
+                            >
+                                {role.title}
+                            </option>
+                        ))
+                    }
                 </select>
-                {/* <input
-                    type="text"
-                    className="form-input"
-                    defaultValue={user.title}
-                    onChange={({ target }) => setRole(target.value)}
-                /> */}
             </div>
             <div>
+                <p>Hourly Pay</p>
                 <input
                     type="text"
                     className="form-input"
-                    defaultValue={user.hourly_pay}
+                    defaultValue={hourly_pay}
                     onChange={({ target }) => setHourlyPay(target.value)}
                 />
             </div>
             <div>
+                <p>Started At</p>
                 <input
                     type="text"
                     className="form-input"
-                    defaultValue={user.started_at}
+                    defaultValue={new Date(started_at).toLocaleDateString()}
                     onChange={({ target }) => setStartedAt(target.value)}
                 />
             </div>
-            {/* <div>
-                <input
-                    type="text"
-                    className="form-input"
-                    defaultValue={user.updated_at}
-                    onChange={({ target }) => setUpdatedAt(target.value)}
-                />
-            </div> */}
             <div>
-                <button>Save</button>
-                <button className="btn-med btn-hovered" onClick={() => setShowEditInfo(false)}>Cancel</button>
+                <button className="btn-med btn-hovered" onClick={() => handleUpdateUserInfo()}>Save</button>
+                <button className="btn-med btn-hovered ml-5" onClick={() => setShowEditInfo(false)}>Cancel</button>
             </div>
         </div>
     )
@@ -207,15 +241,24 @@ export default function AdminEmployee() {
                     </button>
                 </div>
             </form>
-            {error ? <p className="red">{error}</p> : null}
         </div>
     )
 
     useEffect(() => {
         async function getUser() {
             const tokenConfig = isAuthenticated();
+
             const user = await fetchUser(u_id, tokenConfig);
+            const roles = await fetchRoles(tokenConfig);
             setUser(user);
+            setRoles(roles);
+            setFirstName(user.first_name);
+            setLastName(user.last_name);
+            setEmail(user.email);
+            setPhone(user.phone);
+            setRoleId(user.role_id);
+            setHourlyPay(user.hourly_pay);
+            setStartedAt(user.started_at);
         }
 
         getUser();
@@ -248,6 +291,8 @@ export default function AdminEmployee() {
                         verifiedUser && verifiedUser.u_id === user.u_id &&
                         renderEditPassword()
                     }
+
+                    {error ? <p className="red">{error}</p> : null}
                 </div>
             }
         </div>
