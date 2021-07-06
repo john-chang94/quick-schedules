@@ -45,7 +45,7 @@ export default function SignIn() {
                         <input type="password" className="form-input" onChange={({ target }) => setPassword(target.value)} />
                     </div>
                     <div>
-                        <button className="btn-lg btn-hovered pointer-no-u" disabled={isInvalid}>Sign In</button>
+                        <button className="btn-lg btn-hovered" disabled={isInvalid}>Sign In</button>
                     </div>
                     {error ? <p className="mt-2 red">{error}</p> : null}
                 </form>

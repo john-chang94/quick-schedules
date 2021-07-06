@@ -66,6 +66,7 @@ exports.signIn = async (req, res) => {
 
         if (token) {
             const signedInUser = {
+                u_id: user.rows[0].u_id,
                 is_admin: user.rows[0].is_admin,
                 first_name: user.rows[0].first_name
             }
@@ -92,6 +93,7 @@ exports.verifyUser = async (req, res) => {
 
         if (user.rows.length) {
             const verifiedUser = {
+                u_id: user.rows[0].u_id,
                 is_admin: user.rows[0].is_admin,
                 first_name: user.rows[0].first_name
             }

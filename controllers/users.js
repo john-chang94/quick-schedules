@@ -23,7 +23,11 @@ exports.getUserById = async (req, res) => {
     try {
         const { u_id } = req.params;
 
-        const user = await client.query('SELECT * FROM users WHERE u_id = $1', [u_id]);
+        const user = await client.query(
+            `SELECT *, hourly_pay::money FROM roles JOIN users
+                ON roles.role_id = users.role_id
+            WHERE u_id = $1`,
+            [u_id]);
 
         if (!user.rows.length) return res.status(400).send('No user found');
 
