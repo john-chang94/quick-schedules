@@ -68,7 +68,8 @@ exports.signIn = async (req, res) => {
             const signedInUser = {
                 u_id: user.rows[0].u_id,
                 is_admin: user.rows[0].is_admin,
-                first_name: user.rows[0].first_name
+                first_name: user.rows[0].first_name,
+                level: user.rows[0].level
             }
 
             res.status(200).json({
@@ -95,7 +96,8 @@ exports.verifyUser = async (req, res) => {
             const verifiedUser = {
                 u_id: user.rows[0].u_id,
                 is_admin: user.rows[0].is_admin,
-                first_name: user.rows[0].first_name
+                first_name: user.rows[0].first_name,
+                level: user.rows[0].level
             }
 
             res.status(200).json(verifiedUser);

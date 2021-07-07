@@ -35,3 +35,18 @@ exports.isAdmin = async (req, res, next) => {
 
     next();
 }
+
+exports.createUserValidator = (req, res, next) => {
+    req.check('first_name', 'First name required').notEmpty();
+    req.check('last_name', 'Last name required').notEmpty();
+    req.check('email', 'Email required').notEmpty();
+    req.check('password', 'Password required').notEmpty();
+    req.check('phone', 'Phone number required').notEmpty();
+    req.check('hourly_pay', 'Hourly pay required').notEmpty();
+    req.check('started_at', 'Starting date required').notEmpty();
+
+    const errors = req.validationErrors();
+    if (errors) {
+        return res.status(400).send(errors[0].msg);
+    }
+}

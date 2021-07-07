@@ -112,7 +112,7 @@ export default function AdminEmployee() {
             </div>
             <div>
                 <h4>Hourly Pay</h4>
-                <p>{user.hourly_pay}</p>
+                <p>{verifiedUser.level <= user.level ? user.hourly_pay : 'N/A'}</p>
             </div>
             <div>
                 <h4>Started At</h4>
@@ -123,7 +123,13 @@ export default function AdminEmployee() {
                 <p>{user.updated_at ? new Date(user.updated_at).toLocaleDateString() : 'N/A'}</p>
             </div>
             <div>
-                <button className="btn-med btn-hovered" onClick={() => setShowEditInfo(true)}>Edit</button>
+                <button
+                    className="btn-med btn-hovered"
+                    onClick={() => setShowEditInfo(true)}
+                    disabled={verifiedUser.level >= user.level}
+                >
+                    Edit
+                </button>
             </div>
         </div>
     )
@@ -274,7 +280,6 @@ export default function AdminEmployee() {
             setHourlyPay(user.hourly_pay);
             setStartedAt(user.started_at);
         }
-
         getData();
     }, [])
 

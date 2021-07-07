@@ -24,7 +24,18 @@ export default function AdminNewEmployee() {
         const body = { role_id, first_name, last_name, email, phone, password, hourly_pay, started_at };
 
         const res = await createUser(body, tokenConfig);
-        if (res.error) setError(res.error);
+        if (res.error) {
+            setError(res.error);
+        } else {
+            setError('');
+            setRoleId('');
+            setFirstName('');
+            setLastName('');
+            setEmail('');
+            setPhone('');
+            setPassword('');
+            setHourlyPay('');
+        }
     }
 
     useEffect(() => {
