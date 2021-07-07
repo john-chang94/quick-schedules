@@ -972,5 +972,19 @@ select {
 }
 
 @media screen and (max-width: 380px) {
-  
+  .btn-sm {
+    width: 50px;
+  }
+
+  .btn-med {
+    width: 75px;
+  }
+
+  .btn-lg {
+    width: 100px;
+  }
+
+  .btn-x-lg {
+    width: 125px;
+  }
 }

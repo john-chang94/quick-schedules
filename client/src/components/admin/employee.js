@@ -14,6 +14,7 @@ export default function AdminEmployee() {
     const [user, setUser] = useState(null);
     const [roles, setRoles] = useState(null);
     const [error, setError] = useState('');
+    const [success, setSuccess] = useState('');
 
     const [first_name, setFirstName] = useState('');
     const [last_name, setLastName] = useState('');
@@ -39,7 +40,16 @@ export default function AdminEmployee() {
         const body = { password, new_password, confirm_new_password };
 
         const res = await editPassword(u_id, body, tokenConfig);
-        if (res.error) setError(res.error);
+        if (res.error) {
+            setError(res.error);
+        }
+        else {
+            setError('');
+            setSuccess('Password changed successfully');
+            setPassword('');
+            setNewPassword('');
+            setConfirmNewPassword('');
+        }
     }
 
     const handleUpdateUserGeneral = async () => {
@@ -51,9 +61,10 @@ export default function AdminEmployee() {
         if (res.error) {
             setError(res.error);
         } else {
-            setShowEditGeneral(false);
             const user = await fetchUser(u_id, tokenConfig);
+            setError('');
             setUser(user);
+            setShowEditGeneral(false);
         }
     }
 
@@ -66,9 +77,10 @@ export default function AdminEmployee() {
         if (res.error) {
             setError(res.error);
         } else {
-            setShowEditInfo(false);
             const user = await fetchUser(u_id, tokenConfig);
+            setError('');
             setUser(user);
+            setShowEditInfo(false);
         }
     }
 
@@ -211,6 +223,7 @@ export default function AdminEmployee() {
                     <input
                         type="password"
                         className="form-input"
+                        value={password}
                         placeholder="Current Password"
                         onChange={({ target }) => setPassword(target.value)}
                     />
@@ -219,6 +232,7 @@ export default function AdminEmployee() {
                     <input
                         type="password"
                         className="form-input"
+                        value={new_password}
                         placeholder="New Password"
                         onChange={({ target }) => setNewPassword(target.value)}
                     />
@@ -227,6 +241,7 @@ export default function AdminEmployee() {
                     <input
                         type="password"
                         className="form-input"
+                        value={confirm_new_password}
                         placeholder="Confirm New Password"
                         onChange={({ target }) => setConfirmNewPassword(target.value)}
                     />
@@ -244,7 +259,7 @@ export default function AdminEmployee() {
     )
 
     useEffect(() => {
-        async function getUser() {
+        async function getData() {
             const tokenConfig = isAuthenticated();
 
             const user = await fetchUser(u_id, tokenConfig);
@@ -260,7 +275,7 @@ export default function AdminEmployee() {
             setStartedAt(user.started_at);
         }
 
-        getUser();
+        getData();
     }, [])
 
     return (
@@ -292,6 +307,7 @@ export default function AdminEmployee() {
                     }
 
                     {error ? <p className="red">{error}</p> : null}
+                    {success ? <p className="green">{success}</p> : null}
                 </div>
             }
         </div>
