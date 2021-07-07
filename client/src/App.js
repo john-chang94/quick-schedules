@@ -11,6 +11,7 @@ import SignIn from './components/signIn';
 import AdminHome from './components/admin/home';
 import AdminEmployees from './components/admin/employees';
 import AdminEmployee from './components/admin/employee';
+import AdminNewEmployee from './components/admin/newEmployee';
 
 import UserHome from './components/user/home';
 
@@ -40,6 +41,7 @@ function App() {
 
               <Route path={ROUTES.ADMIN_HOME} component={AdminHome} />
               <Route exact path={ROUTES.ADMIN_EMPLOYEES} component={AdminEmployees} />
+              <Route path={ROUTES.ADMIN_NEW_EMPLOYEE} component={AdminNewEmployee} />
               <Route path={ROUTES.ADMIN_EMPLOYEE} component={AdminEmployee} />
 
               <Route path={ROUTES.USER_HOME} component={UserHome} />

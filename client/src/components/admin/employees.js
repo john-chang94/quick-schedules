@@ -14,6 +14,10 @@ export default function AdminEmployees() {
         history.push(`${ROUTES.ADMIN_EMPLOYEES}/${u_id}`);
     }
 
+    const handleNewEmployee = () => {
+        history.push(ROUTES.ADMIN_NEW_EMPLOYEE);
+    }
+
     const setWindowWidth = () => {
         setWidth(window.innerWidth);
     }
@@ -43,7 +47,7 @@ export default function AdminEmployees() {
                 </Link>
             </div>
             <div className="mt-6 mb-4 flex flex-center">
-                <button className="btn-x-lg btn-hovered">
+                <button className="btn-x-lg btn-hovered" onClick={handleNewEmployee}>
                     <p className="text-4"><i className="fas fa-plus"></i> New Employee</p>
                 </button>
             </div>

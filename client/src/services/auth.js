@@ -9,6 +9,15 @@ export const signIn = async (credentials) => {
     }
 }
 
+export const createUser = async (body, tokenConfig) => {
+    try {
+        const res = await axios.post('http://localhost:5000/auth/register', body, tokenConfig);
+        return res.data;
+    } catch (err) {
+        return { error: err.response.data };
+    }
+}
+
 export const verifyUser = async (tokenConfig) => {
     try {
         const res = await axios.get('http://localhost:5000/auth/verify', tokenConfig);
