@@ -641,6 +641,10 @@ nav {
   font-size: 28px;
 }
 
+.text-vw {
+  font-size: 1vw;
+}
+
 /* SIZE STYLES */
 
 .h-1 {
@@ -916,6 +920,10 @@ select {
 
 .border-smooth {
   border-radius: 5px;
+}
+
+.border-bottom {
+  border-bottom: 1px solid gray;
 }
 
 /* CARD STYLES */

@@ -44,3 +44,12 @@ export const editUserInfo = async (u_id, body, tokenConfig) => {
         return { error: err.response.data };
     }
 }
+
+export const fetchUsersAndAvailabilities = async (tokenConfig) => {
+    try {
+        const res = await axios.get('http://localhost:5000/users/availability/all', tokenConfig);
+        return res.data;
+    } catch (err) {
+        return { error: err.response.data };
+    }
+}

@@ -196,6 +196,32 @@ exports.editAvailabilityNotes = async (req, res) => {
     }
 }
 
+// Get users and their availability
+exports.getUsersAndAvailability = async (req, res) => {
+    try {
+        const result = await client.query(
+            `WITH users AS (
+                SELECT u_id, first_name, last_name, title, acn, level
+                FROM roles JOIN users
+                    ON roles.role_id = users.role_id
+            ),
+            availability AS (
+                SELECT u_id, array[mon, tue, wed, thur, fri, sat, sun] AS availability
+                FROM availability
+                GROUP BY u_id, mon, tue, wed, thur, fri, sat, sun
+            )
+            SELECT u.u_id, u.first_name, u.last_name, u.title, u.acn, u.level, a.availability
+            FROM users AS u JOIN availability AS a
+                ON u.u_id = a.u_id
+            ORDER BY u.level, u.first_name`
+        )
+
+        res.status(200).json(result.rows);
+    } catch (err) {
+       return res.status(500).send(err.message); 
+    }
+}
+
 // Admins only
 exports.getUserAvailabilityAndRequests = async (req, res) => {
     try {
