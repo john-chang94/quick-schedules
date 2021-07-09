@@ -5,7 +5,7 @@
 }
 
 .container {
-  margin: 0 15%;
+  margin: 0 12%;
 }
 
 .pointer:hover {
@@ -547,6 +547,10 @@ nav {
   background-color: rgb(79, 79, 79);
 }
 
+.bg-light-gray-hovered:hover {
+  background-color: rgb(201, 201, 201);
+}
+
 .bg-red {
   background-color: red;
 }
@@ -646,7 +650,7 @@ nav {
 }
 
 .text-vw {
-  font-size: 0.8vw;
+  font-size: 0.9vw;
 }
 
 /* SIZE STYLES */
@@ -688,7 +692,7 @@ nav {
 }
 
 .h-10 {
-  height: 28px;
+  height: 65px;
 }
 
 .h-50 {

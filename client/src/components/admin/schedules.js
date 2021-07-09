@@ -6,12 +6,15 @@ import { fetchUsersAndAvailabilities } from '../../services/users';
 
 export default function AdminSchedules() {
     const [users, setUsers] = useState(null);
-    const [date, setDate] = useState(null);
     const [days, setDays] = useState([]);
     const [times, setTimes] = useState(null);
-    const [showEditShift, setShowEditShift] = useState(false);
+
+    const [date, setDate] = useState(null);
     const [userData, setUserData] = useState(null);
-    const [userIndex, setUserIndex] = useState(null);
+    const [availabilityIndex, setAvailabilityIndex] = useState(null);
+
+    const [shift_start, setShiftStart] = useState(null);
+    const [shift_end, setShiftEnd] = useState(null);
 
     const handleSaveShift = () => {
 
@@ -19,13 +22,21 @@ export default function AdminSchedules() {
 
     const handleUserClick = (user, index) => {
         setUserData(user.u_id);
-        setUserIndex(index);
-        // setShowEditShift(true);
+        setAvailabilityIndex(index);
     }
 
     const renderEditShift = () => (
         <div>
-            <select>
+            <select className="w-3">
+                {
+                    times && times.map((time, i) => (
+                        <option key={i} value={time.value}>
+                            {time.time}
+                        </option>
+                    ))
+                }
+            </select>
+            <select className="w-3">
                 {
                     times && times.map((time, i) => (
                         <option key={i} value={time.value}>
@@ -51,11 +62,11 @@ export default function AdminSchedules() {
     // Get dates for the week (Mon - Sun) based on the current day
     useEffect(() => {
         // Current date
-        let date = new Date(Date.now())
+        let date = new Date();
         // Get Monday of the week, getDate returns 1-31, getDay returns 0-6
         let mondayOfTheWeek = date.getDate() - date.getDay() + (date.getDay() === 0 ? -6 : 1);
         // Assign date for Monday of the week to firstDate, setDate requires 1-31
-        let firstDate = new Date(date.setDate(mondayOfTheWeek))
+        let firstDate = new Date(date.setDate(mondayOfTheWeek));
         let daysArray = []
 
         for (let i = 0; i < 7; i++) {
@@ -100,7 +111,7 @@ export default function AdminSchedules() {
                                     key={i}
                                     className="border-bottom"
                                     style={i % 2 === 0
-                                        ? { backgroundColor: 'rgb(240, 240, 240)' }
+                                        ? { backgroundColor: 'rgb(235, 235, 235)' }
                                         : { backgroundColor: 'rbg(255, 255, 255)' }}
                                 >
                                     <td className="text-vw nowrap px-1">{user.title}</td>
@@ -136,25 +147,29 @@ export default function AdminSchedules() {
                             users && users.map((user, i) => (
                                 <tr
                                     key={i}
-                                    className="border-bottom"
+                                    className="border-bottom h-10"
                                     style={i % 2 === 0
-                                        ? { backgroundColor: 'rgb(240, 240, 240)' }
+                                        ? { backgroundColor: 'rgb(235, 235, 235)' }
                                         : { backgroundColor: 'rbg(255, 255, 255)' }}
                                 >
-                                    <td className="border-y text-vw nowrap px-1">{user.title}</td>
-                                    <td className="border-y text-vw nowrap px-1">{user.first_name} {user.last_name}</td>
+                                    <td className="border-y text-vw nowrap">{user.title}</td>
+                                    <td className="border-y text-vw nowrap">{user.first_name} {user.last_name}</td>
                                     {
                                         user.availability.map((time, i) => (
                                             <>
                                                 {
-                                                    (userData === user.u_id && userIndex === i) ?
-                                                    renderEditShift() :
-                                                    <td
-                                                        className={`border-y text-vw nowrap px-1 ${time === 'NA' && 'bg-black'}`}
-                                                        onClick={() => handleUserClick(user, i)}
-                                                    >
+                                                    // Only render edit mode for clicked date and employee
+                                                    (userData === user.u_id && availabilityIndex === i)
+                                                        ? renderEditShift()
+                                                        : <td
+                                                            className={ // Keep bg color black if employee is 'NA' for schedule
+                                                                `border-y text-vw nowrap pointer
+                                                            ${time === 'NA' ? 'bg-black' : 'bg-light-gray-hovered'}`
+                                                            }
+                                                            onClick={() => handleUserClick(user, i)}
+                                                        >
 
-                                                    </td>
+                                                        </td>
                                                 }
                                             </>
                                         ))
