@@ -496,7 +496,7 @@ nav {
 }
 
 .light-gray {
-  color: rgb(201, 201, 201);
+  color: rgb(210, 210, 210);
 }
 
 .dark-gray {
@@ -540,15 +540,19 @@ nav {
 }
 
 .bg-light-gray {
-  background-color: rgb(201, 201, 201);
+  background-color: rgb(210, 210, 210);
+}
+
+.bg-x-light-gray {
+  background-color: rgb(245, 245, 245);
 }
 
 .bg-dark-gray {
-  background-color: rgb(79, 79, 79);
+  background-color: rgb(175, 175, 175);
 }
 
 .bg-light-gray-hovered:hover {
-  background-color: rgb(201, 201, 201);
+  background-color: rgb(210, 210, 210);
 }
 
 .bg-red {

@@ -1,7 +1,9 @@
 import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import * as ROUTES from '../../constants/routes';
+import { isAuthenticated } from '../../services/auth';
 import { fetchTimes } from '../../services/presets';
+import { createShift } from '../../services/shifts';
 import { fetchUsersAndAvailabilities } from '../../services/users';
 
 export default function AdminSchedules() {
@@ -10,24 +12,47 @@ export default function AdminSchedules() {
     const [times, setTimes] = useState(null);
 
     const [date, setDate] = useState(null);
+
+    const [shiftStart, setShiftStart] = useState('0 0');
+    const [shiftEnd, setShiftEnd] = useState('0 0');
+
+    // Used to render edit shift mode for clicked date and employee only
     const [userData, setUserData] = useState(null);
     const [availabilityIndex, setAvailabilityIndex] = useState(null);
 
-    const [shift_start, setShiftStart] = useState(null);
-    const [shift_end, setShiftEnd] = useState(null);
+    const handleSaveShift = async (u_id, dayIndex) => {
+        const tokenConfig = isAuthenticated();
+        // Get shift date
+        const date = days[dayIndex];
 
-    const handleSaveShift = () => {
+        // Get hour and minute in INT data type for date object
+        const timeStartOne = parseInt(shiftStart.split(' ')[0]);
+        const timeStartTwo = parseInt(shiftStart.split(' ')[1]);
 
+        // Get hour and minute in INT data type for date object
+        const timeEndOne = parseInt(shiftEnd.split(' ')[0]);
+        const timeEndTwo = parseInt(shiftEnd.split(' ')[1]);
+
+        // Create new date objects with year, month, day, hour, minute
+        const shift_start = new Date(date.getFullYear(), date.getMonth(), date.getDate(), timeStartOne, timeStartTwo);
+        const shift_end = new Date(date.getFullYear(), date.getMonth(), date.getDate(), timeEndOne, timeEndTwo);
+
+        const body = { u_id, shift_start, shift_end };
+        const res = await createShift(body, tokenConfig);
+        console.log(`res`, res)
     }
 
-    const handleUserClick = (user, index) => {
-        setUserData(user.u_id);
+    // const handle
+
+    const handleUserClick = (u_id, index) => {
+        setUserData(u_id);
         setAvailabilityIndex(index);
     }
 
-    const renderEditShift = () => (
-        <div>
-            <select className="w-3">
+    const renderEditShift = (u_id, dayIndex) => (
+        <td key={dayIndex}>
+            <p>Shift start</p>
+            <select className="w-90" defaultValue={times[0].value} onChange={({ target }) => setShiftStart(target.value)}>
                 {
                     times && times.map((time, i) => (
                         <option key={i} value={time.value}>
@@ -36,7 +61,8 @@ export default function AdminSchedules() {
                     ))
                 }
             </select>
-            <select className="w-3">
+            <p>Shift end</p>
+            <select className="w-90" defaultValue={times[0].value} onChange={({ target }) => setShiftEnd(target.value)}>
                 {
                     times && times.map((time, i) => (
                         <option key={i} value={time.value}>
@@ -45,7 +71,15 @@ export default function AdminSchedules() {
                     ))
                 }
             </select>
-        </div>
+            <div className="mx-2 w-100 flex justify-evenly">
+                <button className="btn-x-sm btn-hovered bg-gray off-white" onClick={() => handleSaveShift(u_id, dayIndex)}>
+                    <i className="fas fa-check"></i>
+                </button>
+                <button className="btn-x-sm btn-hovered bg-gray off-white">
+                    <i className="fas fa-trash-alt"></i>
+                </button>
+            </div>
+        </td>
     )
 
     useEffect(() => {
@@ -144,35 +178,31 @@ export default function AdminSchedules() {
                             }
                         </tr>
                         {
-                            users && users.map((user, i) => (
+                            users && users.map((user, u_i) => (
                                 <tr
-                                    key={i}
-                                    className="border-bottom h-10"
-                                    style={i % 2 === 0
-                                        ? { backgroundColor: 'rgb(235, 235, 235)' }
-                                        : { backgroundColor: 'rbg(255, 255, 255)' }}
+                                    key={u_i}
+                                    className="bg-x-light-gray border-bottom h-10"
                                 >
                                     <td className="border-y text-vw nowrap">{user.title}</td>
                                     <td className="border-y text-vw nowrap">{user.first_name} {user.last_name}</td>
                                     {
-                                        user.availability.map((time, i) => (
-                                            <>
-                                                {
-                                                    // Only render edit mode for clicked date and employee
-                                                    (userData === user.u_id && availabilityIndex === i)
-                                                        ? renderEditShift()
-                                                        : <td
-                                                            className={ // Keep bg color black if employee is 'NA' for schedule
-                                                                `border-y text-vw nowrap pointer
+                                        user.availability.map((time, a_i) => {
+                                            return (
+                                                // Only render edit mode for clicked date and employee
+                                                (userData === user.u_id && availabilityIndex === a_i)
+                                                    ? renderEditShift(user.u_id, a_i)
+                                                    : <td
+                                                        key={a_i}
+                                                        className={ // Keep bg color black if employee is 'NA' for schedule
+                                                            `border-y text-vw nowrap pointer
                                                             ${time === 'NA' ? 'bg-black' : 'bg-light-gray-hovered'}`
-                                                            }
-                                                            onClick={() => handleUserClick(user, i)}
-                                                        >
+                                                        }
+                                                        onClick={() => handleUserClick(user.u_id, a_i)}
+                                                    >
 
-                                                        </td>
-                                                }
-                                            </>
-                                        ))
+                                                    </td>
+                                            )
+                                        })
                                     }
                                 </tr>
                             ))
