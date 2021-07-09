@@ -17,11 +17,11 @@ export default function Header() {
         <nav>
             {
                 verifiedUser &&
-                <div className="flex">
+                <div className="flex container">
                     <div className="mr-5">
                         <p className="off-white">Welcome, {verifiedUser && verifiedUser.first_name}</p>
                     </div>
-                    <div className="mr-8 pointer-no-u" onClick={handleSignOut}>
+                    <div className="pointer-no-u" onClick={handleSignOut}>
                         <p className="off-white">Sign Out <i className="fas fa-sign-out-alt text-6"></i></p>
                     </div>
                 </div>

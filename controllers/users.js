@@ -159,7 +159,7 @@ exports.editAvailability = async (req, res) => {
 
         const availability = await client.query(
             `UPDATE availability
-                SET mon = $1
+                SET mon = $1,
                 tue = $2,
                 wed = $3,
                 thur = $4,

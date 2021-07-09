@@ -573,6 +573,10 @@ nav {
 
 /* TEXT STYLES */
 
+.nowrap {
+  white-space: nowrap;
+}
+
 .text-center {
   text-align: center;
 }
@@ -642,7 +646,7 @@ nav {
 }
 
 .text-vw {
-  font-size: 1vw;
+  font-size: 0.8vw;
 }
 
 /* SIZE STYLES */
@@ -920,6 +924,11 @@ select {
 
 .border-smooth {
   border-radius: 5px;
+}
+
+.border-y {
+  border-left: 1px solid gray;
+  border-right: 1px solid gray;
 }
 
 .border-bottom {
