@@ -78,17 +78,28 @@ exports.getShiftsByUser = async (req, res) => {
 
 exports.getShiftsByDates = async (req, res) => {
     try {
-        const { shift_start, shift_end } = req.params;
+        const { start_date, end_date } = req.params;
 
         const shifts = await client.query(
-            `SELECT * FROM shifts
-            WHERE shift_start >= $1
-                AND shift_end <= $2
-            ORDER BY shift_start`,
-            [shift_start, shift_end]
+            `SELECT u.u_id, first_name, last_name, array_agg(s.shift) AS shifts
+            FROM roles AS r JOIN users AS u
+                ON r.role_id = u.role_id
+            LEFT JOIN
+                (
+                    SELECT u_id, json_build_object(
+                        'shift_start', shift_start,
+                        'shift_end', shift_end
+                    ) AS shift
+                    FROM shifts
+                    WHERE shift_start >= $1
+                        AND shift_start <= $2
+                    ORDER BY shift_start DESC
+                ) AS s
+                ON u.u_id = s.u_id
+            GROUP BY u.u_id, r.level, first_name, last_name
+            ORDER BY r.level, first_name`,
+            [start_date, end_date]
         )
-
-        if (!shifts.rows.length) return res.status(404).send('No records found');
 
         res.status(200).json(shifts.rows);
     } catch (err) {
