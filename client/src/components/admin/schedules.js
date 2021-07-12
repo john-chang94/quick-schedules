@@ -4,7 +4,7 @@ import * as ROUTES from '../../constants/routes';
 import { isAuthenticated } from '../../services/auth';
 import { fetchTimes } from '../../services/presets';
 import { createShift } from '../../services/shifts';
-import { fetchUsersAndAvailabilities } from '../../services/users';
+import { fetchAllUsersSchedulesByDate, fetchAllUsersAndAvailabilities } from '../../services/users';
 
 export default function AdminSchedules() {
     const [users, setUsers] = useState(null);
@@ -20,26 +20,45 @@ export default function AdminSchedules() {
     const [userData, setUserData] = useState(null);
     const [availabilityIndex, setAvailabilityIndex] = useState(null);
 
+    const getFirstAndLastDatesOfCurrentWeek = () => {
+        let date = new Date();
+        // Get Monday of the week, getDate returns 1-31, getDay returns 0-6
+        let mondayOfTheWeek = date.getDate() - date.getDay() + (date.getDay() === 0 ? -6 : 1);
+        // Assign date for Monday of the week to firstDate, setDate requires 1-31
+        let firstDate = new Date(date.setDate(mondayOfTheWeek));
+        let lastDate = new Date(date.setDate(mondayOfTheWeek + 6))
+
+    }
+
     const handleSaveShift = async (u_id, dayIndex) => {
         const tokenConfig = isAuthenticated();
         // Get shift date
         const date = days[dayIndex];
-
         // Get hour and minute in INT data type for date object
-        const timeStartOne = parseInt(shiftStart.split(' ')[0]);
-        const timeStartTwo = parseInt(shiftStart.split(' ')[1]);
-
+        const startTimeHour = parseInt(shiftStart.split(' ')[0]);
+        const startTimeMinute = parseInt(shiftStart.split(' ')[1]);
         // Get hour and minute in INT data type for date object
-        const timeEndOne = parseInt(shiftEnd.split(' ')[0]);
-        const timeEndTwo = parseInt(shiftEnd.split(' ')[1]);
-
+        const endTimeHour = parseInt(shiftEnd.split(' ')[0]);
+        const endTimeMinute = parseInt(shiftEnd.split(' ')[1]);
+        // Get local timezone
+        const timezone = Intl.DateTimeFormat().resolvedOptions().timeZone
         // Create new date objects with year, month, day, hour, minute
-        const shift_start = new Date(date.getFullYear(), date.getMonth(), date.getDate(), timeStartOne, timeStartTwo);
-        const shift_end = new Date(date.getFullYear(), date.getMonth(), date.getDate(), timeEndOne, timeEndTwo);
+        const shift_start = new Date(
+            date.getFullYear(),
+            date.getMonth(),
+            date.getDate(),
+            startTimeHour,
+            startTimeMinute).toLocaleString('en-US', { timeZone: timezone });
+
+        const shift_end = new Date(
+            date.getFullYear(),
+            date.getMonth(),
+            date.getDate(),
+            endTimeHour,
+            endTimeMinute).toLocaleString('en-US', { timeZone: timezone });
 
         const body = { u_id, shift_start, shift_end };
         const res = await createShift(body, tokenConfig);
-        console.log(`res`, res)
     }
 
     // const handle
@@ -51,7 +70,7 @@ export default function AdminSchedules() {
 
     const renderEditShift = (u_id, dayIndex) => (
         <td key={dayIndex}>
-            <p>Shift start</p>
+            <p className="text-3">Shift start</p>
             <select className="w-90" defaultValue={times[0].value} onChange={({ target }) => setShiftStart(target.value)}>
                 {
                     times && times.map((time, i) => (
@@ -61,7 +80,7 @@ export default function AdminSchedules() {
                     ))
                 }
             </select>
-            <p>Shift end</p>
+            <p className="text-3">Shift end</p>
             <select className="w-90" defaultValue={times[0].value} onChange={({ target }) => setShiftEnd(target.value)}>
                 {
                     times && times.map((time, i) => (
@@ -84,9 +103,7 @@ export default function AdminSchedules() {
 
     useEffect(() => {
         async function getData() {
-            const users = await fetchUsersAndAvailabilities();
             const times = await fetchTimes();
-            setUsers(users);
             setTimes(times);
         }
 
@@ -95,22 +112,35 @@ export default function AdminSchedules() {
 
     // Get dates for the week (Mon - Sun) based on the current day
     useEffect(() => {
-        // Current date
-        let date = new Date();
-        // Get Monday of the week, getDate returns 1-31, getDay returns 0-6
-        let mondayOfTheWeek = date.getDate() - date.getDay() + (date.getDay() === 0 ? -6 : 1);
-        // Assign date for Monday of the week to firstDate, setDate requires 1-31
-        let firstDate = new Date(date.setDate(mondayOfTheWeek));
-        let daysArray = []
+        async function getDatesAndLoadData() {
+            const tokenConfig = isAuthenticated();
+            // Current date
+            let date = new Date();
+            // Get Monday of the week, getDate returns 1-31, getDay returns 0-6
+            let mondayOfTheWeek = date.getDate() - date.getDay() + (date.getDay() === 0 ? -6 : 1);
+            // Assign date for Monday of the week to firstDate, setDate requires 1-31
+            let firstDate = new Date(date.setDate(mondayOfTheWeek));
+            let lastDate = new Date(date.setDate(mondayOfTheWeek + 6))
+            let daysArray = []
 
-        for (let i = 0; i < 7; i++) {
-            // Starting on Monday, add 0-6 each loop to increment the date
-            // then turn into a date object to add to array
-            let day = new Date(date.setDate(firstDate.getDate() + i));
-            daysArray.push(day);
+            for (let i = 0; i < 7; i++) {
+                // Starting on Monday, add 0-6 each loop to increment the date
+                // then turn into a date object to add to array
+                let day = new Date(date.setDate(firstDate.getDate() + i));
+                daysArray.push(day);
+            }
+
+            const startDate = new Date(firstDate.getFullYear(), firstDate.getMonth(), firstDate.getDate()).toISOString().split('T')[0];
+            const endDate = new Date(lastDate.getFullYear(), lastDate.getMonth(), lastDate.getDate()).toISOString().split('T')[0];
+
+            const users = await fetchAllUsersSchedulesByDate(startDate, endDate, tokenConfig);
+
+            setDays(daysArray);
+            setUsers(users);
+            console.log(`users`, users)
         }
 
-        setDays(daysArray);
+        getDatesAndLoadData();
     }, [])
 
     return (
@@ -195,11 +225,18 @@ export default function AdminSchedules() {
                                                         key={a_i}
                                                         className={ // Keep bg color black if employee is 'NA' for schedule
                                                             `border-y text-vw nowrap pointer
-                                                            ${time === 'NA' ? 'bg-black' : 'bg-light-gray-hovered'}`
+                                                                ${time === 'NA' ? 'bg-black' : 'bg-light-gray-hovered'}`
                                                         }
                                                         onClick={() => handleUserClick(user.u_id, a_i)}
                                                     >
-
+                                                        {
+                                                            (user.shifts[a_i] !== undefined)
+                                                                ? <p>
+                                                                    {new Date(user.shifts[a_i].shift_start).toLocaleTimeString().replace(':00 ', ' ')} -&nbsp;
+                                                                    {new Date(user.shifts[a_i].shift_end).toLocaleTimeString().replace(':00 ', ' ')}
+                                                                </p>
+                                                                : null
+                                                        }
                                                     </td>
                                             )
                                         })

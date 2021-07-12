@@ -794,9 +794,9 @@ nav {
 /* BUTTON STYLES */
 
 .btn-x-sm {
-  width: 50px;
+  width: 45px;
   border-radius: 5px;
-  box-shadow: 0 3px 10px rgb(200, 200, 200);
+  box-shadow: 0 3px 10px rgb(180, 180, 180);
   padding: 5px 0;
   border: none;
   font-size: 14px;
@@ -805,7 +805,7 @@ nav {
 .btn-sm {
   width: 75px;
   border-radius: 5px;
-  box-shadow: 0 4px 8px rgb(200, 200, 200);
+  box-shadow: 0 4px 8px rgb(180, 180, 180);
   padding: 4px 0;
   border: none;
   font-size: 14px;
@@ -814,7 +814,7 @@ nav {
 .btn-med {
   width: 100px;
   border-radius: 5px;
-  box-shadow: 0 4px 8px rgb(200, 200, 200);
+  box-shadow: 0 4px 8px rgb(180, 180, 180);
   padding: 5px 0;
   border: none;
   font-size: 14px;
@@ -823,7 +823,7 @@ nav {
 .btn-lg {
   width: 125px;
   border-radius: 5px;
-  box-shadow: 0 4px 8px rgb(200, 200, 200);
+  box-shadow: 0 4px 8px rgb(180, 180, 180);
   padding: 5px 0;
   border: none;
   font-size: 14px;
@@ -832,7 +832,7 @@ nav {
 .btn-x-lg {
   width: 150px;
   border-radius: 5px;
-  box-shadow: 0 4px 8px rgb(200, 200, 200);
+  box-shadow: 0 4px 8px rgb(180, 180, 180);
   padding: 6px 0;
   border: none;
   font-size: 14px;

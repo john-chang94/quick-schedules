@@ -21,7 +21,7 @@ app.use('/', require('./routes/storeRoutes'));
 //     res.sendFile(path.join(__dirname, 'client/build/index.html'));
 // })
 
-console.log(new Date(2021, 6, 24, 7).toLocaleString())
+console.log(new Date(2021, 6, 24, 0).toLocaleTimeString())
 
 const PORT = process.env.PORT || 5000;
 app.listen(PORT, () => console.log(`Server is running on port: ${PORT}`));

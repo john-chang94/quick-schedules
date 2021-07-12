@@ -81,7 +81,13 @@ exports.getShiftsByDates = async (req, res) => {
         const { start_date, end_date } = req.params;
 
         const shifts = await client.query(
-            `SELECT u.u_id, first_name, last_name, array_agg(s.shift) AS shifts
+            `SELECT u.u_id, first_name, last_name,
+                CASE
+                    WHEN COUNT(s) = 0
+                        THEN ARRAY[]::json[]
+                    ELSE
+                        array_agg(s.shift)
+                END AS shifts
             FROM roles AS r JOIN users AS u
                 ON r.role_id = u.role_id
             LEFT JOIN
@@ -91,8 +97,8 @@ exports.getShiftsByDates = async (req, res) => {
                         'shift_end', shift_end
                     ) AS shift
                     FROM shifts
-                    WHERE shift_start >= $1
-                        AND shift_start <= $2
+                    WHERE shift_start::date >= $1
+                        AND shift_start::date <= $2
                     ORDER BY shift_start DESC
                 ) AS s
                 ON u.u_id = s.u_id

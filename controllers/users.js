@@ -125,7 +125,7 @@ exports.deleteUser = async (req, res) => {
 
         const foundUser = await client.query('SELECT * FROM users WHERE u_id = $1', [u_id]);
         if (!foundUser.rows.length) return res.status(404).send('User does not exist');
-        
+
         const deletedUser = await client.query('DELETE FROM users WHERE u_id = $1', [u_id]);
 
         res.status(200).json({ success: true });
@@ -182,7 +182,7 @@ exports.editAvailabilityNotes = async (req, res) => {
     try {
         const { u_id } = req.params;
         const { notes } = req.body;
-        
+
         const addNotes = await client.query(
             `UPDATE availability
                 SET notes = $1,
@@ -218,8 +218,64 @@ exports.getUsersAndAvailability = async (req, res) => {
 
         res.status(200).json(result.rows);
     } catch (err) {
-       return res.status(500).send(err.message); 
+        return res.status(500).send(err.message);
     }
+}
+
+exports.getAllUsersSchedulesByDate = async (req, res) => {
+    const { start_date, end_date } = req.params;
+
+    try {
+        const data = await client.query(
+            `WITH users AS (
+                SELECT u_id, first_name, last_name, title, acn, level
+                FROM roles JOIN users
+                    ON roles.role_id = users.role_id
+            ),
+            availability AS (
+                SELECT u_id, array[mon, tue, wed, thur, fri, sat, sun] AS availability
+                FROM availability
+                GROUP BY u_id, mon, tue, wed, thur, fri, sat, sun
+            ),
+            shifts AS (
+                SELECT u.u_id,
+                    CASE
+                        WHEN COUNT(s) = 0
+                            THEN ARRAY[]::json[]
+                        ELSE
+                            array_agg(s.shift)
+                    END AS shifts
+                FROM users as u
+                LEFT JOIN
+                    (
+                        SELECT u_id, json_build_object(
+                            'shift_start', shift_start,
+                            'shift_end', shift_end
+                        ) AS shift
+                        FROM shifts
+                        WHERE shift_start::date >= $1
+                            AND shift_start::date <= $2
+                        ORDER BY shift_start
+                    ) AS s
+                    ON u.u_id = s.u_id
+                GROUP BY u.u_id
+            )
+            SELECT u.u_id, u.first_name, u.last_name, u.title, u.acn, u.level, a.availability, s.shifts
+            FROM users AS u
+            JOIN availability AS a
+                ON u.u_id = a.u_id
+            JOIN shifts AS s
+                ON a.u_id = s.u_id
+            ORDER BY u.level, u.first_name`,
+            [start_date, end_date]
+        )
+
+        res.status(200).json(data.rows);
+
+    } catch (err) {
+        res.status(500).send(err.message);
+    }
+
 }
 
 // Admins only
