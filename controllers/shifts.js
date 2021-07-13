@@ -55,6 +55,16 @@ exports.deleteShift = async (req, res) => {
     }
 }
 
+exports.getAllShifts = async (req, res) => {
+    try {
+        const shifts = await client.query('SELECT * FROM shifts');
+
+        res.status(200).json(shifts.rows);
+    } catch (err) {
+        res.status(500).send(err.message);
+    }
+}
+
 exports.getShiftsByUser = async (req, res) => {
     try {
         const { u_id, shift_start, shift_end } = req.params;

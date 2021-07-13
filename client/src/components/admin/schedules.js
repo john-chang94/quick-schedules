@@ -5,13 +5,19 @@ import { isAuthenticated } from '../../services/auth';
 import { fetchTimes } from '../../services/presets';
 import { createShift } from '../../services/shifts';
 import { fetchAllUsersSchedulesByDate, fetchAllUsersAndAvailabilities } from '../../services/users';
+import Loader from 'react-loader-spinner';
 
 export default function AdminSchedules() {
+    const [availabilities, setAvailabilities] = useState([]);
     const [users, setUsers] = useState(null);
     const [days, setDays] = useState([]);
     const [times, setTimes] = useState(null);
+    const [isLoading, setIsLoading] = useState(false);
 
     const [date, setDate] = useState(null);
+    // Used for fetching data within dates in yyyy-mm-dd
+    const [startDate, setStartDate] = useState('');
+    const [endDate, setEndDate] = useState('');
 
     const [shiftStart, setShiftStart] = useState('0 0');
     const [shiftEnd, setShiftEnd] = useState('0 0');
@@ -20,17 +26,18 @@ export default function AdminSchedules() {
     const [userData, setUserData] = useState(null);
     const [availabilityIndex, setAvailabilityIndex] = useState(null);
 
-    const getFirstAndLastDatesOfCurrentWeek = () => {
-        let date = new Date();
-        // Get Monday of the week, getDate returns 1-31, getDay returns 0-6
-        let mondayOfTheWeek = date.getDate() - date.getDay() + (date.getDay() === 0 ? -6 : 1);
-        // Assign date for Monday of the week to firstDate, setDate requires 1-31
-        let firstDate = new Date(date.setDate(mondayOfTheWeek));
-        let lastDate = new Date(date.setDate(mondayOfTheWeek + 6))
+    // const getFirstAndLastDatesOfCurrentWeek = () => {
+    //     let date = new Date();
+    //     // Get Monday of the week, getDate returns 1-31, getDay returns 0-6
+    //     let mondayOfTheWeek = date.getDate() - date.getDay() + (date.getDay() === 0 ? -6 : 1);
+    //     // Assign date for Monday of the week to firstDate, setDate requires 1-31
+    //     let firstDate = new Date(date.setDate(mondayOfTheWeek));
+    //     let lastDate = new Date(date.setDate(mondayOfTheWeek + 6))
 
-    }
+    // }
 
     const handleSaveShift = async (u_id, dayIndex) => {
+        setIsLoading(true);
         const tokenConfig = isAuthenticated();
         // Get shift date
         const date = days[dayIndex];
@@ -42,26 +49,38 @@ export default function AdminSchedules() {
         const endTimeMinute = parseInt(shiftEnd.split(' ')[1]);
         // Get local timezone
         const timezone = Intl.DateTimeFormat().resolvedOptions().timeZone
-        // Create new date objects with year, month, day, hour, minute
+        // Create new date objects with year, month, day, hour, minute, and timezone
         const shift_start = new Date(
             date.getFullYear(),
             date.getMonth(),
             date.getDate(),
             startTimeHour,
-            startTimeMinute).toLocaleString('en-US', { timeZone: timezone });
+            startTimeMinute)
+            .toLocaleString('en-US', { timeZone: timezone });
 
         const shift_end = new Date(
             date.getFullYear(),
             date.getMonth(),
             date.getDate(),
             endTimeHour,
-            endTimeMinute).toLocaleString('en-US', { timeZone: timezone });
+            endTimeMinute)
+            .toLocaleString('en-US', { timeZone: timezone });
 
         const body = { u_id, shift_start, shift_end };
-        const res = await createShift(body, tokenConfig);
+        await createShift(body, tokenConfig);
+
+        const users = await fetchAllUsersSchedulesByDate(startDate, endDate, tokenConfig);
+        setUsers(users);
+
+        setUserData('');
+        setAvailabilityIndex('');
+        setIsLoading(false);
     }
 
-    // const handle
+    const handleCancelShift = () => {
+        setUserData('');
+        setAvailabilityIndex('');
+    }
 
     const handleUserClick = (u_id, index) => {
         setUserData(u_id);
@@ -71,7 +90,11 @@ export default function AdminSchedules() {
     const renderEditShift = (u_id, dayIndex) => (
         <td key={dayIndex}>
             <p className="text-3">Shift start</p>
-            <select className="w-90" defaultValue={times[0].value} onChange={({ target }) => setShiftStart(target.value)}>
+            <select
+                className="w-80"
+                defaultValue={times[0].value}
+                disabled={isLoading}
+                onChange={({ target }) => setShiftStart(target.value)}>
                 {
                     times && times.map((time, i) => (
                         <option key={i} value={time.value}>
@@ -81,7 +104,11 @@ export default function AdminSchedules() {
                 }
             </select>
             <p className="text-3">Shift end</p>
-            <select className="w-90" defaultValue={times[0].value} onChange={({ target }) => setShiftEnd(target.value)}>
+            <select
+                className="w-80"
+                defaultValue={times[0].value}
+                disabled={isLoading}
+                onChange={({ target }) => setShiftEnd(target.value)}>
                 {
                     times && times.map((time, i) => (
                         <option key={i} value={time.value}>
@@ -90,21 +117,39 @@ export default function AdminSchedules() {
                     ))
                 }
             </select>
-            <div className="mx-2 w-100 flex justify-evenly">
-                <button className="btn-x-sm btn-hovered bg-gray off-white" onClick={() => handleSaveShift(u_id, dayIndex)}>
-                    <i className="fas fa-check"></i>
-                </button>
-                <button className="btn-x-sm btn-hovered bg-gray off-white">
-                    <i className="fas fa-trash-alt"></i>
-                </button>
-            </div>
+            {
+                isLoading ?
+                    <div className="mx-1">
+                        <Loader
+                            type='Oval'
+                            color='rgb(50, 110, 150)'
+                            height={35}
+                        />
+                    </div> :
+                    <div className="mx-2 w-100 flex justify-evenly">
+                        <button
+                            className="btn-x-sm btn-hovered bg-dark-gray off-white"
+                            onClick={() => handleSaveShift(u_id, dayIndex)}
+                        >
+                            <i className="fas fa-check"></i>
+                        </button>
+                        <button
+                            className="btn-x-sm btn-hovered bg-dark-gray off-white"
+                            onClick={() => handleCancelShift()}
+                        >
+                            <i className="fas fa-trash-alt"></i>
+                        </button>
+                    </div>
+            }
         </td>
     )
 
     useEffect(() => {
         async function getData() {
             const times = await fetchTimes();
+            const availabilities = await fetchAllUsersAndAvailabilities();
             setTimes(times);
+            setAvailabilities(availabilities);
         }
 
         getData();
@@ -115,12 +160,12 @@ export default function AdminSchedules() {
         async function getDatesAndLoadData() {
             const tokenConfig = isAuthenticated();
             // Current date
-            let date = new Date();
+            const date = new Date();
             // Get Monday of the week, getDate returns 1-31, getDay returns 0-6
-            let mondayOfTheWeek = date.getDate() - date.getDay() + (date.getDay() === 0 ? -6 : 1);
+            const mondayOfTheWeek = date.getDate() - date.getDay() + (date.getDay() === 0 ? -6 : 1);
             // Assign date for Monday of the week to firstDate, setDate requires 1-31
-            let firstDate = new Date(date.setDate(mondayOfTheWeek));
-            let lastDate = new Date(date.setDate(mondayOfTheWeek + 6))
+            const firstDate = new Date(date.setDate(mondayOfTheWeek));
+            const lastDate = new Date(date.setDate(mondayOfTheWeek + 6))
             let daysArray = []
 
             for (let i = 0; i < 7; i++) {
@@ -136,7 +181,10 @@ export default function AdminSchedules() {
             const users = await fetchAllUsersSchedulesByDate(startDate, endDate, tokenConfig);
 
             setDays(daysArray);
+            setStartDate(startDate);
+            setEndDate(endDate);
             setUsers(users);
+
             console.log(`users`, users)
         }
 
@@ -170,7 +218,7 @@ export default function AdminSchedules() {
                     </thead>
                     <tbody>
                         {
-                            users && users.map((user, i) => (
+                            availabilities && availabilities.map((user, i) => (
                                 <tr
                                     key={i}
                                     className="border-bottom"
@@ -218,24 +266,27 @@ export default function AdminSchedules() {
                                     {
                                         user.availability.map((time, a_i) => {
                                             return (
-                                                // Only render edit mode for clicked date and employee
+                                                // Only render edit mode for the clicked date and employee
                                                 (userData === user.u_id && availabilityIndex === a_i)
                                                     ? renderEditShift(user.u_id, a_i)
                                                     : <td
                                                         key={a_i}
-                                                        className={ // Keep bg color black if employee is 'NA' for schedule
+                                                        className={ // Keep bg color black if employee is 'NA' for availability
                                                             `border-y text-vw nowrap pointer
                                                                 ${time === 'NA' ? 'bg-black' : 'bg-light-gray-hovered'}`
                                                         }
                                                         onClick={() => handleUserClick(user.u_id, a_i)}
                                                     >
                                                         {
-                                                            (user.shifts[a_i] !== undefined)
-                                                                ? <p>
-                                                                    {new Date(user.shifts[a_i].shift_start).toLocaleTimeString().replace(':00 ', ' ')} -&nbsp;
-                                                                    {new Date(user.shifts[a_i].shift_end).toLocaleTimeString().replace(':00 ', ' ')}
-                                                                </p>
-                                                                : null
+                                                            // If a shift exists for a day of the week, render the times
+                                                            user.shifts.map((shift, s_i) => (
+                                                                (new Date(shift.shift_start).toLocaleDateString() === days[a_i].toLocaleDateString())
+                                                                    ? <p key={s_i}>
+                                                                        {new Date(shift.shift_start).toLocaleTimeString().replace(':00 ', ' ')} -&nbsp;
+                                                                        {new Date(shift.shift_end).toLocaleTimeString().replace(':00 ', ' ')}
+                                                                    </p>
+                                                                    : null
+                                                            ))
                                                         }
                                                     </td>
                                             )

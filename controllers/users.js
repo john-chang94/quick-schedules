@@ -197,7 +197,7 @@ exports.editAvailabilityNotes = async (req, res) => {
 }
 
 // Get users and their availability
-exports.getUsersAndAvailability = async (req, res) => {
+exports.getAllUsersAndAvailability = async (req, res) => {
     try {
         const result = await client.query(
             `WITH users AS (
@@ -249,6 +249,7 @@ exports.getAllUsersSchedulesByDate = async (req, res) => {
                 LEFT JOIN
                     (
                         SELECT u_id, json_build_object(
+                            's_id', s_id,
                             'shift_start', shift_start,
                             'shift_end', shift_end
                         ) AS shift

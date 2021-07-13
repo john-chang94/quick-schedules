@@ -4,6 +4,7 @@ import { BrowserRouter as Router, Switch, Route } from 'react-router-dom';
 import * as ROUTES from './constants/routes';
 import { isAuthenticated, verifyUser } from './services/auth';
 import { UserContext } from './contexts/userContext';
+import "react-loader-spinner/dist/loader/css/react-spinner-loader.css";
 
 import Header from './components/header';
 import SignIn from './components/signIn';

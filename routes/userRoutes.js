@@ -12,7 +12,7 @@ const {
     editAvailability,
     editAvailabilityNotes,
     getUserAvailabilityAndRequests,
-    getUsersAndAvailability,
+    getAllUsersAndAvailability,
     getAllUsersSchedulesByDate,
 } = require('../controllers/users');
 
@@ -25,7 +25,7 @@ router.delete('/users/:u_id', authorizeToken, isAdmin, deleteUser);
 router.post('/users/availability', authorizeToken, isAdmin, addAdvailability);
 router.put('/users/availability/:u_id', authorizeToken, isAdmin, editAvailability);
 router.put('/users/availability/notes/:u_id', authorizeToken, isAdmin, editAvailabilityNotes);
-router.get('/users/availability/all', getUsersAndAvailability);
+router.get('/users/availability/all', getAllUsersAndAvailability);
 router.get('/users/availability/shifts/:start_date/:end_date', getAllUsersSchedulesByDate);
 router.get('/users/availability/requests/:u_id/:week_start/:week_end', authorizeToken, isAdmin, getUserAvailabilityAndRequests);
 

@@ -1,8 +1,9 @@
 const express = require('express');
 const router = express.Router();
-const { createShift, editShift, deleteShift, getShiftsByUser, getShiftsByDates, test } = require('../controllers/shifts');
+const { createShift, editShift, deleteShift, getShiftsByUser, getShiftsByDates, test, getAllShifts } = require('../controllers/shifts');
 const { authorizeToken, isAdmin } = require('../middlewares');
 
+router.get('/shifts', getAllShifts);
 router.get('/shifts/:start_date/:end_date', getShiftsByDates);
 router.get('/shifts/:u_id/:shift_start/:shift_end', authorizeToken, getShiftsByUser);
 router.post('/shifts', authorizeToken, isAdmin, createShift);

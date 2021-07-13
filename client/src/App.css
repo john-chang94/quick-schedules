@@ -536,23 +536,23 @@ nav {
 }
 
 .bg-gray {
-  background-color: gray;
+  background-color: rgb(160, 160, 160);
 }
 
 .bg-light-gray {
-  background-color: rgb(210, 210, 210);
+  background-color: rgb(200, 200, 200);
 }
 
 .bg-x-light-gray {
-  background-color: rgb(245, 245, 245);
+  background-color: rgb(240, 240, 240);
 }
 
 .bg-dark-gray {
-  background-color: rgb(175, 175, 175);
+  background-color: rgb(130, 130, 130);
 }
 
 .bg-light-gray-hovered:hover {
-  background-color: rgb(210, 210, 210);
+  background-color: rgb(200, 200, 200);
 }
 
 .bg-red {
