@@ -119,85 +119,109 @@ exports.getShiftsByDates = async (req, res) => {
         )
 
         let shifts = result.rows;
+        // console.log(`shifts`, shifts)
 
         let date = new Date();
         let firstDate = new Date(start_date);
         let timezone = Intl.DateTimeFormat().resolvedOptions().timeZone
         let dates = [];
         for (let i = 0; i < 7; i++) {
-            let day = new Date(date.setDate(firstDate.getDate() + i));
-            dates.push({ 'shift_start': day, 'shift_end': null });
+            let day = new Date(date.getFullYear(), date.getMonth(), firstDate.getDate() + i, 0).toLocaleString('en-US', { timeZone: timezone });
+            day2 = new Date(day).toISOString()
+            dates.push({ 'shift_start': day2, 'shift_end': null });
         }
+        // console.log(`dates`, dates)
         // console.log(new Date(dates[0].shift_start).toJSON().split('T')[0])
         // console.log(new Date(shifts[1].shifts[0].shift_start).toJSON())
 
         // for (let i = 0; i < dates.length; i++) {
-            for (let j = 0; j < shifts.length; j++) {
-                let index = 0;
-                if (!shifts[j].shifts.length) {
-                    // console.log(`empty`, shifts[j].shifts.length)
-                    for (let k = 0; k < 7; k++) {
-                        // if (shifts[j].shifts[index] === undefined || new Date(dates[index]).toLocaleDateString() !== new Date(shifts[j].shifts[index].shift_start).toLocaleDateString()) {
-                                shifts[j].shifts.push(dates[index])
-                            // }
-                            index++;
-                    }
-                } 
-                else {
-                    let datesArr = [];
-                    let missingDates = [];
-                        // for (let k = 0; k < shifts[j].shifts.length; k++) {
-                            // for (let i = 0; i < dates.length; i++) {
-                    let tempArr = [...shifts[j].shifts, ...dates];
-                    let sortedArr = tempArr.sort((a, b) => new Date(a.shift_start) - new Date(b.shift_start))
-                    console.log(`sortedArr`, sortedArr)
-                    for (let i = 0; i < sortedArr.length - 1; i++) {
-                        for (let j = 0; j < sortedArr.length; j++) {
-                            if (new Date(sortedArr[i].shift_start).toJSON().split('T')[0] === new Date(sortedArr[j].shift_start).toJSON().split('T')[0]) {
-                                if (sortedArr[i].shift_end === null) {
-                                    let one = sortedArr.slice(0, i);
-                                    let two = sortedArr.slice(i+1);
-                                    sortedArr = [...one, ...two];
-                                }
-                                if (sortedArr[j].shift_end === null) {
-                                    let one = sortedArr.slice(0, j);
-                                    let two = sortedArr.slice(j+1);
-                                    sortedArr = [...one, ...two];
-                                }
-                            }
+        for (let j = 0; j < shifts.length; j++) {
+            let index = 0;
+            if (!shifts[j].shifts.length) {
+                // console.log(`empty`, shifts[j].shifts.length)
+                for (let k = 0; k < 7; k++) {
+                    // if (shifts[j].shifts[index] === undefined || new Date(dates[index]).toLocaleDateString() !== new Date(shifts[j].shifts[index].shift_start).toLocaleDateString()) {
+                    shifts[j].shifts.push(dates[index])
+                    // }
+                    index++;
+                }
+            }
+            else {
+                let datesArr = [];
+                let missingDates = [];
+                // for (let k = 0; k < shifts[j].shifts.length; k++) {
+                // for (let i = 0; i < dates.length; i++) {
+                let tempArr = [...shifts[j].shifts, ...dates];
+                let sortedArr = tempArr.sort((a, b) => new Date(a.shift_start) - new Date(b.shift_start))
+
+                for (let i = 0; i < sortedArr.length - 1; i++) {
+                    // console.log(`sortedArr`, sortedArr)
+                    // console.log('check', new Date(sortedArr[i].shift_start).toJSON().split('T')[0] === new Date(sortedArr[j+1].shift_start).toJSON().split('T')[0])
+                    for (let mm = i + 1; mm < sortedArr.length; mm++) {
+                        // console.log(`i`, i)
+                        // console.log(`mm`, mm)
+                        if (i === 0 && sortedArr[i].shift_start.split('T')[0] === sortedArr[mm].shift_start.split('T')[0]
+                            && sortedArr[i].shift_end === null) {
+                            let one = sortedArr.slice(i + 1);
+                            sortedArr = one;
+                            // console.log(' ')
+                            // console.log(`sortedArr1`, sortedArr)
+                        }
+                        else if ((sortedArr[i].shift_start.split('T')[0] === sortedArr[mm].shift_start.split('T')[0] && sortedArr[i].shift_end === null)) {
+                            // console.log('I', sortedArr[i].shift_start.split('T')[0])
+                            // console.log('m', sortedArr[mm].shift_start.split('T')[0])
+                            let one = sortedArr.slice(0, i);
+                            let two = sortedArr.slice(i + 1);
+                            sortedArr = [...one, ...two];
+                            // console.log(' ')
+                            // console.log(`sortedArr2`, sortedArr)
+                        }
+                        else if ((sortedArr[i].shift_start.split('T')[0] === sortedArr[mm].shift_start.split('T')[0] && sortedArr[mm].shift_end === null)) {
+                            // console.log('I', sortedArr[i].shift_start)
+                            // console.log('m', sortedArr[mm].shift_start)
+                            let one = sortedArr.slice(0, mm);
+                            let two = sortedArr.slice(mm + 1);
+                            sortedArr = [...one, ...two];
+                            // console.log(' ')
+                            // console.log(`sortedArr3`, sortedArr)
+                        }
+                        else {
+                            continue;
                         }
                     }
-                    console.log(`sortedArr`, sortedArr)
-                                if (new Date(dates[index]).toJSON().split('T')[0] !== shifts[j].shifts[k].shift_start.split('T')[0]) {
-                                    // for (let l = 0; l < shifts[j].shifts.length; l++) {
-                                    //     if (new Date(dates[index]).toJSON().split('T')[0] === shifts[j].shifts[l].shift_start.split('T')[0]) {
-                                    //         console.log(`match`)
-                                    //         continue;
-                                    //     } else {
-                                            datesArr.push({ 'shift_start': dates[index] })
-
-                                    //     }
-                                    // }
-                                    // console.log(`${shifts[j].u_id}`)
-                                    // console.log(new Date(dates[index]).toLocaleDateString())
-                                    // console.log(new Date(shifts[j].shifts[k].shift_start).toDateString())
-                                    // console.log(date)
-                                }
-                            // }
-                            // console.log(`j`, j)
-                            // console.log(`k`, k)
-                            // let date = shifts[j].shifts[k].shift_start.split('T')[0]
-                            index++;
-                        // }
-                        let finalArr = [...shifts[j].shifts, ...datesArr]
-                        shifts[j].shifts = finalArr.sort((a, b) => new Date(a.shift_start) - new Date(b.shift_start));
-                        
                 }
-                // else {
-                //     continue;
-                // }
-                
+                shifts[j].shifts = sortedArr;
+                // console.log(`sortedArr`, sortedArr)
+                //             if (new Date(dates[index]).toJSON().split('T')[0] !== shifts[j].shifts[k].shift_start.split('T')[0]) {
+                //                 // for (let l = 0; l < shifts[j].shifts.length; l++) {
+                //                 //     if (new Date(dates[index]).toJSON().split('T')[0] === shifts[j].shifts[l].shift_start.split('T')[0]) {
+                //                 //         console.log(`match`)
+                //                 //         continue;
+                //                 //     } else {
+                //                         datesArr.push({ 'shift_start': dates[index] })
+
+                //                 //     }
+                //                 // }
+                //                 // console.log(`${shifts[j].u_id}`)
+                //                 // console.log(new Date(dates[index]).toLocaleDateString())
+                //                 // console.log(new Date(shifts[j].shifts[k].shift_start).toDateString())
+                //                 // console.log(date)
+                //             }
+                //         // }
+                //         // console.log(`j`, j)
+                //         // console.log(`k`, k)
+                //         // let date = shifts[j].shifts[k].shift_start.split('T')[0]
+                //         index++;
+                //     // }
+                //     let finalArr = [...shifts[j].shifts, ...datesArr]
+                //     shifts[j].shifts = finalArr.sort((a, b) => new Date(a.shift_start) - new Date(b.shift_start));
+
             }
+            // else {
+            //     continue;
+            // }
+
+        }
         // }
         // console.log((new Date(dates[0].shift_start).split('T')[0]))
         // console.log((shifts[1].shifts[0].shift_start.split('T')[0]))
