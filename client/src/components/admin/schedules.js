@@ -4,7 +4,8 @@ import * as ROUTES from '../../constants/routes';
 import { isAuthenticated } from '../../services/auth';
 import { fetchTimes } from '../../services/presets';
 import { createShift } from '../../services/shifts';
-import { fetchAllUsersSchedulesByDate, fetchAllUsersAndAvailabilities } from '../../services/users';
+import { fetchAllUsersAvailabilities } from '../../services/users';
+import { fetchAllUsersSchedulesByDate } from '../../services/shifts';
 import Loader from 'react-loader-spinner';
 
 export default function AdminSchedules() {
@@ -85,6 +86,16 @@ export default function AdminSchedules() {
     const handleUserClick = (u_id, index) => {
         setUserData(u_id);
         setAvailabilityIndex(index);
+        setShiftStart('0 0');
+        setShiftEnd('0 0');
+    }
+
+    const handleEditShift = (u_id, index, startTimeValue, endTimeValue) => {
+        setUserData(u_id);
+        setAvailabilityIndex(index);
+        setShiftStart(startTimeValue);
+        setShiftEnd(endTimeValue);
+        console.log(`startTimeValue`, startTimeValue)
     }
 
     const renderEditShift = (u_id, dayIndex) => (
@@ -92,7 +103,7 @@ export default function AdminSchedules() {
             <p className="text-3">Shift start</p>
             <select
                 className="w-80"
-                defaultValue={times[0].value}
+                defaultValue={shiftStart}
                 disabled={isLoading}
                 onChange={({ target }) => setShiftStart(target.value)}>
                 {
@@ -106,7 +117,7 @@ export default function AdminSchedules() {
             <p className="text-3">Shift end</p>
             <select
                 className="w-80"
-                defaultValue={times[0].value}
+                defaultValue={shiftEnd}
                 disabled={isLoading}
                 onChange={({ target }) => setShiftEnd(target.value)}>
                 {
@@ -144,10 +155,63 @@ export default function AdminSchedules() {
         </td>
     )
 
+    const getTimeValue = (shift) => {
+        return new Date(shift).toTimeString().split(':').slice(0, 2).join(' ').replace('00', '0');
+    }
+
+    const getTime = (shift) => {
+        return new Date(shift).toLocaleTimeString().replace(':00 ', ' ');
+    }
+
+    const renderBlank = (u_id, a_i, time) => (
+        <td
+            key={a_i}
+            className={ // Keep bg color black if employee is 'NA' for availability
+                `border-y text-vw nowrap pointer h-10
+                ${time === 'NA' ? 'bg-black' : 'bg-light-gray-hovered'}`
+            }
+            onClick={() => handleUserClick(u_id, a_i)}
+        ></td>
+    )
+
+    const renderShift = (a_i, shift) => (
+        <td className="border-y text-vw nowrap pointer h-10">
+            {getTime(shift.shift_start)} -&nbsp;
+            {getTime(shift.shift_end)}
+        </td>
+    )
+
+    const renderShift2 = (u_id, time, a_i, shifts) => (
+        <td
+            key={a_i}
+            className={ // Keep bg color black if employee is 'NA' for availability
+                `border-y text-vw nowrap pointer h-10
+                ${time === 'NA' ? 'bg-black' : 'bg-light-gray-hovered'}`
+            }
+            onClick={() => handleUserClick(u_id, a_i)}
+        >
+            {
+                // If a shift exists for a day of the week, render the times
+                shifts.map((shift, s_i) => (
+                    (new Date(shift.shift_start).toLocaleDateString() === days[a_i].toLocaleDateString())
+                        ? <p
+                            key={s_i}
+                            className=""
+                            onClick={() => handleEditShift(u_id, a_i, getTimeValue(shift.shift_start), getTimeValue(shift.shift_end))}
+                        >
+                            {getTime(shift.shift_start)} -&nbsp;
+                            {getTime(shift.shift_end)}
+                        </p>
+                        : null
+                ))
+            }
+        </td>
+    )
+
     useEffect(() => {
         async function getData() {
             const times = await fetchTimes();
-            const availabilities = await fetchAllUsersAndAvailabilities();
+            const availabilities = await fetchAllUsersAvailabilities();
             setTimes(times);
             setAvailabilities(availabilities);
         }
@@ -259,7 +323,7 @@ export default function AdminSchedules() {
                             users && users.map((user, u_i) => (
                                 <tr
                                     key={u_i}
-                                    className="bg-x-light-gray border-bottom h-10"
+                                    className="bg-x-light-gray border-bottom"
                                 >
                                     <td className="border-y text-vw nowrap">{user.title}</td>
                                     <td className="border-y text-vw nowrap">{user.first_name} {user.last_name}</td>
@@ -272,20 +336,20 @@ export default function AdminSchedules() {
                                                     : <td
                                                         key={a_i}
                                                         className={ // Keep bg color black if employee is 'NA' for availability
-                                                            `border-y text-vw nowrap pointer
-                                                                ${time === 'NA' ? 'bg-black' : 'bg-light-gray-hovered'}`
+                                                            `border-y text-vw nowrap pointer h-10
+                                                            ${time === 'NA' ? 'bg-black' : 'bg-light-gray-hovered'}`
                                                         }
-                                                        onClick={() => handleUserClick(user.u_id, a_i)}
+                                                        // onClick={() => handleUserClick(user.u_id, a_i)}
                                                     >
                                                         {
                                                             // If a shift exists for a day of the week, render the times
                                                             user.shifts.map((shift, s_i) => (
                                                                 (new Date(shift.shift_start).toLocaleDateString() === days[a_i].toLocaleDateString())
-                                                                    ? <p key={s_i}>
+                                                                    ? <p key={s_i} className="h-100" onClick={() => handleEditShift(user.u_id, a_i, getTimeValue(shift.shift_start), getTimeValue(shift.shift_end))}>
                                                                         {new Date(shift.shift_start).toLocaleTimeString().replace(':00 ', ' ')} -&nbsp;
                                                                         {new Date(shift.shift_end).toLocaleTimeString().replace(':00 ', ' ')}
                                                                     </p>
-                                                                    : null
+                                                                    : <div className="w-100" onClick={() => handleUserClick(user.u_id, a_i)}></div>
                                                             ))
                                                         }
                                                     </td>

@@ -45,18 +45,9 @@ export const editUserInfo = async (u_id, body, tokenConfig) => {
     }
 }
 
-export const fetchAllUsersAndAvailabilities = async (tokenConfig) => {
+export const fetchAllUsersAvailabilities = async (tokenConfig) => {
     try {
         const res = await axios.get('http://localhost:5000/users/availability/all', tokenConfig);
-        return res.data;
-    } catch (err) {
-        return { error: err.response.data };
-    }
-}
-
-export const fetchAllUsersSchedulesByDate = async (start_date, end_date) => {
-    try {
-        const res = await axios.get(`http://localhost:5000/users/availability/shifts/${start_date}/${end_date}`);
         return res.data;
     } catch (err) {
         return { error: err.response.data };
