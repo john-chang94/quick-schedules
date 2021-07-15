@@ -6,17 +6,15 @@ const {
     editShift,
     deleteShift,
     getShiftsByUser,
-    getShiftsByDates,
+    getShiftsByDate,
     getAllShifts,
-    getAllUsersSchedulesByDate,
-    getDatesForNullShifts
+    getAllUsersSchedulesByDate
 } = require('../controllers/shifts');
 
 router.get('/shifts', getAllShifts);
-router.get('/shifts/:start_date', getDatesForNullShifts);
-router.get('/shifts/:start_date/:end_date', getShiftsByDates);
-router.get('/shifts/:u_id/:shift_start/:shift_end', authorizeToken, getShiftsByUser);
-// router.get('/shifts/:start_date/:end_date', getAllUsersSchedulesByDate);
+router.get('/shifts/:start_date/:end_date', getShiftsByDate);
+router.get('/shifts/all/:start_date/:end_date', getAllUsersSchedulesByDate);
+router.get('/shifts/:u_id/:shift_start/:shift_end', getShiftsByUser);
 router.post('/shifts', authorizeToken, isAdmin, createShift);
 router.put('/shifts/:s_id', authorizeToken, isAdmin, editShift);
 router.delete('/shifts/:s_id', authorizeToken, isAdmin, deleteShift);

@@ -86,11 +86,11 @@ exports.getShiftsByUser = async (req, res) => {
     }
 }
 
-exports.getShiftsByDates = async (req, res) => {
+exports.getShiftsByDate = async (req, res) => {
     try {
         const { start_date, end_date } = req.params;
 
-        const result = await client.query(
+        const data = await client.query(
             `SELECT u.u_id, first_name, last_name,
                 CASE
                     WHEN COUNT(s) = 0
@@ -118,136 +118,67 @@ exports.getShiftsByDates = async (req, res) => {
             [start_date, end_date]
         )
 
-        let shifts = result.rows;
-        // console.log(`shifts`, shifts)
+        let shifts = data.rows;
 
-        let date = new Date();
         let firstDate = new Date(start_date);
         let timezone = Intl.DateTimeFormat().resolvedOptions().timeZone
         let dates = [];
-        for (let i = 0; i < 7; i++) {
-            let day = new Date(date.getFullYear(), date.getMonth(), firstDate.getDate() + i, 0).toLocaleString('en-US', { timeZone: timezone });
-            day2 = new Date(day).toISOString()
-            dates.push({ 'shift_start': day2, 'shift_end': null });
-        }
-        // console.log(`dates`, dates)
-        // console.log(new Date(dates[0].shift_start).toJSON().split('T')[0])
-        // console.log(new Date(shifts[1].shifts[0].shift_start).toJSON())
 
-        // for (let i = 0; i < dates.length; i++) {
-        for (let j = 0; j < shifts.length; j++) {
-            let index = 0;
-            if (!shifts[j].shifts.length) {
-                // console.log(`empty`, shifts[j].shifts.length)
-                for (let k = 0; k < 7; k++) {
-                    // if (shifts[j].shifts[index] === undefined || new Date(dates[index]).toLocaleDateString() !== new Date(shifts[j].shifts[index].shift_start).toLocaleDateString()) {
-                    shifts[j].shifts.push(dates[index])
-                    // }
-                    index++;
+        // Get dates for the week from Monday to Sunday
+        for (let i = 0; i < 7; i++) {
+            let day = new Date(firstDate.getFullYear(), firstDate.getMonth(), firstDate.getDate() + i, 0).toLocaleString('en-US', { timeZone: timezone });
+            dateToAdd = new Date(day).toISOString();
+            dates.push({ 'shift_start': dateToAdd, 'shift_end': null });
+        }
+
+        // If an employee has no shifts for the week, add empty shifts
+        for (let i = 0; i < shifts.length; i++) {
+            if (!shifts[i].shifts.length) {
+                for (let j = 0; j < 7; j++) {
+                    shifts[i].shifts.push(dates[j]);
                 }
             }
             else {
-                let datesArr = [];
-                let missingDates = [];
-                // for (let k = 0; k < shifts[j].shifts.length; k++) {
-                // for (let i = 0; i < dates.length; i++) {
-                let tempArr = [...shifts[j].shifts, ...dates];
-                let sortedArr = tempArr.sort((a, b) => new Date(a.shift_start) - new Date(b.shift_start))
+                // If an employee has at least one shift for the week,
+                // Combine shifts and empty shifts for the week and sort by start_date
+                let tempArr = [...shifts[i].shifts, ...dates];
+                let sortedArr = tempArr.sort((a, b) => new Date(a.shift_start) - new Date(b.shift_start));
 
-                for (let i = 0; i < sortedArr.length - 1; i++) {
-                    // console.log(`sortedArr`, sortedArr)
-                    // console.log('check', new Date(sortedArr[i].shift_start).toJSON().split('T')[0] === new Date(sortedArr[j+1].shift_start).toJSON().split('T')[0])
-                    for (let mm = i + 1; mm < sortedArr.length; mm++) {
-                        // console.log(`i`, i)
-                        // console.log(`mm`, mm)
-                        if (i === 0 && sortedArr[i].shift_start.split('T')[0] === sortedArr[mm].shift_start.split('T')[0]
-                            && sortedArr[i].shift_end === null) {
-                            let one = sortedArr.slice(i + 1);
+                // If there are matching dates, remove the one with start_end that is a NULL value
+                for (let j = 0; j < sortedArr.length - 1; j++) {
+                    for (let k = j + 1; k < sortedArr.length; k++) {
+                        if (j === 0
+                            && sortedArr[j].shift_start.split('T')[0] === sortedArr[k].shift_start.split('T')[0]
+                            && sortedArr[j].shift_end === null) {
+                            let one = sortedArr.slice(j + 1);
                             sortedArr = one;
-                            // console.log(' ')
-                            // console.log(`sortedArr1`, sortedArr)
                         }
-                        else if ((sortedArr[i].shift_start.split('T')[0] === sortedArr[mm].shift_start.split('T')[0] && sortedArr[i].shift_end === null)) {
-                            // console.log('I', sortedArr[i].shift_start.split('T')[0])
-                            // console.log('m', sortedArr[mm].shift_start.split('T')[0])
-                            let one = sortedArr.slice(0, i);
-                            let two = sortedArr.slice(i + 1);
+                        else if (sortedArr[j].shift_start.split('T')[0] === sortedArr[k].shift_start.split('T')[0]
+                            && sortedArr[j].shift_end === null) {
+                            let one = sortedArr.slice(0, j);
+                            let two = sortedArr.slice(j + 1);
                             sortedArr = [...one, ...two];
-                            // console.log(' ')
-                            // console.log(`sortedArr2`, sortedArr)
                         }
-                        else if ((sortedArr[i].shift_start.split('T')[0] === sortedArr[mm].shift_start.split('T')[0] && sortedArr[mm].shift_end === null)) {
-                            // console.log('I', sortedArr[i].shift_start)
-                            // console.log('m', sortedArr[mm].shift_start)
-                            let one = sortedArr.slice(0, mm);
-                            let two = sortedArr.slice(mm + 1);
+                        else if (sortedArr[j].shift_start.split('T')[0] === sortedArr[k].shift_start.split('T')[0]
+                            && sortedArr[k].shift_end === null) {
+                            let one = sortedArr.slice(0, k);
+                            let two = sortedArr.slice(k + 1);
                             sortedArr = [...one, ...two];
-                            // console.log(' ')
-                            // console.log(`sortedArr3`, sortedArr)
                         }
                         else {
                             continue;
                         }
                     }
                 }
-                shifts[j].shifts = sortedArr;
-                // console.log(`sortedArr`, sortedArr)
-                //             if (new Date(dates[index]).toJSON().split('T')[0] !== shifts[j].shifts[k].shift_start.split('T')[0]) {
-                //                 // for (let l = 0; l < shifts[j].shifts.length; l++) {
-                //                 //     if (new Date(dates[index]).toJSON().split('T')[0] === shifts[j].shifts[l].shift_start.split('T')[0]) {
-                //                 //         console.log(`match`)
-                //                 //         continue;
-                //                 //     } else {
-                //                         datesArr.push({ 'shift_start': dates[index] })
 
-                //                 //     }
-                //                 // }
-                //                 // console.log(`${shifts[j].u_id}`)
-                //                 // console.log(new Date(dates[index]).toLocaleDateString())
-                //                 // console.log(new Date(shifts[j].shifts[k].shift_start).toDateString())
-                //                 // console.log(date)
-                //             }
-                //         // }
-                //         // console.log(`j`, j)
-                //         // console.log(`k`, k)
-                //         // let date = shifts[j].shifts[k].shift_start.split('T')[0]
-                //         index++;
-                //     // }
-                //     let finalArr = [...shifts[j].shifts, ...datesArr]
-                //     shifts[j].shifts = finalArr.sort((a, b) => new Date(a.shift_start) - new Date(b.shift_start));
-
+                shifts[i].shifts = sortedArr;
             }
-            // else {
-            //     continue;
-            // }
-
         }
-        // }
-        // console.log((new Date(dates[0].shift_start).split('T')[0]))
-        // console.log((shifts[1].shifts[0].shift_start.split('T')[0]))
-        // console.log(new Date(dates[0]).toJSON().split('T')[0] !== shifts[1].shifts[0].shift_start.split('T')[0])
-        // if (new Date(dates[4]).toLocaleDateString() !== new Date(shifts[0].shifts[0]).toLocaleDateString()) {
-        //     shifts[0].shifts.push({ 'shift_start': dates[6] })
-        // }
 
         res.status(200).send(shifts);
     } catch (err) {
         res.status(500).send(err.message);
     }
-}
-
-exports.getDatesForNullShifts = async (req, res) => {
-    const { start_date } = req.params;
-
-    let date = new Date();
-    let firstDate = new Date(start_date);
-    let dates = [];
-    for (let i = 0; i < 7; i++) {
-        let day = new Date(date.setDate(firstDate.getDate() + i));
-        dates.push(day);
-    }
-
-    res.send(dates);
 }
 
 exports.getAllUsersSchedulesByDate = async (req, res) => {
@@ -298,6 +229,63 @@ exports.getAllUsersSchedulesByDate = async (req, res) => {
             ORDER BY u.level, u.first_name`,
             [start_date, end_date]
         )
+
+        let shifts = data.rows;
+
+        let firstDate = new Date(start_date);
+        let timezone = Intl.DateTimeFormat().resolvedOptions().timeZone
+        let dates = [];
+
+        // Get dates for the week from Monday to Sunday
+        for (let i = 0; i < 7; i++) {
+            let day = new Date(firstDate.getFullYear(), firstDate.getMonth(), firstDate.getDate() + i, 0).toLocaleString('en-US', { timeZone: timezone });
+            dateToAdd = new Date(day).toISOString();
+            dates.push({ 'shift_start': dateToAdd, 'shift_end': null });
+        }
+
+        // If an employee has no shifts for the week, add empty shifts
+        for (let i = 0; i < shifts.length; i++) {
+            if (!shifts[i].shifts.length) {
+                for (let j = 0; j < 7; j++) {
+                    shifts[i].shifts.push(dates[j]);
+                }
+            }
+            else {
+                // If an employee has at least one shift for the week,
+                // Combine shifts and empty shifts for the week and sort by start_date
+                let tempArr = [...shifts[i].shifts, ...dates];
+                let sortedArr = tempArr.sort((a, b) => new Date(a.shift_start) - new Date(b.shift_start));
+
+                // If there are matching dates, remove the one with start_end that is a NULL value
+                for (let j = 0; j < sortedArr.length - 1; j++) {
+                    for (let k = j + 1; k < sortedArr.length; k++) {
+                        if (j === 0
+                            && sortedArr[j].shift_start.split('T')[0] === sortedArr[k].shift_start.split('T')[0]
+                            && sortedArr[j].shift_end === null) {
+                            let one = sortedArr.slice(j + 1);
+                            sortedArr = one;
+                        }
+                        else if (sortedArr[j].shift_start.split('T')[0] === sortedArr[k].shift_start.split('T')[0]
+                            && sortedArr[j].shift_end === null) {
+                            let one = sortedArr.slice(0, j);
+                            let two = sortedArr.slice(j + 1);
+                            sortedArr = [...one, ...two];
+                        }
+                        else if (sortedArr[j].shift_start.split('T')[0] === sortedArr[k].shift_start.split('T')[0]
+                            && sortedArr[k].shift_end === null) {
+                            let one = sortedArr.slice(0, k);
+                            let two = sortedArr.slice(k + 1);
+                            sortedArr = [...one, ...two];
+                        }
+                        else {
+                            continue;
+                        }
+                    }
+                }
+
+                shifts[i].shifts = sortedArr;
+            }
+        }
 
         res.status(200).json(data.rows);
 

@@ -3,9 +3,8 @@ import { Link } from 'react-router-dom';
 import * as ROUTES from '../../constants/routes';
 import { isAuthenticated } from '../../services/auth';
 import { fetchTimes } from '../../services/presets';
-import { createShift } from '../../services/shifts';
+import { createShift, fetchAllUsersSchedulesByDate } from '../../services/shifts';
 import { fetchAllUsersAvailabilities } from '../../services/users';
-import { fetchAllUsersSchedulesByDate } from '../../services/shifts';
 import Loader from 'react-loader-spinner';
 
 export default function AdminSchedules() {
@@ -16,14 +15,14 @@ export default function AdminSchedules() {
     const [isLoading, setIsLoading] = useState(false);
 
     const [date, setDate] = useState(null);
-    // Used for fetching data within dates in yyyy-mm-dd
+    // Used for fetching data within dates in ISO string
     const [startDate, setStartDate] = useState('');
     const [endDate, setEndDate] = useState('');
 
     const [shiftStart, setShiftStart] = useState('0 0');
     const [shiftEnd, setShiftEnd] = useState('0 0');
 
-    // Used to render edit shift mode for clicked date and employee only
+    // Used to render edit shift mode for selected date and employee only
     const [userData, setUserData] = useState(null);
     const [availabilityIndex, setAvailabilityIndex] = useState(null);
 
@@ -95,7 +94,6 @@ export default function AdminSchedules() {
         setAvailabilityIndex(index);
         setShiftStart(startTimeValue);
         setShiftEnd(endTimeValue);
-        console.log(`startTimeValue`, startTimeValue)
     }
 
     const renderEditShift = (u_id, dayIndex) => (
@@ -156,7 +154,11 @@ export default function AdminSchedules() {
     )
 
     const getTimeValue = (shift) => {
-        return new Date(shift).toTimeString().split(':').slice(0, 2).join(' ').replace('00', '0');
+        const date = new Date(shift);
+        const hour = date.getHours();
+        const min = date.getMinutes();
+        const values = `${hour.toString()} ${min.toString()}`
+        return values;
     }
 
     const getTime = (shift) => {
@@ -166,45 +168,20 @@ export default function AdminSchedules() {
     const renderBlank = (u_id, a_i, time) => (
         <td
             key={a_i}
-            className={ // Keep bg color black if employee is 'NA' for availability
-                `border-y text-vw nowrap pointer h-10
-                ${time === 'NA' ? 'bg-black' : 'bg-light-gray-hovered'}`
-            }
+            // Keep bg color black if employee is 'NA' for availability
+            className={`border-y text-vw nowrap pointer h-10 ${time === 'NA' ? 'bg-black' : 'bg-light-gray-hovered'}`}
             onClick={() => handleUserClick(u_id, a_i)}
         ></td>
     )
 
-    const renderShift = (a_i, shift) => (
-        <td className="border-y text-vw nowrap pointer h-10">
-            {getTime(shift.shift_start)} -&nbsp;
-            {getTime(shift.shift_end)}
-        </td>
-    )
-
-    const renderShift2 = (u_id, time, a_i, shifts) => (
+    const renderShift = (u_id, a_i, shift_start, shift_end) => (
         <td
             key={a_i}
-            className={ // Keep bg color black if employee is 'NA' for availability
-                `border-y text-vw nowrap pointer h-10
-                ${time === 'NA' ? 'bg-black' : 'bg-light-gray-hovered'}`
-            }
-            onClick={() => handleUserClick(u_id, a_i)}
+            className="border-y text-vw nowrap pointer h-10 bg-light-gray-hovered"
+            onClick={() => handleEditShift(u_id, a_i, getTimeValue(shift_start), getTimeValue(shift_end))}
         >
-            {
-                // If a shift exists for a day of the week, render the times
-                shifts.map((shift, s_i) => (
-                    (new Date(shift.shift_start).toLocaleDateString() === days[a_i].toLocaleDateString())
-                        ? <p
-                            key={s_i}
-                            className=""
-                            onClick={() => handleEditShift(u_id, a_i, getTimeValue(shift.shift_start), getTimeValue(shift.shift_end))}
-                        >
-                            {getTime(shift.shift_start)} -&nbsp;
-                            {getTime(shift.shift_end)}
-                        </p>
-                        : null
-                ))
-            }
+            {getTime(shift_start)} -&nbsp;
+            {getTime(shift_end)}
         </td>
     )
 
@@ -222,7 +199,6 @@ export default function AdminSchedules() {
     // Get dates for the week (Mon - Sun) based on the current day
     useEffect(() => {
         async function getDatesAndLoadData() {
-            const tokenConfig = isAuthenticated();
             // Current date
             const date = new Date();
             // Get Monday of the week, getDate returns 1-31, getDay returns 0-6
@@ -239,17 +215,15 @@ export default function AdminSchedules() {
                 daysArray.push(day);
             }
 
-            const startDate = new Date(firstDate.getFullYear(), firstDate.getMonth(), firstDate.getDate()).toISOString().split('T')[0];
-            const endDate = new Date(lastDate.getFullYear(), lastDate.getMonth(), lastDate.getDate()).toISOString().split('T')[0];
+            const startDate = new Date(firstDate.getFullYear(), firstDate.getMonth(), firstDate.getDate()).toISOString();
+            const endDate = new Date(lastDate.getFullYear(), lastDate.getMonth(), lastDate.getDate()).toISOString();
 
-            const users = await fetchAllUsersSchedulesByDate(startDate, endDate, tokenConfig);
+            const users = await fetchAllUsersSchedulesByDate(startDate, endDate);
 
             setDays(daysArray);
             setStartDate(startDate);
             setEndDate(endDate);
             setUsers(users);
-
-            console.log(`users`, users)
         }
 
         getDatesAndLoadData();
@@ -328,33 +302,15 @@ export default function AdminSchedules() {
                                     <td className="border-y text-vw nowrap">{user.title}</td>
                                     <td className="border-y text-vw nowrap">{user.first_name} {user.last_name}</td>
                                     {
-                                        user.availability.map((time, a_i) => {
-                                            return (
-                                                // Only render edit mode for the clicked date and employee
-                                                (userData === user.u_id && availabilityIndex === a_i)
-                                                    ? renderEditShift(user.u_id, a_i)
-                                                    : <td
-                                                        key={a_i}
-                                                        className={ // Keep bg color black if employee is 'NA' for availability
-                                                            `border-y text-vw nowrap pointer h-10
-                                                            ${time === 'NA' ? 'bg-black' : 'bg-light-gray-hovered'}`
-                                                        }
-                                                        // onClick={() => handleUserClick(user.u_id, a_i)}
-                                                    >
-                                                        {
-                                                            // If a shift exists for a day of the week, render the times
-                                                            user.shifts.map((shift, s_i) => (
-                                                                (new Date(shift.shift_start).toLocaleDateString() === days[a_i].toLocaleDateString())
-                                                                    ? <p key={s_i} className="h-100" onClick={() => handleEditShift(user.u_id, a_i, getTimeValue(shift.shift_start), getTimeValue(shift.shift_end))}>
-                                                                        {new Date(shift.shift_start).toLocaleTimeString().replace(':00 ', ' ')} -&nbsp;
-                                                                        {new Date(shift.shift_end).toLocaleTimeString().replace(':00 ', ' ')}
-                                                                    </p>
-                                                                    : <div className="w-100" onClick={() => handleUserClick(user.u_id, a_i)}></div>
-                                                            ))
-                                                        }
-                                                    </td>
-                                            )
-                                        })
+                                        user.availability.map((time, a_i) => (
+                                            // Only render edit mode for the selected date and employee
+                                            (userData === user.u_id && availabilityIndex === a_i)
+                                                ? renderEditShift(user.u_id, a_i)
+                                                // Render shifts if they exist during the selected week
+                                                : user.shifts[a_i].shift_end === null
+                                                    ? renderBlank(user.u_id, a_i, time)
+                                                    : renderShift(user.u_id, a_i, user.shifts[a_i].shift_start, user.shifts[a_i].shift_end)
+                                        ))
                                     }
                                 </tr>
                             ))
