@@ -654,7 +654,7 @@ nav {
 }
 
 .text-vw {
-  font-size: 0.9vw;
+  font-size: 0.86vw;
 }
 
 /* SIZE STYLES */
@@ -963,6 +963,10 @@ select {
     grid-template-columns: repeat(2, 6fr);
     grid-template-rows: repeat(2, 6fr);
     gap: 10px;
+  }
+
+  .text-vw {
+    font-size: 0.95vw;
   }
 }
 

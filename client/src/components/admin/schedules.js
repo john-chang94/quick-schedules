@@ -15,17 +15,54 @@ export default function AdminSchedules() {
     const [isLoading, setIsLoading] = useState(true);
     const [isUpdating, setIsUpdating] = useState(false);
 
-    const [date, setDate] = useState(null);
+    // Used for datepicker
+    const [dateISO, setDateISO] = useState(new Date().toISOString().split('T')[0])
     // Used for fetching data within dates in ISO string
     const [startDate, setStartDate] = useState('');
     const [endDate, setEndDate] = useState('');
-
+    // Used for getting time values when saving a shift
     const [shiftStart, setShiftStart] = useState('0 0');
     const [shiftEnd, setShiftEnd] = useState('0 0');
-
     // Used to render edit shift mode for selected date and employee only
     const [userData, setUserData] = useState(null);
     const [availabilityIndex, setAvailabilityIndex] = useState(null);
+
+    // For init load and datepicker
+    const getDatesOfTheWeek = async (selectedDate) => {
+        let date;
+        if (selectedDate) {
+            date = new Date(selectedDate);
+            setDateISO(selectedDate);
+        }
+        else {
+            date = new Date();
+        }
+
+        // Get Monday of the week, getDate returns 1-31, getDay returns 0-6
+        const mondayOfTheWeek = date.getDate() - date.getDay() + (date.getDay() === 0 ? -6 : 1);
+        // Assign date for Monday of the week to firstDate, setDate requires 1-31
+        const firstDate = new Date(date.setDate(mondayOfTheWeek));
+        const lastDate = new Date(date.setDate(mondayOfTheWeek + 6))
+        let daysArray = []
+
+        for (let i = 0; i < 7; i++) {
+            // Starting on Monday, add 0-6 each loop to increment the date
+            // then turn into a date object to add to array
+            let day = new Date(date.setDate(firstDate.getDate() + i));
+            daysArray.push(day);
+        }
+
+        const startDate = new Date(firstDate.getFullYear(), firstDate.getMonth(), firstDate.getDate()).toISOString();
+        const endDate = new Date(lastDate.getFullYear(), lastDate.getMonth(), lastDate.getDate()).toISOString();
+
+        setDays(daysArray);
+        setStartDate(startDate);
+        setEndDate(endDate);
+
+        // Refresh schedules after date change
+        const users = await fetchAllUsersSchedulesByDate(startDate, endDate);
+        setUsers(users);
+    }
 
     // Can create or update shift based on s_id being provided
     const handleSaveShift = async (u_id, dayIndex, s_id) => {
@@ -78,6 +115,7 @@ export default function AdminSchedules() {
         setAvailabilityIndex('');
     }
 
+    // Render edit shift (new)
     const handleUserClick = (u_id, index) => {
         setUserData(u_id);
         setAvailabilityIndex(index);
@@ -85,6 +123,7 @@ export default function AdminSchedules() {
         setShiftEnd('0 0');
     }
 
+    // Render edit shift (update)
     const handleEditShift = (u_id, index, startTimeValue, endTimeValue) => {
         setUserData(u_id);
         setAvailabilityIndex(index);
@@ -200,45 +239,15 @@ export default function AdminSchedules() {
         </td>
     )
 
-    useEffect(() => {
-        async function getData() {
-            const times = await fetchTimes();
-            const availabilities = await fetchAllUsersAvailabilities();
-            setTimes(times);
-            setAvailabilities(availabilities);
-        }
-
-        getData();
-    }, [])
-
     // Get dates for the week (Mon - Sun) based on the current day
     useEffect(() => {
         async function getDatesAndLoadData() {
-            // Current date
-            const date = new Date();
-            // Get Monday of the week, getDate returns 1-31, getDay returns 0-6
-            const mondayOfTheWeek = date.getDate() - date.getDay() + (date.getDay() === 0 ? -6 : 1);
-            // Assign date for Monday of the week to firstDate, setDate requires 1-31
-            const firstDate = new Date(date.setDate(mondayOfTheWeek));
-            const lastDate = new Date(date.setDate(mondayOfTheWeek + 6))
-            let daysArray = []
+            const times = await fetchTimes();
+            const availabilities = await fetchAllUsersAvailabilities();
+            await getDatesOfTheWeek();
 
-            for (let i = 0; i < 7; i++) {
-                // Starting on Monday, add 0-6 each loop to increment the date
-                // then turn into a date object to add to array
-                let day = new Date(date.setDate(firstDate.getDate() + i));
-                daysArray.push(day);
-            }
-
-            const startDate = new Date(firstDate.getFullYear(), firstDate.getMonth(), firstDate.getDate()).toISOString();
-            const endDate = new Date(lastDate.getFullYear(), lastDate.getMonth(), lastDate.getDate()).toISOString();
-
-            const users = await fetchAllUsersSchedulesByDate(startDate, endDate);
-
-            setDays(daysArray);
-            setStartDate(startDate);
-            setEndDate(endDate);
-            setUsers(users);
+            setTimes(times);
+            setAvailabilities(availabilities);
             setIsLoading(false);
         }
 
@@ -255,94 +264,102 @@ export default function AdminSchedules() {
 
             {
                 isLoading ?
-                    <div className="text-center mt-8">
+                    <div className="text-center" style={{ marginTop: '70px'}}>
                         <Loader
                             type='Oval'
                             color='rgb(50, 110, 150)'
                         />
                     </div> :
                     <div>
-                        <div>
-                            <h3 className="text-center">Availability</h3>
-                            <table id="availability-table" style={{ tableLayout: 'fixed' }} className="border-collapse w-100 text-center">
-                                <thead>
-                                    <tr className="border-bottom">
-                                        <th className="text-vw p-2">Role</th>
-                                        <th className="text-vw p-2">Name</th>
-                                        {
-                                            // Render the day only
-                                            days && days.map((day, i) => (
-                                                <th key={i} className="text-vw p-2">
-                                                    <p>{day.toString().split(' ')[0]}</p>
-                                                </th>
-                                            ))
-                                        }
-                                    </tr>
-                                </thead>
-                                <tbody>
+                        <h3 className="text-center">Availability</h3>
+                        <table id="availability-table" style={{ tableLayout: 'fixed' }} className="border-collapse w-100 text-center">
+                            <thead>
+                                <tr className="border-bottom">
+                                    <th className="text-vw pt-2 pb-1">Role</th>
+                                    <th className="text-vw pt-2 pb-1">Name</th>
                                     {
-                                        availabilities && availabilities.map((user, i) => (
-                                            <tr
-                                                key={i}
-                                                className="border-bottom"
-                                                style={i % 2 === 0
-                                                    ? { backgroundColor: 'rgb(235, 235, 235)' }
-                                                    : { backgroundColor: 'rbg(255, 255, 255)' }}
-                                            >
-                                                <td className="text-vw nowrap px-1">{user.title}</td>
-                                                <td className="text-vw nowrap px-1">{user.first_name} {user.last_name}</td>
-                                                {
-                                                    user.availability.map((time, i) => (
-                                                        <td key={i} className={`text-vw nowrap px-1 ${time === 'NA' && 'bg-black'}`}>{time}</td>
-                                                    ))
-                                                }
-                                            </tr>
+                                        // Render the day only
+                                        days && days.map((day, i) => (
+                                            <th key={i} className="text-vw pt-2 pb-1">
+                                                <p>{day.toString().split(' ')[0]}</p>
+                                            </th>
                                         ))
                                     }
-                                </tbody>
-                            </table>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {
+                                    availabilities && availabilities.map((user, i) => (
+                                        <tr
+                                            key={i}
+                                            className="border-bottom"
+                                            style={i % 2 === 0
+                                                ? { backgroundColor: 'rgb(235, 235, 235)' }
+                                                : { backgroundColor: 'rbg(255, 255, 255)' }}
+                                        >
+                                            <td className="text-vw nowrap px-1">{user.title}</td>
+                                            <td className="text-vw nowrap px-1">{user.first_name} {user.last_name}</td>
+                                            {
+                                                user.availability.map((time, i) => (
+                                                    <td key={i} className={`text-vw nowrap px-1 ${time === 'NA' && 'bg-black'}`}>{time}</td>
+                                                ))
+                                            }
+                                        </tr>
+                                    ))
+                                }
+                            </tbody>
+                        </table>
+
+                        <div className="flex flex-center flex-col mt-7 mb-4">
+                            <em>Currently viewing {new Date(startDate).toLocaleDateString()} - {new Date(endDate).toLocaleDateString()}</em>
+                            <p>Choose a date to change the work week</p>
+                            <div className="mt-1">
+                                <input
+                                    type="date"
+                                    value={dateISO}
+                                    onChange={({ target }) => getDatesOfTheWeek(target.value)}
+                                />
+                            </div>
                         </div>
 
-                        <div className="mt-5">
-                            <table style={{ tableLayout: 'fixed' }} className="w-100 border-collapse text-center">
-                                <tbody>
-                                    <tr className="border-bottom">
-                                        <td className="text-vw"><strong>Role</strong></td>
-                                        <td className="text-vw"><strong>Name</strong></td>
-                                        {
-                                            days && days.map((day, i) => (
-                                                <td className="text-vw" key={i}>
-                                                    <strong>{day.toString().split(' ')[0]}</strong>
-                                                    <p><em>{day.toLocaleDateString()}</em></p>
-                                                </td>
-                                            ))
-                                        }
-                                    </tr>
+                        <table style={{ tableLayout: 'fixed' }} className="w-100 mt-1 border-collapse text-center">
+                            <tbody>
+                                <tr className="border-bottom">
+                                    <td className="text-vw"><strong>Role</strong></td>
+                                    <td className="text-vw"><strong>Name</strong></td>
                                     {
-                                        users && users.map((user, u_i) => (
-                                            <tr
-                                                key={u_i}
-                                                className="bg-x-light-gray border-bottom"
-                                            >
-                                                <td className="border-y text-vw nowrap">{user.title}</td>
-                                                <td className="border-y text-vw nowrap">{user.first_name} {user.last_name}</td>
-                                                {
-                                                    user.availability.map((time, a_i) => (
-                                                        // Only render edit mode for the selected date and employee
-                                                        (userData === user.u_id && availabilityIndex === a_i)
-                                                            ? renderEditShift(user.u_id, a_i, user.shifts[a_i])
-                                                            // Render shifts if they exist during the selected week
-                                                            : user.shifts[a_i].shift_end === null
-                                                                ? renderBlank(user.u_id, a_i, time)
-                                                                : renderShift(user.u_id, a_i, user.shifts[a_i].shift_start, user.shifts[a_i].shift_end)
-                                                    ))
-                                                }
-                                            </tr>
+                                        days && days.map((day, i) => (
+                                            <td className="text-vw" key={i}>
+                                                <strong>{day.toString().split(' ')[0]}</strong>
+                                                <p><em>{day.toLocaleDateString()}</em></p>
+                                            </td>
                                         ))
                                     }
-                                </tbody>
-                            </table>
-                        </div>
+                                </tr>
+                                {
+                                    users && users.map((user, u_i) => (
+                                        <tr
+                                            key={u_i}
+                                            className="bg-x-light-gray border-bottom"
+                                        >
+                                            <td className="border-y text-vw nowrap">{user.title}</td>
+                                            <td className="border-y text-vw nowrap">{user.first_name} {user.last_name}</td>
+                                            {
+                                                user.availability.map((time, a_i) => (
+                                                    // Only render edit mode for the selected date and employee
+                                                    (userData === user.u_id && availabilityIndex === a_i)
+                                                        ? renderEditShift(user.u_id, a_i, user.shifts[a_i])
+                                                        // Render shifts if they exist during the selected week
+                                                        : user.shifts[a_i].shift_end === null
+                                                            ? renderBlank(user.u_id, a_i, time)
+                                                            : renderShift(user.u_id, a_i, user.shifts[a_i].shift_start, user.shifts[a_i].shift_end)
+                                                ))
+                                            }
+                                        </tr>
+                                    ))
+                                }
+                            </tbody>
+                        </table>
                     </div>
             }
         </div>
