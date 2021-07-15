@@ -26,3 +26,21 @@ export const fetchAllUsersSchedulesByDate = async (start_date, end_date) => {
         return { error: err.response.data };
     }
 }
+
+export const updateShift = async (s_id, body, tokenConfig) => {
+    try {
+        const res = await axios.put(`http://localhost:5000/shifts/${s_id}`, body, tokenConfig);
+        return res.data;
+    } catch (err) {
+        return { error: err.response.data };
+    }
+}
+
+export const deleteShift = async (s_id, tokenConfig) => {
+    try {
+        const res = await axios.delete(`http://localhost:5000/shifts/${s_id}`, tokenConfig);
+        return res.data;
+    } catch (err) {
+        return { error: err.response.data };
+    }
+}

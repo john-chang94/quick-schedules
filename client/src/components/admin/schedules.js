@@ -3,7 +3,7 @@ import { Link } from 'react-router-dom';
 import * as ROUTES from '../../constants/routes';
 import { isAuthenticated } from '../../services/auth';
 import { fetchTimes } from '../../services/presets';
-import { createShift, fetchAllUsersSchedulesByDate } from '../../services/shifts';
+import { createShift, fetchAllUsersSchedulesByDate, deleteShift, updateShift } from '../../services/shifts';
 import { fetchAllUsersAvailabilities } from '../../services/users';
 import Loader from 'react-loader-spinner';
 
@@ -12,7 +12,8 @@ export default function AdminSchedules() {
     const [users, setUsers] = useState(null);
     const [days, setDays] = useState([]);
     const [times, setTimes] = useState(null);
-    const [isLoading, setIsLoading] = useState(false);
+    const [isLoading, setIsLoading] = useState(true);
+    const [isUpdating, setIsUpdating] = useState(false);
 
     const [date, setDate] = useState(null);
     // Used for fetching data within dates in ISO string
@@ -26,18 +27,9 @@ export default function AdminSchedules() {
     const [userData, setUserData] = useState(null);
     const [availabilityIndex, setAvailabilityIndex] = useState(null);
 
-    // const getFirstAndLastDatesOfCurrentWeek = () => {
-    //     let date = new Date();
-    //     // Get Monday of the week, getDate returns 1-31, getDay returns 0-6
-    //     let mondayOfTheWeek = date.getDate() - date.getDay() + (date.getDay() === 0 ? -6 : 1);
-    //     // Assign date for Monday of the week to firstDate, setDate requires 1-31
-    //     let firstDate = new Date(date.setDate(mondayOfTheWeek));
-    //     let lastDate = new Date(date.setDate(mondayOfTheWeek + 6))
-
-    // }
-
-    const handleSaveShift = async (u_id, dayIndex) => {
-        setIsLoading(true);
+    // Can create or update shift based on s_id being provided
+    const handleSaveShift = async (u_id, dayIndex, s_id) => {
+        setIsUpdating(true);
         const tokenConfig = isAuthenticated();
         // Get shift date
         const date = days[dayIndex];
@@ -67,14 +59,18 @@ export default function AdminSchedules() {
             .toLocaleString('en-US', { timeZone: timezone });
 
         const body = { u_id, shift_start, shift_end };
-        await createShift(body, tokenConfig);
+        if (s_id) {
+            await updateShift(s_id, body, tokenConfig);
+        } else {
+            await createShift(body, tokenConfig);
+        }
 
-        const users = await fetchAllUsersSchedulesByDate(startDate, endDate, tokenConfig);
+        const users = await fetchAllUsersSchedulesByDate(startDate, endDate);
         setUsers(users);
 
         setUserData('');
         setAvailabilityIndex('');
-        setIsLoading(false);
+        setIsUpdating(false);
     }
 
     const handleCancelShift = () => {
@@ -96,13 +92,40 @@ export default function AdminSchedules() {
         setShiftEnd(endTimeValue);
     }
 
-    const renderEditShift = (u_id, dayIndex) => (
+    const handleRemoveShift = async (s_id) => {
+        const toDelete = window.confirm('Are you sure you want to remove this shift?');
+        if (toDelete) {
+            const tokenConfig = isAuthenticated();
+            setIsUpdating(true);
+            await deleteShift(s_id, tokenConfig);
+
+            const users = await fetchAllUsersSchedulesByDate(startDate, endDate);
+            setUsers(users);
+            setUserData('');
+            setAvailabilityIndex('');
+            setIsUpdating(false);
+        }
+    }
+
+    const getTimeValue = (shift) => {
+        const date = new Date(shift);
+        const hour = date.getHours();
+        const min = date.getMinutes();
+        const values = `${hour.toString()} ${min.toString()}`
+        return values;
+    }
+
+    const getTime = (shift) => {
+        return new Date(shift).toLocaleTimeString().replace(':00 ', ' ');
+    }
+
+    const renderEditShift = (u_id, dayIndex, shift) => (
         <td key={dayIndex}>
             <p className="text-3">Shift start</p>
             <select
                 className="w-80"
                 defaultValue={shiftStart}
-                disabled={isLoading}
+                disabled={isUpdating}
                 onChange={({ target }) => setShiftStart(target.value)}>
                 {
                     times && times.map((time, i) => (
@@ -116,7 +139,7 @@ export default function AdminSchedules() {
             <select
                 className="w-80"
                 defaultValue={shiftEnd}
-                disabled={isLoading}
+                disabled={isUpdating}
                 onChange={({ target }) => setShiftEnd(target.value)}>
                 {
                     times && times.map((time, i) => (
@@ -127,7 +150,7 @@ export default function AdminSchedules() {
                 }
             </select>
             {
-                isLoading ?
+                isUpdating ?
                     <div className="mx-1">
                         <Loader
                             type='Oval'
@@ -138,32 +161,24 @@ export default function AdminSchedules() {
                     <div className="mx-2 w-100 flex justify-evenly">
                         <button
                             className="btn-x-sm btn-hovered bg-dark-gray off-white"
-                            onClick={() => handleSaveShift(u_id, dayIndex)}
+                            onClick={() => handleSaveShift(u_id, dayIndex, shift.s_id)}
                         >
                             <i className="fas fa-check"></i>
                         </button>
                         <button
                             className="btn-x-sm btn-hovered bg-dark-gray off-white"
-                            onClick={() => handleCancelShift()}
+                            onClick={() => shift.s_id ? handleRemoveShift(shift.s_id) : handleCancelShift()}
                         >
-                            <i className="fas fa-trash-alt"></i>
+                            {
+                                shift.shift_end === null
+                                    ? <i className="fas fa-times"></i>
+                                    : <i className="fas fa-trash-alt"></i>
+                            }
                         </button>
                     </div>
             }
         </td>
     )
-
-    const getTimeValue = (shift) => {
-        const date = new Date(shift);
-        const hour = date.getHours();
-        const min = date.getMinutes();
-        const values = `${hour.toString()} ${min.toString()}`
-        return values;
-    }
-
-    const getTime = (shift) => {
-        return new Date(shift).toLocaleTimeString().replace(':00 ', ' ');
-    }
 
     const renderBlank = (u_id, a_i, time) => (
         <td
@@ -224,6 +239,7 @@ export default function AdminSchedules() {
             setStartDate(startDate);
             setEndDate(endDate);
             setUsers(users);
+            setIsLoading(false);
         }
 
         getDatesAndLoadData();
@@ -237,87 +253,98 @@ export default function AdminSchedules() {
                 </Link>
             </div>
 
-            <div>
-                <h3 className="text-center">Availability</h3>
-                <table id="availability-table" style={{ tableLayout: 'fixed' }} className="border-collapse w-100 text-center">
-                    <thead>
-                        <tr className="border-bottom">
-                            <th className="text-vw p-2">Role</th>
-                            <th className="text-vw p-2">Name</th>
-                            {
-                                // Render the day only
-                                days && days.map((day, i) => (
-                                    <th key={i} className="text-vw p-2">
-                                        <p>{day.toString().split(' ')[0]}</p>
-                                    </th>
-                                ))
-                            }
-                        </tr>
-                    </thead>
-                    <tbody>
-                        {
-                            availabilities && availabilities.map((user, i) => (
-                                <tr
-                                    key={i}
-                                    className="border-bottom"
-                                    style={i % 2 === 0
-                                        ? { backgroundColor: 'rgb(235, 235, 235)' }
-                                        : { backgroundColor: 'rbg(255, 255, 255)' }}
-                                >
-                                    <td className="text-vw nowrap px-1">{user.title}</td>
-                                    <td className="text-vw nowrap px-1">{user.first_name} {user.last_name}</td>
+            {
+                isLoading ?
+                    <div className="text-center mt-8">
+                        <Loader
+                            type='Oval'
+                            color='rgb(50, 110, 150)'
+                        />
+                    </div> :
+                    <div>
+                        <div>
+                            <h3 className="text-center">Availability</h3>
+                            <table id="availability-table" style={{ tableLayout: 'fixed' }} className="border-collapse w-100 text-center">
+                                <thead>
+                                    <tr className="border-bottom">
+                                        <th className="text-vw p-2">Role</th>
+                                        <th className="text-vw p-2">Name</th>
+                                        {
+                                            // Render the day only
+                                            days && days.map((day, i) => (
+                                                <th key={i} className="text-vw p-2">
+                                                    <p>{day.toString().split(' ')[0]}</p>
+                                                </th>
+                                            ))
+                                        }
+                                    </tr>
+                                </thead>
+                                <tbody>
                                     {
-                                        user.availability.map((time, i) => (
-                                            <td key={i} className={`text-vw nowrap px-1 ${time === 'NA' && 'bg-black'}`}>{time}</td>
+                                        availabilities && availabilities.map((user, i) => (
+                                            <tr
+                                                key={i}
+                                                className="border-bottom"
+                                                style={i % 2 === 0
+                                                    ? { backgroundColor: 'rgb(235, 235, 235)' }
+                                                    : { backgroundColor: 'rbg(255, 255, 255)' }}
+                                            >
+                                                <td className="text-vw nowrap px-1">{user.title}</td>
+                                                <td className="text-vw nowrap px-1">{user.first_name} {user.last_name}</td>
+                                                {
+                                                    user.availability.map((time, i) => (
+                                                        <td key={i} className={`text-vw nowrap px-1 ${time === 'NA' && 'bg-black'}`}>{time}</td>
+                                                    ))
+                                                }
+                                            </tr>
                                         ))
                                     }
-                                </tr>
-                            ))
-                        }
-                    </tbody>
-                </table>
-            </div>
+                                </tbody>
+                            </table>
+                        </div>
 
-            <div className="mt-5">
-                <table style={{ tableLayout: 'fixed' }} className="w-100 border-collapse text-center">
-                    <tbody>
-                        <tr className="border-bottom">
-                            <td className="text-vw"><strong>Role</strong></td>
-                            <td className="text-vw"><strong>Name</strong></td>
-                            {
-                                days && days.map((day, i) => (
-                                    <td className="text-vw" key={i}>
-                                        <strong>{day.toString().split(' ')[0]}</strong>
-                                        <p><em>{day.toLocaleDateString()}</em></p>
-                                    </td>
-                                ))
-                            }
-                        </tr>
-                        {
-                            users && users.map((user, u_i) => (
-                                <tr
-                                    key={u_i}
-                                    className="bg-x-light-gray border-bottom"
-                                >
-                                    <td className="border-y text-vw nowrap">{user.title}</td>
-                                    <td className="border-y text-vw nowrap">{user.first_name} {user.last_name}</td>
+                        <div className="mt-5">
+                            <table style={{ tableLayout: 'fixed' }} className="w-100 border-collapse text-center">
+                                <tbody>
+                                    <tr className="border-bottom">
+                                        <td className="text-vw"><strong>Role</strong></td>
+                                        <td className="text-vw"><strong>Name</strong></td>
+                                        {
+                                            days && days.map((day, i) => (
+                                                <td className="text-vw" key={i}>
+                                                    <strong>{day.toString().split(' ')[0]}</strong>
+                                                    <p><em>{day.toLocaleDateString()}</em></p>
+                                                </td>
+                                            ))
+                                        }
+                                    </tr>
                                     {
-                                        user.availability.map((time, a_i) => (
-                                            // Only render edit mode for the selected date and employee
-                                            (userData === user.u_id && availabilityIndex === a_i)
-                                                ? renderEditShift(user.u_id, a_i)
-                                                // Render shifts if they exist during the selected week
-                                                : user.shifts[a_i].shift_end === null
-                                                    ? renderBlank(user.u_id, a_i, time)
-                                                    : renderShift(user.u_id, a_i, user.shifts[a_i].shift_start, user.shifts[a_i].shift_end)
+                                        users && users.map((user, u_i) => (
+                                            <tr
+                                                key={u_i}
+                                                className="bg-x-light-gray border-bottom"
+                                            >
+                                                <td className="border-y text-vw nowrap">{user.title}</td>
+                                                <td className="border-y text-vw nowrap">{user.first_name} {user.last_name}</td>
+                                                {
+                                                    user.availability.map((time, a_i) => (
+                                                        // Only render edit mode for the selected date and employee
+                                                        (userData === user.u_id && availabilityIndex === a_i)
+                                                            ? renderEditShift(user.u_id, a_i, user.shifts[a_i])
+                                                            // Render shifts if they exist during the selected week
+                                                            : user.shifts[a_i].shift_end === null
+                                                                ? renderBlank(user.u_id, a_i, time)
+                                                                : renderShift(user.u_id, a_i, user.shifts[a_i].shift_start, user.shifts[a_i].shift_end)
+                                                    ))
+                                                }
+                                            </tr>
                                         ))
                                     }
-                                </tr>
-                            ))
-                        }
-                    </tbody>
-                </table>
-            </div>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+            }
         </div>
     )
 }
