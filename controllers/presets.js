@@ -16,6 +16,15 @@ exports.createPreset = async (req, res) => {
     }
 }
 
+exports.getPresets = async (req, res) => {
+    try {
+        const presets = await client.query('SELECT * FROM presets ORDER BY level');
+        res.status(200).json(presets.rows);
+    } catch (err) {
+        res.status(500).send(err.message);
+    }
+}
+
 exports.deletePreset = async (req, res) => {
     try {
         const { p_id } = req.params;

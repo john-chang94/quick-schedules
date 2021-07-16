@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import * as ROUTES from '../../constants/routes';
 import { isAuthenticated } from '../../services/auth';
-import { fetchTimes } from '../../services/presets';
+import { createPreset, fetchPresets, fetchTimes } from '../../services/presets';
 import { createShift, fetchAllUsersSchedulesByDate, deleteShift, updateShift } from '../../services/shifts';
 import { fetchAllUsersAvailabilities } from '../../services/users';
 import Loader from 'react-loader-spinner';
@@ -12,6 +12,7 @@ export default function AdminSchedules() {
     const [users, setUsers] = useState(null);
     const [days, setDays] = useState([]);
     const [times, setTimes] = useState(null);
+    const [presets, setPresets] = useState(null);
     const [isLoading, setIsLoading] = useState(true);
     const [isUpdating, setIsUpdating] = useState(false);
 
@@ -21,8 +22,9 @@ export default function AdminSchedules() {
     const [startDate, setStartDate] = useState('');
     const [endDate, setEndDate] = useState('');
     // Used for getting time values when saving a shift
-    const [shiftStart, setShiftStart] = useState('0 0');
-    const [shiftEnd, setShiftEnd] = useState('0 0');
+    const [shift_start_value, setShiftStartValue] = useState('0 0');
+    const [shift_end_value, setShiftEndValue] = useState('0 0');
+    const [level, setLevel] = useState('');
     // Used to render edit shift mode for selected date and employee only
     const [userData, setUserData] = useState(null);
     const [availabilityIndex, setAvailabilityIndex] = useState(null);
@@ -71,11 +73,11 @@ export default function AdminSchedules() {
         // Get shift date
         const date = days[dayIndex];
         // Get hour and minute in INT data type for date object
-        const startTimeHour = parseInt(shiftStart.split(' ')[0]);
-        const startTimeMinute = parseInt(shiftStart.split(' ')[1]);
+        const startTimeHour = parseInt(shift_start_value.split(' ')[0]);
+        const startTimeMinute = parseInt(shift_start_value.split(' ')[1]);
         // Get hour and minute in INT data type for date object
-        const endTimeHour = parseInt(shiftEnd.split(' ')[0]);
-        const endTimeMinute = parseInt(shiftEnd.split(' ')[1]);
+        const endTimeHour = parseInt(shift_end_value.split(' ')[0]);
+        const endTimeMinute = parseInt(shift_end_value.split(' ')[1]);
         // Get local timezone
         const timezone = Intl.DateTimeFormat().resolvedOptions().timeZone
         // Create new date objects with year, month, day, hour, minute, and timezone
@@ -119,16 +121,46 @@ export default function AdminSchedules() {
     const handleUserClick = (u_id, index) => {
         setUserData(u_id);
         setAvailabilityIndex(index);
-        setShiftStart('0 0');
-        setShiftEnd('0 0');
+        setShiftStartValue('0 0');
+        setShiftEndValue('0 0');
     }
 
     // Render edit shift (update)
-    const handleEditShift = (u_id, index, startTimeValue, endTimeValue) => {
+    const handleEditShift = (u_id, index, startStartValue, endStartValue) => {
         setUserData(u_id);
         setAvailabilityIndex(index);
-        setShiftStart(startTimeValue);
-        setShiftEnd(endTimeValue);
+        setShiftStartValue(startStartValue);
+        setShiftEndValue(endStartValue);
+        setLevel(level);
+    }
+
+    const handleSavePreset = async () => {
+        const tokenConfig = isAuthenticated();
+        let level;
+        let shift_start;
+        let shift_end;
+        for (let i = 0; i < presets.length; i++) {
+            if (shift_start_value === presets[i].shift_start_value
+                && shift_end_value === presets[i].shift_end_value) {
+                    alert('Preset already saved');
+                    return;
+                }
+        }
+        for (let i = 0; i < times.length; i++) {
+            if (shift_start_value === times[i].value) {
+                level = times[i].level;
+                shift_start = times[i].time;
+            }
+            if (shift_end_value === times[i].value) {
+                shift_end = times[i].time;
+            }
+        }
+
+        const body = { shift_start, shift_end, shift_start_value, shift_end_value, level };
+        await createPreset(body, tokenConfig);
+
+        const newPresets = await fetchPresets();
+        setPresets(newPresets);
     }
 
     const handleRemoveShift = async (s_id) => {
@@ -160,34 +192,55 @@ export default function AdminSchedules() {
 
     const renderEditShift = (u_id, dayIndex, shift) => (
         <td key={dayIndex}>
-            <p className="text-3">Shift start</p>
-            <select
-                className="w-80"
-                defaultValue={shiftStart}
-                disabled={isUpdating}
-                onChange={({ target }) => setShiftStart(target.value)}>
-                {
-                    times && times.map((time, i) => (
-                        <option key={i} value={time.value}>
-                            {time.time}
-                        </option>
-                    ))
-                }
-            </select>
-            <p className="text-3">Shift end</p>
-            <select
-                className="w-80"
-                defaultValue={shiftEnd}
-                disabled={isUpdating}
-                onChange={({ target }) => setShiftEnd(target.value)}>
-                {
-                    times && times.map((time, i) => (
-                        <option key={i} value={time.value}>
-                            {time.time}
-                        </option>
-                    ))
-                }
-            </select>
+            <div className="flex justify-evenly mt-1">
+                <p className="text-3">Preset</p>
+                <select
+                    className="w-60"
+                    defaultValue='0 0'
+                    disabled={isUpdating}
+                    onChange={({ target }) => setShiftStartValue(target.value)}>
+                    {
+                        presets && presets.map((preset, i) => (
+                            <option key={i} value={`${preset.shift_start_value} ${preset.shift_end_value}`}>
+                                {preset.shift_start} - {preset.shift_end}
+                            </option>
+                        ))
+                    }
+                </select>
+            </div>
+            <hr className="mx-1" />
+            <div className="flex justify-evenly mb-1">
+                <p className="text-3">Start</p>
+                <select
+                    className="w-60"
+                    defaultValue={shift_start_value}
+                    disabled={isUpdating}
+                    onChange={({ target }) => setShiftStartValue(target.value)}>
+                    {
+                        times && times.map((time, i) => (
+                            <option key={i} value={time.value}>
+                                {time.time}
+                            </option>
+                        ))
+                    }
+                </select>
+            </div>
+            <div className="flex justify-evenly mb-1">
+                <p className="text-3 mr-1">End</p>
+                <select
+                    className="w-60"
+                    defaultValue={shift_end_value}
+                    disabled={isUpdating}
+                    onChange={({ target }) => setShiftEndValue(target.value)}>
+                    {
+                        times && times.map((time, i) => (
+                            <option key={i} value={time.value}>
+                                {time.time}
+                            </option>
+                        ))
+                    }
+                </select>
+            </div>
             {
                 isUpdating ?
                     <div className="mx-1">
@@ -199,13 +252,19 @@ export default function AdminSchedules() {
                     </div> :
                     <div className="mx-2 w-100 flex justify-evenly">
                         <button
-                            className="btn-x-sm btn-hovered bg-dark-gray off-white"
+                            className="btn-x-sm btn-hovered bg-green off-white"
                             onClick={() => handleSaveShift(u_id, dayIndex, shift.s_id)}
                         >
                             <i className="fas fa-check"></i>
                         </button>
                         <button
-                            className="btn-x-sm btn-hovered bg-dark-gray off-white"
+                            className="btn-x-sm btn-hovered bg-dark-gray white"
+                            onClick={() => handleSavePreset()}
+                        >
+                            <i className="fas fa-star"></i>
+                        </button>
+                        <button
+                            className="btn-x-sm btn-hovered bg-red off-white"
                             onClick={() => shift.s_id ? handleRemoveShift(shift.s_id) : handleCancelShift()}
                         >
                             {
@@ -239,15 +298,16 @@ export default function AdminSchedules() {
         </td>
     )
 
-    // Get dates for the week (Mon - Sun) based on the current day
     useEffect(() => {
         async function getDatesAndLoadData() {
             const times = await fetchTimes();
             const availabilities = await fetchAllUsersAvailabilities();
+            const presets = await fetchPresets();
             await getDatesOfTheWeek();
 
             setTimes(times);
             setAvailabilities(availabilities);
+            setPresets(presets);
             setIsLoading(false);
         }
 
@@ -264,7 +324,7 @@ export default function AdminSchedules() {
 
             {
                 isLoading ?
-                    <div className="text-center" style={{ marginTop: '70px'}}>
+                    <div className="text-center" style={{ marginTop: '70px' }}>
                         <Loader
                             type='Oval'
                             color='rgb(50, 110, 150)'
