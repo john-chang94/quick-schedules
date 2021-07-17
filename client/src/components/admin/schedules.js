@@ -45,13 +45,30 @@ export default function AdminSchedules() {
         // Assign date for Monday of the week to firstDate, setDate requires 1-31
         const firstDate = new Date(date.setDate(mondayOfTheWeek));
         const lastDate = new Date(date.setDate(mondayOfTheWeek + 6))
-        let daysArray = []
+        const lastDayOfMonth = new Date(date.getFullYear(), date.getMonth()+1, 0);
 
+        let daysArray = []
+        let addDate = 0;
+        
         for (let i = 0; i < 7; i++) {
             // Starting on Monday, add 0-6 each loop to increment the date
             // then turn into a date object to add to array
-            let day = new Date(date.setDate(firstDate.getDate() + i));
-            daysArray.push(day);
+            let dateToAdd = new Date(date.setDate(firstDate.getDate() + addDate));
+            addDate++;
+            console.log(' ')
+            console.log('date to add', dateToAdd.getDate())
+            console.log(`last day of month`, lastDayOfMonth.getDate())
+            console.log(dateToAdd.getDate() === lastDayOfMonth.getDate())
+            if (dateToAdd.getDate() === lastDayOfMonth.getDate()) {
+                console.log('HEREEEE')
+                addDate = 0;
+                date = new Date(date.getFullYear(), date.getMonth()+1, 1);
+                dateToAdd = date;
+                console.log(`NEW DATE`, date)
+                console.log('NEW DATE TO ADD', dateToAdd)
+                console.log('NEW DATE NUMBER', dateToAdd.getDate())
+            }
+            daysArray.push(dateToAdd);
         }
 
         const startDate = new Date(firstDate.getFullYear(), firstDate.getMonth(), firstDate.getDate()).toISOString();
@@ -134,6 +151,26 @@ export default function AdminSchedules() {
         setLevel(level);
     }
 
+    const handleSelectPreset = (shiftValue) => {
+        setShiftStartValue(shiftValue.split('-')[0]);
+        setShiftEndValue(shiftValue.split('-')[1]);
+    }
+
+    const handlePreviousWeek = () => {
+        // Create a new date object to set the date backwards
+        let today = new Date(dateISO)
+        let date = new Date(today.setDate(today.getDate() - 7)).toISOString().split('T')[0];
+        setDateISO(date);
+        getDatesOfTheWeek(date);
+    }
+
+    const handleNextWeek = () => {
+        let today = new Date(dateISO)
+        let date = new Date(today.setDate(today.getDate() + 7)).toISOString().split('T')[0];
+        setDateISO(date);
+        getDatesOfTheWeek(date);
+    }
+
     const handleSavePreset = async () => {
         const tokenConfig = isAuthenticated();
         let level;
@@ -142,9 +179,9 @@ export default function AdminSchedules() {
         for (let i = 0; i < presets.length; i++) {
             if (shift_start_value === presets[i].shift_start_value
                 && shift_end_value === presets[i].shift_end_value) {
-                    alert('Preset already saved');
-                    return;
-                }
+                alert('Preset already saved');
+                return;
+            }
         }
         for (let i = 0; i < times.length; i++) {
             if (shift_start_value === times[i].value) {
@@ -198,10 +235,12 @@ export default function AdminSchedules() {
                     className="w-60"
                     defaultValue='0 0'
                     disabled={isUpdating}
-                    onChange={({ target }) => setShiftStartValue(target.value)}>
+                    onChange={({ target }) => handleSelectPreset(target.value)}
+                >
+                    <option value="">Select</option>
                     {
                         presets && presets.map((preset, i) => (
-                            <option key={i} value={`${preset.shift_start_value} ${preset.shift_end_value}`}>
+                            <option key={i} value={`${preset.shift_start_value}-${preset.shift_end_value}`}>
                                 {preset.shift_start} - {preset.shift_end}
                             </option>
                         ))
@@ -213,7 +252,7 @@ export default function AdminSchedules() {
                 <p className="text-3">Start</p>
                 <select
                     className="w-60"
-                    defaultValue={shift_start_value}
+                    value={shift_start_value}
                     disabled={isUpdating}
                     onChange={({ target }) => setShiftStartValue(target.value)}>
                     {
@@ -229,7 +268,7 @@ export default function AdminSchedules() {
                 <p className="text-3 mr-1">End</p>
                 <select
                     className="w-60"
-                    defaultValue={shift_end_value}
+                    value={shift_end_value}
                     disabled={isUpdating}
                     onChange={({ target }) => setShiftEndValue(target.value)}>
                     {
@@ -249,8 +288,8 @@ export default function AdminSchedules() {
                             color='rgb(50, 110, 150)'
                             height={35}
                         />
-                    </div> :
-                    <div className="mx-2 w-100 flex justify-evenly">
+                    </div>
+                    : <div className="mx-2 w-100 flex justify-evenly">
                         <button
                             className="btn-x-sm btn-hovered bg-green off-white"
                             onClick={() => handleSaveShift(u_id, dayIndex, shift.s_id)}
@@ -329,8 +368,8 @@ export default function AdminSchedules() {
                             type='Oval'
                             color='rgb(50, 110, 150)'
                         />
-                    </div> :
-                    <div>
+                    </div>
+                    : <div>
                         <h3 className="text-center">Availability</h3>
                         <table id="availability-table" style={{ tableLayout: 'fixed' }} className="border-collapse w-100 text-center">
                             <thead>
@@ -370,15 +409,29 @@ export default function AdminSchedules() {
                             </tbody>
                         </table>
 
-                        <div className="flex flex-center flex-col mt-7 mb-4">
-                            <em>Currently viewing {new Date(startDate).toLocaleDateString()} - {new Date(endDate).toLocaleDateString()}</em>
-                            <p>Choose a date to change the work week</p>
-                            <div className="mt-1">
-                                <input
-                                    type="date"
-                                    value={dateISO}
-                                    onChange={({ target }) => getDatesOfTheWeek(target.value)}
-                                />
+                        <div className="flex flex-center mt-7 mb-3">
+                            <div className="flex flex-center">
+                                <div className="mr-3 pointer" onClick={() => handlePreviousWeek()}>
+                                    <em className="text-3">Previous&nbsp;week</em>
+                                    <p className="text-center">
+                                        <i className="fas fa-angle-double-left"></i>
+                                        <i className="fas fa-angle-double-left"></i>
+                                    </p>
+                                </div>
+                                <div>
+                                    <input
+                                        type="date"
+                                        value={dateISO}
+                                        onChange={({ target }) => getDatesOfTheWeek(target.value)}
+                                    />
+                                </div>
+                                <div className="ml-3 pointer" onClick={() => handleNextWeek()}>
+                                    <em className="text-3">Next&nbsp;week</em>
+                                    <p className="text-center">
+                                        <i className="fas fa-angle-double-right"></i>
+                                        <i className="fas fa-angle-double-right"></i>
+                                    </p>
+                                </div>
                             </div>
                         </div>
 
