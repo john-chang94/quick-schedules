@@ -17,7 +17,7 @@ export default function AdminSchedules() {
     const [isUpdating, setIsUpdating] = useState(false);
 
     // Used for datepicker
-    const [dateISO, setDateISO] = useState(new Date().toISOString().split('T')[0])
+    const [dateISO, setDateISO] = useState(new Date())
     // Used for fetching data within dates in ISO string
     const [startDate, setStartDate] = useState('');
     const [endDate, setEndDate] = useState('');
@@ -44,49 +44,14 @@ export default function AdminSchedules() {
         const mondayOfTheWeek = date.getDate() - date.getDay() + (date.getDay() === 0 ? -6 : 1);
         // Assign date for Monday of the week to firstDate, setDate requires 1-31
         const firstDate = new Date(date.setDate(mondayOfTheWeek));
-        const lastDate = new Date(date.setDate(mondayOfTheWeek + 6))
-        const lastDayOfMonth = new Date(date.getFullYear(), date.getMonth()+1, 0);
+        const lastDate = new Date(date.setDate(mondayOfTheWeek + 6));
 
-        let daysArray = []
-        let addDate = 0;
-        let isLastDay = false;
-        console.log(' ')
-        console.log(' ')
-        console.log(' ')
+        let daysArray = [];
         let dateToAdd = new Date(date.setDate(firstDate.getDate()));
+
         for (let i = 0; i < 7; i++) {
-            // Starting on Monday, add 0-6 each loop to increment the date
-            // then turn into a date object to add to array
-            // console.log(' ')
-            // console.log(`INITIAL DATE TO ADD`, dateToAdd)
-            // addDate++;
-            // console.log('date to add', dateToAdd.getDate())
-            // console.log(`last day of month`, lastDayOfMonth.getDate())
-            // console.log(dateToAdd.getDate() === lastDayOfMonth.getDate())
-            // if (dateToAdd.getDate() === lastDayOfMonth.getDate()) {
-            //     isLastDay = true;
-            //     if (isLastDay) {
-            //         daysArray.push(dateToAdd);
-            //         isLastDay = false;
-            //     }
-            //     addDate = 0;
-            //     date = new Date(date.getFullYear(), date.getMonth()+1, 1);
-            //     dateToAdd = date;
-            //     console.log(`NEW DATE`, date)
-            //     console.log('NEW DATE TO ADD', dateToAdd)
-            //     console.log('NEW DATE NUMBER', dateToAdd.getDate())
-            //     // daysArray.push(dateToAdd);
-            //     console.log(`daysArray`, daysArray)
-            // } else {
-                
-            //     console.log(`ELSE DATE TO ADD`, dateToAdd)
-            //     // daysArray.push(dateToAdd);
-            // }
-            console.log(`dateToAdd`, dateToAdd)
-            daysArray.push(dateToAdd);
-            console.log(`daysArray`, daysArray)
+            daysArray.push(dateToAdd.toISOString());
             dateToAdd = new Date(dateToAdd.setDate(dateToAdd.getDate() + 1));
-            // console.log(`dateToAddTWO`, dateToAdd)
         }
 
         const startDate = new Date(firstDate.getFullYear(), firstDate.getMonth(), firstDate.getDate()).toISOString();
@@ -176,15 +141,13 @@ export default function AdminSchedules() {
 
     const handlePreviousWeek = () => {
         // Create a new date object to set the date backwards
-        let today = new Date(dateISO)
-        let date = new Date(today.setDate(today.getDate() - 7)).toISOString().split('T')[0];
+        let date = new Date(dateISO.setDate(dateISO.getDate() - 7));
         setDateISO(date);
         getDatesOfTheWeek(date);
     }
 
     const handleNextWeek = () => {
-        let today = new Date(dateISO)
-        let date = new Date(today.setDate(today.getDate() + 7)).toISOString().split('T')[0];
+        let date = new Date(dateISO.setDate(dateISO.getDate() + 7));
         setDateISO(date);
         getDatesOfTheWeek(date);
     }
@@ -398,7 +361,7 @@ export default function AdminSchedules() {
                                         // Render the day only
                                         days && days.map((day, i) => (
                                             <th key={i} className="text-vw pt-2 pb-1">
-                                                <p>{day.toString().split(' ')[0]}</p>
+                                                <p>{new Date(day).toString().split(' ')[0]}</p>
                                             </th>
                                         ))
                                     }
@@ -439,7 +402,7 @@ export default function AdminSchedules() {
                                 <div>
                                     <input
                                         type="date"
-                                        value={dateISO}
+                                        value={new Date(dateISO).toISOString().split('T')[0]}
                                         onChange={({ target }) => getDatesOfTheWeek(target.value)}
                                     />
                                 </div>
@@ -461,8 +424,8 @@ export default function AdminSchedules() {
                                     {
                                         days && days.map((day, i) => (
                                             <td className="text-vw" key={i}>
-                                                <strong>{day.toString().split(' ')[0]}</strong>
-                                                <p><em>{day.toLocaleDateString()}</em></p>
+                                                <strong>{new Date(day).toString().split(' ')[0]}</strong>
+                                                <p><em>{new Date(day).toLocaleDateString()}</em></p>
                                             </td>
                                         ))
                                     }
