@@ -31,89 +31,63 @@ export default function AdminSchedules() {
 
     // For init load and datepicker
     const getDatesOfTheWeek = async (selectedDate) => {
-        // let date;
-        let date = new Date();
+        let date;
+        if (selectedDate) {
+            date = new Date(selectedDate);
+            setDateISO(selectedDate);
+        }
+        else {
+            date = new Date();
+        }
+
         // Get Monday of the week, getDate returns 1-31, getDay returns 0-6
         const mondayOfTheWeek = date.getDate() - date.getDay() + (date.getDay() === 0 ? -6 : 1);
         // Assign date for Monday of the week to firstDate, setDate requires 1-31
         const firstDate = new Date(date.setDate(mondayOfTheWeek));
         const lastDate = new Date(date.setDate(mondayOfTheWeek + 6))
-        const lastDayOfMonth = new Date(date.getFullYear(), date.getMonth() + 1, 0);
-        
+        const lastDayOfMonth = new Date(date.getFullYear(), date.getMonth()+1, 0);
+
         let daysArray = []
-        if (selectedDate) {
-            date = new Date(selectedDate);
-            setDateISO(selectedDate);
-
-            let addDate = 0;
-            console.log(' ')
-            console.log(' ')
-            console.log(' ')
-            for (let i = 0; i < 7; i++) {
-                // Starting on Monday, add 0-6 each loop to increment the date
-                // then turn into a date object to add to array
-                let dateToAdd = new Date(date.setDate(firstDate.getDate() + addDate));
-                console.log(' ')
-                console.log(`INITIAL DATE TO ADD`, dateToAdd)
-                addDate++;
-                console.log('date to add', dateToAdd.getDate())
-                console.log(`last day of month`, lastDayOfMonth.getDate())
-                console.log(dateToAdd.getDate() === lastDayOfMonth.getDate())
-                if (dateToAdd.getDate() === lastDayOfMonth.getDate()) {
-                    console.log('HEREEEE')
-                    addDate = 0;
-                    console.log(`NEW DATE`, date)
-                    console.log('NEW DATE TO ADD', dateToAdd)
-                    console.log('NEW DATE NUMBER', dateToAdd.getDate())
-                    daysArray.push(dateToAdd);
-                    date = new Date(date.getFullYear(), date.getMonth() + 1, 1);
-                    dateToAdd = date;
-                } else {
-
-                    console.log(`ELSE DATE TO ADD`, dateToAdd)
-                    daysArray.push(dateToAdd);
-                }
-            }
+        let addDate = 0;
+        let isLastDay = false;
+        console.log(' ')
+        console.log(' ')
+        console.log(' ')
+        let dateToAdd = new Date(date.setDate(firstDate.getDate()));
+        for (let i = 0; i < 7; i++) {
+            // Starting on Monday, add 0-6 each loop to increment the date
+            // then turn into a date object to add to array
+            // console.log(' ')
+            // console.log(`INITIAL DATE TO ADD`, dateToAdd)
+            // addDate++;
+            // console.log('date to add', dateToAdd.getDate())
+            // console.log(`last day of month`, lastDayOfMonth.getDate())
+            // console.log(dateToAdd.getDate() === lastDayOfMonth.getDate())
+            // if (dateToAdd.getDate() === lastDayOfMonth.getDate()) {
+            //     isLastDay = true;
+            //     if (isLastDay) {
+            //         daysArray.push(dateToAdd);
+            //         isLastDay = false;
+            //     }
+            //     addDate = 0;
+            //     date = new Date(date.getFullYear(), date.getMonth()+1, 1);
+            //     dateToAdd = date;
+            //     console.log(`NEW DATE`, date)
+            //     console.log('NEW DATE TO ADD', dateToAdd)
+            //     console.log('NEW DATE NUMBER', dateToAdd.getDate())
+            //     // daysArray.push(dateToAdd);
+            //     console.log(`daysArray`, daysArray)
+            // } else {
+                
+            //     console.log(`ELSE DATE TO ADD`, dateToAdd)
+            //     // daysArray.push(dateToAdd);
+            // }
+            console.log(`dateToAdd`, dateToAdd)
+            daysArray.push(dateToAdd);
+            console.log(`daysArray`, daysArray)
+            dateToAdd = new Date(dateToAdd.setDate(dateToAdd.getDate() + 1));
+            // console.log(`dateToAddTWO`, dateToAdd)
         }
-        else {
-            for (let i = 0; i < 7; i++) {
-                // Starting on Monday, add 0-6 each loop to increment the date being added
-                let day = new Date(date.setDate(firstDate.getDate() + i));
-                daysArray.push(day);
-            }
-        }
-
-
-        // let daysArray = []
-        // let addDate = 0;
-        // console.log(' ')
-        // console.log(' ')
-        // console.log(' ')
-        // for (let i = 0; i < 7; i++) {
-        //     // Starting on Monday, add 0-6 each loop to increment the date
-        //     // then turn into a date object to add to array
-        //     let dateToAdd = new Date(date.setDate(firstDate.getDate() + addDate));
-        //     console.log(' ')
-        //     console.log(`INITIAL DATE TO ADD`, dateToAdd)
-        //     addDate++;
-        //     console.log('date to add', dateToAdd.getDate())
-        //     console.log(`last day of month`, lastDayOfMonth.getDate())
-        //     console.log(dateToAdd.getDate() === lastDayOfMonth.getDate())
-        //     if (dateToAdd.getDate() === lastDayOfMonth.getDate()) {
-        //         console.log('HEREEEE')
-        //         addDate = 0;
-        //         console.log(`NEW DATE`, date)
-        //         console.log('NEW DATE TO ADD', dateToAdd)
-        //         console.log('NEW DATE NUMBER', dateToAdd.getDate())
-        //         daysArray.push(dateToAdd);
-        //         date = new Date(date.getFullYear(), date.getMonth() + 1, 1);
-        //         dateToAdd = date;
-        //     } else {
-
-        //         console.log(`ELSE DATE TO ADD`, dateToAdd)
-        //         daysArray.push(dateToAdd);
-        //     }
-        // }
 
         const startDate = new Date(firstDate.getFullYear(), firstDate.getMonth(), firstDate.getDate()).toISOString();
         const endDate = new Date(lastDate.getFullYear(), lastDate.getMonth(), lastDate.getDate()).toISOString();
@@ -121,7 +95,6 @@ export default function AdminSchedules() {
         setDays(daysArray);
         setStartDate(startDate);
         setEndDate(endDate);
-        console.log(`daysArray`, daysArray)
 
         // Refresh schedules after date change
         const users = await fetchAllUsersSchedulesByDate(startDate, endDate);
