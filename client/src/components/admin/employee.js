@@ -6,6 +6,7 @@ import { isAuthenticated } from '../../services/auth';
 import { editPassword, editUserGeneral, editUserInfo, fetchUser } from '../../services/users';
 import { UserContext } from '../../contexts/userContext';
 import { fetchRoles } from '../../services/roles';
+import Loader from 'react-loader-spinner';
 
 export default function AdminEmployee() {
     const { u_id } = useParams();
@@ -15,6 +16,7 @@ export default function AdminEmployee() {
     const [roles, setRoles] = useState(null);
     const [error, setError] = useState('');
     const [success, setSuccess] = useState('');
+    const [isLoading, setIsLoading] = useState(false);
 
     const [first_name, setFirstName] = useState('');
     const [last_name, setLastName] = useState('');
@@ -265,6 +267,7 @@ export default function AdminEmployee() {
     )
 
     useEffect(() => {
+        setIsLoading(true);
         async function getData() {
             const tokenConfig = isAuthenticated();
 
@@ -279,6 +282,7 @@ export default function AdminEmployee() {
             setRoleId(user.role_id);
             setHourlyPay(user.hourly_pay);
             setStartedAt(user.started_at);
+            setIsLoading(false);
         }
         getData();
     }, [])
@@ -291,29 +295,40 @@ export default function AdminEmployee() {
                 </Link>
             </div>
             {
-                user &&
-                <div>
-                    {
-                        showEditGeneral
-                            ? renderEditGeneral()
-                            : renderUserGeneral()
+                isLoading
+                    ? <div className="text-center" style={{ marginTop: '70px' }}>
+                        <Loader
+                            type='Oval'
+                            color='rgb(50, 110, 150)'
+                        />
+                    </div>
+                    : <div>
+                        {
+                            user &&
+                            <div>
+                                {
+                                    showEditGeneral
+                                        ? renderEditGeneral()
+                                        : renderUserGeneral()
 
-                    }
-                    <hr />
-                    {
-                        showEditInfo
-                            ? renderEditInfo()
-                            : renderUserInfo()
-                    }
-                    <hr />
-                    {
-                        verifiedUser && verifiedUser.u_id === user.u_id &&
-                        renderEditPassword()
-                    }
+                                }
+                                <hr />
+                                {
+                                    showEditInfo
+                                        ? renderEditInfo()
+                                        : renderUserInfo()
+                                }
+                                <hr />
+                                {
+                                    verifiedUser && verifiedUser.u_id === user.u_id &&
+                                    renderEditPassword()
+                                }
 
-                    {error ? <p className="red">{error}</p> : null}
-                    {success ? <p className="green">{success}</p> : null}
-                </div>
+                                {error ? <p className="red">{error}</p> : null}
+                                {success ? <p className="green">{success}</p> : null}
+                            </div>
+                        }
+                    </div>
             }
         </div>
     )

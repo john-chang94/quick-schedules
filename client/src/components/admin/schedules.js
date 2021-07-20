@@ -5,7 +5,7 @@ import { isAuthenticated } from '../../services/auth';
 import { createPreset, fetchPresets, fetchTimes } from '../../services/presets';
 import { createShift, fetchAllUsersSchedulesByDate, deleteShift, updateShift } from '../../services/shifts';
 import { fetchAllUsersAvailabilities } from '../../services/users';
-import { startOfToday, startOfWeek, endOfWeek, addWeeks, subWeeks } from 'date-fns';
+import { startOfToday, startOfWeek, addWeeks, subWeeks } from 'date-fns';
 import Loader from 'react-loader-spinner';
 
 export default function AdminSchedules() {
@@ -43,14 +43,13 @@ export default function AdminSchedules() {
 
         let daysArray = [];
         let dateToAdd = date;
-
         for (let i = 0; i < 7; i++) {
             daysArray.push(dateToAdd.toISOString());
             dateToAdd = new Date(dateToAdd.setDate(dateToAdd.getDate() + 1));
         }
 
-        const startDate = date.toISOString();
-        const endDate = endOfWeek(date).toISOString();
+        const startDate = daysArray[0];
+        const endDate = daysArray[6];
 
         setDays(daysArray);
         setStartDate(startDate);
@@ -66,7 +65,7 @@ export default function AdminSchedules() {
         setIsUpdating(true);
         const tokenConfig = isAuthenticated();
         // Get shift date
-        const date = days[dayIndex];
+        const date = new Date(days[dayIndex]);
         // Get hour and minute in INT data type for date object
         const startTimeHour = parseInt(shift_start_value.split(' ')[0]);
         const startTimeMinute = parseInt(shift_start_value.split(' ')[1]);
@@ -129,21 +128,26 @@ export default function AdminSchedules() {
         setLevel(level);
     }
 
-    const handleSelectPreset = (shiftValue) => {
-        setShiftStartValue(shiftValue.split('-')[0]);
-        setShiftEndValue(shiftValue.split('-')[1]);
-    }
-
     const handlePreviousWeek = () => {
         let date = subWeeks(new Date(dateISO), 1);
         setDateISO(date);
         getDatesOfTheWeek(date);
+        setUserData('');
+        setAvailabilityIndex('');
     }
-
+    
     const handleNextWeek = () => {
         let date = addWeeks(new Date(dateISO), 1);
         setDateISO(date);
         getDatesOfTheWeek(date);
+        setUserData('');
+        setAvailabilityIndex('');
+    }
+    
+    const handleSelectPreset = (shiftValue) => {
+        if (!shiftValue) return;
+        setShiftStartValue(shiftValue.split('-')[0]);
+        setShiftEndValue(shiftValue.split('-')[1]);
     }
 
     const handleSavePreset = async () => {
@@ -173,6 +177,8 @@ export default function AdminSchedules() {
 
         const newPresets = await fetchPresets();
         setPresets(newPresets);
+
+        alert('Preset saved')
     }
 
     const handleRemoveShift = async (s_id) => {
@@ -384,7 +390,7 @@ export default function AdminSchedules() {
                             </tbody>
                         </table>
 
-                        <div className="flex flex-center mt-7 mb-3">
+                        <div className="flex flex-center mt-7 mb-3" id="select-week">
                             <div className="flex flex-center">
                                 <div className="mr-3 pointer" onClick={() => handlePreviousWeek()}>
                                     <em className="text-3">Previous&nbsp;week</em>
@@ -393,12 +399,14 @@ export default function AdminSchedules() {
                                         <i className="fas fa-angle-double-left"></i>
                                     </p>
                                 </div>
-                                <div>
+                                <div className="relative">
                                     <input
                                         type="date"
                                         value={new Date(dateISO).toISOString().split('T')[0]}
-                                        onChange={({ target }) => getDatesOfTheWeek(target.value)}
+                                        // Creating a new date obj with yyyy-mm-dd rolls back one day so create with year, month, and date
+                                        onChange={({ target }) => getDatesOfTheWeek(new Date(target.value.split('-'[0], target.value.split('-')[1], target.value.split('-')[2])))}
                                     />
+                                    <div className="absolute">&nbsp;</div>
                                 </div>
                                 <div className="ml-3 pointer" onClick={() => handleNextWeek()}>
                                     <em className="text-3">Next&nbsp;week</em>

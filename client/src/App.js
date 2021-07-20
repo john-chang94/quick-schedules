@@ -14,6 +14,7 @@ import AdminEmployees from './components/admin/employees';
 import AdminEmployee from './components/admin/employee';
 import AdminNewEmployee from './components/admin/newEmployee';
 import AdminSchedules from './components/admin/schedules';
+import AdminRequests from './components/admin/requests';
 
 import UserHome from './components/user/home';
 
@@ -46,6 +47,7 @@ function App() {
               <Route path={ROUTES.ADMIN_NEW_EMPLOYEE} component={AdminNewEmployee} />
               <Route path={ROUTES.ADMIN_EMPLOYEE} component={AdminEmployee} />
               <Route path={ROUTES.ADMIN_SCHEDULES} component={AdminSchedules} />
+              <Route path={ROUTES.ADMIN_REQUESTS} component={AdminRequests} />
 
               <Route path={ROUTES.USER_HOME} component={UserHome} />
             </Switch>

@@ -51,7 +51,6 @@ exports.getRequestsByUserAndDate = async (req, res) => {
     }
 }
 
-// Admins only
 // Get requests by current date and later
 exports.getRequestsByDateAndLater = async (req, res) => {
     try {
@@ -96,7 +95,6 @@ exports.deleteRequestDays = async (req, res) => {
     }
 }
 
-// Admins only
 exports.editRequestStatus = async (req, res) => {
     try {
         const { r_id } = req.params;

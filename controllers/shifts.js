@@ -1,6 +1,5 @@
 const client = require('../config/db');
 
-// Admins only
 exports.createShift = async (req, res) => {
     try {
         const { u_id, shift_start, shift_end } = req.body;
@@ -17,7 +16,6 @@ exports.createShift = async (req, res) => {
     }
 }
 
-// Admins only
 exports.editShift = async (req, res) => {
     try {
         const { s_id } = req.params;
@@ -39,7 +37,6 @@ exports.editShift = async (req, res) => {
     }
 }
 
-// Admins only
 exports.deleteShift = async (req, res) => {
     try {
         const { s_id } = req.params;

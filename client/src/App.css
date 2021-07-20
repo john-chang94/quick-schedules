@@ -27,6 +27,12 @@ nav {
   align-items: center;
 }
 
+#select-week .relative .absolute {
+  top: 0;
+  width: 85%;
+  height: 100%;
+}
+
 /* SPACING STYLES */
 
 .m-1 {
@@ -916,8 +922,18 @@ select {
   justify-content: space-evenly;
 }
 
+/* POSITION STYLES */
+
 .inline-block {
   display: inline-block;
+}
+
+.relative {
+  position: relative;
+}
+
+.absolute {
+  position: absolute;
 }
 
 /* BORDER STYLES */

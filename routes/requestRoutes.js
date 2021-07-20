@@ -5,8 +5,8 @@ const { authorizeToken, isAdmin } = require('../middlewares');
 
 router.post('/requests', authorizeToken, createRequest);
 router.post('/request_days', authorizeToken, addRequestDays);
-router.get('/requests/:u_id/:date', authorizeToken, getRequestsByUserAndDate);
-router.get('/requests/:date', authorizeToken, isAdmin, getRequestsByDateAndLater);
+router.get('/requests/:u_id/:date', getRequestsByUserAndDate);
+router.get('/requests/:date', isAdmin, getRequestsByDateAndLater);
 router.put('/requests/:r_id', authorizeToken, isAdmin, editRequestStatus);
 router.delete('/requests/:r_id', authorizeToken, deleteRequest);
 router.delete('/request_days/:r_id', authorizeToken, deleteRequestDays);
