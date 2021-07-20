@@ -5,6 +5,7 @@ import { isAuthenticated } from '../../services/auth';
 import { createPreset, fetchPresets, fetchTimes } from '../../services/presets';
 import { createShift, fetchAllUsersSchedulesByDate, deleteShift, updateShift } from '../../services/shifts';
 import { fetchAllUsersAvailabilities } from '../../services/users';
+import { startOfToday, startOfWeek, endOfWeek, addWeeks, subWeeks } from 'date-fns';
 import Loader from 'react-loader-spinner';
 
 export default function AdminSchedules() {
@@ -17,7 +18,7 @@ export default function AdminSchedules() {
     const [isUpdating, setIsUpdating] = useState(false);
 
     // Used for datepicker
-    const [dateISO, setDateISO] = useState(new Date())
+    const [dateISO, setDateISO] = useState(startOfToday())
     // Used for fetching data within dates in ISO string
     const [startDate, setStartDate] = useState('');
     const [endDate, setEndDate] = useState('');
@@ -33,35 +34,29 @@ export default function AdminSchedules() {
     const getDatesOfTheWeek = async (selectedDate) => {
         let date;
         if (selectedDate) {
-            date = new Date(selectedDate);
+            date = startOfWeek(new Date(selectedDate), { weekStartsOn: 1 });
             setDateISO(selectedDate);
         }
         else {
-            date = new Date();
+            date = startOfWeek(new Date(), { weekStartsOn: 1 });
         }
 
-        // Get Monday of the week, getDate returns 1-31, getDay returns 0-6
-        const mondayOfTheWeek = date.getDate() - date.getDay() + (date.getDay() === 0 ? -6 : 1);
-        // Assign date for Monday of the week to firstDate, setDate requires 1-31
-        const firstDate = new Date(date.setDate(mondayOfTheWeek));
-        const lastDate = new Date(date.setDate(mondayOfTheWeek + 6));
-
         let daysArray = [];
-        let dateToAdd = new Date(date.setDate(firstDate.getDate()));
+        let dateToAdd = date;
 
         for (let i = 0; i < 7; i++) {
             daysArray.push(dateToAdd.toISOString());
             dateToAdd = new Date(dateToAdd.setDate(dateToAdd.getDate() + 1));
         }
 
-        const startDate = new Date(firstDate.getFullYear(), firstDate.getMonth(), firstDate.getDate()).toISOString();
-        const endDate = new Date(lastDate.getFullYear(), lastDate.getMonth(), lastDate.getDate()).toISOString();
+        const startDate = date.toISOString();
+        const endDate = endOfWeek(date).toISOString();
 
         setDays(daysArray);
         setStartDate(startDate);
         setEndDate(endDate);
 
-        // Refresh schedules after date change
+        // // Refresh schedules after date change
         const users = await fetchAllUsersSchedulesByDate(startDate, endDate);
         setUsers(users);
     }
@@ -140,14 +135,13 @@ export default function AdminSchedules() {
     }
 
     const handlePreviousWeek = () => {
-        // Create a new date object to set the date backwards
-        let date = new Date(dateISO.setDate(dateISO.getDate() - 7));
+        let date = subWeeks(new Date(dateISO), 1);
         setDateISO(date);
         getDatesOfTheWeek(date);
     }
 
     const handleNextWeek = () => {
-        let date = new Date(dateISO.setDate(dateISO.getDate() + 7));
+        let date = addWeeks(new Date(dateISO), 1);
         setDateISO(date);
         getDatesOfTheWeek(date);
     }
