@@ -2,7 +2,7 @@ const client = require('../config/db');
 
 exports.createRequest = async (req, res) => {
     try {
-        const { u_id, requested_at, notes } = req.body;
+        const { u_id, requested_at, notes, requested_dates } = req.body;
 
         const addRequest = await client.query(
             `INSERT INTO requests (u_id, requested_at, notes)
@@ -10,22 +10,16 @@ exports.createRequest = async (req, res) => {
             [u_id, requested_at, notes]
         )
 
-        res.status(201).json({ r_id: addRequest.rows[0].r_id });
-    } catch (err) {
-        res.status(500).send(err.message);
-    }
-}
-
-// Run after createRequest with the returned r_id
-exports.addRequestDays = async (req, res) => {
-    try {
-        const { r_id, requested_date } = req.body;
-
-        const addRequestDays = await client.query(
-            `INSERT INTO request_days (r_id, requested_date)
-            VALUES ($1, $2)`,
-            [r_id, requested_date]
-        )
+        // Add requested dates after creating request
+        if (addRequest.rows) {
+            for (let i = 0; i < requested_dates.length; i++) {
+                const addRequestDays = await client.query(
+                    `INSERT INTO request_days (r_id, requested_date)
+                    VALUES ($1, $2)`,
+                    [addRequest.rows[0].r_id, requested_dates[i]]
+                )
+            }
+        }
 
         res.status(201).json({ success: true });
     } catch (err) {

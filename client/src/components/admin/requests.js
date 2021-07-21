@@ -1,12 +1,26 @@
 import { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import * as ROUTES from '../../constants/routes';
-import { fetchAllRequests } from '../../services/requests';
+import { fetchAllRequests, updateRequestStatus } from '../../services/requests';
 import Loader from 'react-loader-spinner';
+import { isAuthenticated } from '../../services/auth';
 
 export default function AdminRequests() {
     const [requests, setRequests] = useState(null);
     const [isLoading, setIsLoading] = useState(true);
+    const [isUpdating, setIsUpdating] = useState(false);
+
+    const handleUpdateRequestStatus = async (r_id, status) => {
+        const update = window.confirm('Confirm decision?');
+        if (update) {
+            setIsUpdating(true);
+            const tokenConfig = isAuthenticated();
+    
+            await updateRequestStatus(r_id, status, tokenConfig);
+            setIsUpdating(false);
+            // INCOMPLETE
+        }
+    }
 
     useEffect(() => {
         async function getRequests() {
@@ -37,6 +51,10 @@ export default function AdminRequests() {
                     : requests && requests.map((request, r_i) => (
                         <div key={r_i}>
                             <div className="mx-2">
+                                <p><strong>Status</strong></p>
+                                <em>{request.status}</em>
+                            </div>
+                            <div className="mx-2">
                                 <strong>{request.first_name} {request.last_name}</strong>
                                 <p>{request.title}</p>
                             </div>
@@ -64,8 +82,18 @@ export default function AdminRequests() {
                                 <p>{request.notes}</p>
                             </div>
                             <div className="mx-4">
-                                <button className="btn-med btn-hovered pointer-no-u">Approve</button>
-                                <button className="btn-med btn-hovered ml-7 pointer-no-u">Deny</button>
+                                <button
+                                    className="btn-med btn-hovered pointer-no-u"
+                                    onClick={() => handleUpdateRequestStatus(request.r_id, 'Approved')}
+                                >
+                                    Approve
+                                </button>
+                                <button
+                                    className="btn-med btn-hovered ml-7 pointer-no-u"
+                                    onClick={() => handleUpdateRequestStatus(request.r_id, 'Denied')}
+                                >
+                                    Deny
+                                </button>
                             </div>
                             <hr className="mx-4" />
                         </div>

@@ -802,45 +802,45 @@ nav {
 .btn-x-sm {
   width: 45px;
   border-radius: 5px;
-  box-shadow: 0 3px 10px rgb(210, 210, 210);
+  box-shadow: 0 3px 10px rgb(215, 215, 215);
   padding: 5px 0;
-  border: none;
+  border: 1px solid lightgray;
   font-size: 14px;
 }
 
 .btn-sm {
   width: 75px;
   border-radius: 5px;
-  box-shadow: 0 4px 8px rgb(210, 210, 210);
+  box-shadow: 0 4px 8px rgb(215, 215, 215);
   padding: 4px 0;
-  border: none;
+  border: 1px solid lightgray;
   font-size: 14px;
 }
 
 .btn-med {
   width: 100px;
   border-radius: 5px;
-  box-shadow: 0 4px 8px rgb(210, 210, 210);
+  box-shadow: 0 4px 8px rgb(215, 215, 215);
   padding: 5px 0;
-  border: none;
+  border: 1px solid lightgray;
   font-size: 14px;
 }
 
 .btn-lg {
   width: 125px;
   border-radius: 5px;
-  box-shadow: 0 4px 8px rgb(210, 210, 210);
+  box-shadow: 0 4px 8px rgb(215, 215, 215);
   padding: 5px 0;
-  border: none;
+  border: 1px solid lightgray;
   font-size: 14px;
 }
 
 .btn-x-lg {
   width: 150px;
   border-radius: 5px;
-  box-shadow: 0 4px 8px rgb(210, 210, 210);
+  box-shadow: 0 4px 8px rgb(215, 215, 215);
   padding: 6px 0;
-  border: none;
+  border: 1px solid lightgray;
   font-size: 14px;
 }
 
