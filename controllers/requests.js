@@ -19,12 +19,12 @@ exports.createRequest = async (req, res) => {
 // Run after createRequest with the returned r_id
 exports.addRequestDays = async (req, res) => {
     try {
-        const { u_id, r_id, date } = req.body;
+        const { r_id, requested_date } = req.body;
 
         const addRequestDays = await client.query(
-            `INSERT INTO request_days (u_id, r_id, requested_date)
-            VALUES ($1, $2, $3)`,
-            [u_id, r_id, date]
+            `INSERT INTO request_days (r_id, requested_date)
+            VALUES ($1, $2)`,
+            [r_id, requested_date]
         )
 
         res.status(201).json({ success: true });
@@ -51,13 +51,27 @@ exports.getRequestsByUserAndDate = async (req, res) => {
     }
 }
 
-// Get requests by current date and later
-exports.getRequestsByDateAndLater = async (req, res) => {
+exports.getAllRequests = async (req, res) => {
     try {
         const { date } = req.params;
 
         // Get all requests
-        const requests = await client.query('SELECT * FROM requests WHERE date >= $1', [date]);
+        const requests = await client.query(
+            `SELECT u.u_id, first_name, last_name, title, r.r_id, requested_at, notes, status,
+                array_agg(rd.requested_date) AS requested_dates
+            FROM roles JOIN users AS u
+                ON roles.role_id = u.role_id
+            JOIN requests AS r
+                ON u.u_id = r.u_id
+            JOIN
+            (
+                SELECT r_id, requested_date
+                FROM request_days
+                ORDER BY requested_date
+            ) AS rd
+            ON r.r_id = rd.r_id
+            GROUP BY u.u_id, roles.title, first_name, last_name, r.r_id, rd.r_id`
+        );
 
         if (!requests.rows.length) return res.status(404).send('No records found');
 

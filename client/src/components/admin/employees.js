@@ -10,7 +10,7 @@ export default function AdminEmployees() {
     const history = useHistory();
     const [users, setUsers] = useState(null);
     const [width, setWidth] = useState(null);
-    const [isLoading, setIsLoading] = useState(false);
+    const [isLoading, setIsLoading] = useState(true);
 
     const handleClickUser = (u_id) => {
         history.push(`${ROUTES.ADMIN_EMPLOYEES}/${u_id}`);
@@ -25,7 +25,6 @@ export default function AdminEmployees() {
     }
 
     useEffect(() => {
-        setIsLoading(true);
         async function getUsers() {
             const tokenConfig = isAuthenticated();
             const users = await fetchAllUsers(tokenConfig);

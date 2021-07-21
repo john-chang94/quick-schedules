@@ -1,6 +1,7 @@
 const client = require('../config/db');
 const bcrypt = require('bcrypt');
 
+// Need to fix between dates
 exports.getAllUsers = async (req, res) => {
     try {
         const users = await client.query(
@@ -95,6 +96,7 @@ exports.editUserPassword = async (req, res) => {
     }
 }
 
+// Need to fix between dates
 exports.editUserSystem = async (req, res) => {
     try {
         const { u_id } = req.params;
@@ -116,6 +118,7 @@ exports.editUserSystem = async (req, res) => {
     }
 }
 
+// Need to fix between dates
 exports.deleteUser = async (req, res) => {
     try {
         const { u_id } = req.params;
@@ -131,6 +134,7 @@ exports.deleteUser = async (req, res) => {
     }
 }
 
+// Need to fix between dates
 exports.addAdvailability = async (req, res) => {
     try {
         const { u_id, mon, tue, wed, thur, fri, sat, sun } = req.body;
@@ -147,6 +151,7 @@ exports.addAdvailability = async (req, res) => {
     }
 }
 
+// Need to fix between dates
 exports.editAvailability = async (req, res) => {
     try {
         const { u_id } = req.params;
@@ -172,6 +177,7 @@ exports.editAvailability = async (req, res) => {
     }
 }
 
+// Need to fix between dates
 exports.editAvailabilityNotes = async (req, res) => {
     try {
         const { u_id } = req.params;
@@ -216,6 +222,7 @@ exports.getAllUsersAndAvailability = async (req, res) => {
     }
 }
 
+// Need to fix between dates
 exports.getUserAvailabilityAndRequests = async (req, res) => {
     try {
         const { u_id, week_start, week_end } = req.params;

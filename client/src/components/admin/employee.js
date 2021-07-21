@@ -16,7 +16,7 @@ export default function AdminEmployee() {
     const [roles, setRoles] = useState(null);
     const [error, setError] = useState('');
     const [success, setSuccess] = useState('');
-    const [isLoading, setIsLoading] = useState(false);
+    const [isLoading, setIsLoading] = useState(true);
 
     const [first_name, setFirstName] = useState('');
     const [last_name, setLastName] = useState('');
@@ -267,7 +267,6 @@ export default function AdminEmployee() {
     )
 
     useEffect(() => {
-        setIsLoading(true);
         async function getData() {
             const tokenConfig = isAuthenticated();
 
