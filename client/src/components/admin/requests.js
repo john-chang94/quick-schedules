@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import * as ROUTES from '../../constants/routes';
-import { fetchAllRequests, updateRequestStatus } from '../../services/requests';
+import { fetchAllRequestByStatus, fetchAllRequests, updateRequestStatus } from '../../services/requests';
 import Loader from 'react-loader-spinner';
 import { isAuthenticated } from '../../services/auth';
 
@@ -9,7 +9,7 @@ export default function AdminRequests() {
     const [requests, setRequests] = useState(null);
     const [isLoading, setIsLoading] = useState(true);
     const [isUpdating, setIsUpdating] = useState(false);
-    const [sortedBy, setSortedBy] = useState('All');
+    const [status, setStatus] = useState('All');
 
     const handleUpdateRequestStatus = async (r_id, status) => {
         const update = window.confirm('Confirm decision?');
@@ -23,6 +23,21 @@ export default function AdminRequests() {
 
             setRequests(requests);
             setIsUpdating(false);
+        }
+    }
+
+    const handleSortRequests = async (status) => {
+        setIsLoading(true);
+        if (status === 'All') {
+            const requests = await fetchAllRequests();
+            setRequests(requests);
+            setStatus(status);
+            setIsLoading(false);
+        } else {
+            const requests = await fetchAllRequestByStatus(status);
+            setRequests(requests);
+            setStatus(status);
+            setIsLoading(false);
         }
     }
 
@@ -44,13 +59,38 @@ export default function AdminRequests() {
                 </Link>
             </div>
 
-            <div className="text-center mt-4">
-                <div className="flex justify-center">
-                    <div className="flex justify-evenly w-9">
-                        <button className="border-solid-1 border-oval px-5 py-1 bg-light-gray-hovered">All</button>
-                        <button className="border-solid-1 border-oval px-5 py-1 bg-light-gray-hovered">Pending</button>
-                        <button className="border-solid-1 border-oval px-5 py-1 bg-light-gray-hovered">Approved</button>
-                        <button className="border-solid-1 border-oval px-5 py-1 bg-light-gray-hovered">Denied</button>
+            <div className="mt-4">
+                <div className="flex flex-col align-center">
+                    <p className="mb-2">View by</p>
+                    <div className="w-50 lg-w-60 med-w-80 grid gap-2 xs-w-90 col-xl-4-3fr sm-2-6fr">
+                        <button
+                            className={`border-solid-1 border-oval py-1 bg-light-gray-hovered w-90 sm-w-60 grid-center
+                                ${status === 'All' && 'bg-light-gray'}`}
+                            onClick={() => handleSortRequests('All')}
+                        >
+                            All
+                        </button>
+                        <button
+                            className={`border-solid-1 border-oval py-1 bg-light-gray-hovered w-90 sm-w-60 grid-center
+                                ${status === 'Pending' && 'bg-light-gray'}`}
+                            onClick={() => handleSortRequests('Pending')}
+                        >
+                            Pending
+                        </button>
+                        <button
+                            className={`border-solid-1 border-oval py-1 bg-light-gray-hovered w-90 sm-w-60 grid-center
+                                ${status === 'Approved' && 'bg-light-gray'}`}
+                            onClick={() => handleSortRequests('Approved')}
+                        >
+                            Approved
+                        </button>
+                        <button
+                            className={`border-solid-1 border-oval py-1 bg-light-gray-hovered w-90 sm-w-60 grid-center
+                                ${status === 'Denied' && 'bg-light-gray'}`}
+                            onClick={() => handleSortRequests('Denied')}
+                        >
+                            Denied
+                        </button>
                     </div>
                 </div>
                 {
@@ -63,7 +103,7 @@ export default function AdminRequests() {
                         </div>
                         : <div className="mt-2 flex flex-col align-center">
                             {
-                                requests && requests.map((request, r_i) => (
+                                requests.length ? requests.map((request, r_i) => (
                                     <div key={r_i} className="my-2 border-solid-1 border-smooth box-shadow text-center w-50 lg-w-60 med-w-80 xs-w-90">
                                         <div className="my-2">
                                             <p><strong>Status</strong></p>
@@ -114,6 +154,7 @@ export default function AdminRequests() {
                                         </div>
                                     </div>
                                 ))
+                                    : null
                             }
                         </div>
                 }

@@ -49,7 +49,6 @@ exports.getAllRequests = async (req, res) => {
     try {
         const { date } = req.params;
 
-        // Get all requests
         const requests = await client.query(
             `SELECT u.u_id, first_name, last_name, title, r.r_id, requested_at, notes, status,
                 array_agg(rd.requested_date) AS requested_dates
@@ -68,6 +67,38 @@ exports.getAllRequests = async (req, res) => {
             ORDER BY requested_at DESC`
         );
 
+        if (!requests.rows.length) return res.status(404).send('No records found');
+
+        res.status(200).send(requests.rows);
+    } catch (err) {
+        res.status(500).send(err.message);
+    }
+}
+
+exports.getAllRequestsByStatus = async (req, res) => {
+    try {
+        const { status } = req.params;
+
+        const requests = await client.query(
+            `SELECT u.u_id, first_name, last_name, title, r.r_id, requested_at, notes, status,
+                array_agg(rd.requested_date) AS requested_dates
+            FROM roles JOIN users AS u
+                ON roles.role_id = u.role_id
+            JOIN requests AS r
+                ON u.u_id = r.u_id
+            JOIN
+            (
+                SELECT r_id, requested_date
+                FROM request_days
+                ORDER BY requested_date
+            ) AS rd
+            ON r.r_id = rd.r_id
+            WHERE status = $1
+            GROUP BY u.u_id, roles.title, first_name, last_name, r.r_id, rd.r_id
+            ORDER BY requested_at DESC`,
+            [status]
+        );
+        
         if (!requests.rows.length) return res.status(404).send('No records found');
 
         res.status(200).send(requests.rows);

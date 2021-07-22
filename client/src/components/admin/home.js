@@ -3,7 +3,7 @@ import * as ROUTES from '../../constants/routes';
 
 export default function AdminHome() {
     return (
-        <div className="home">
+        <div id="home" className="grid gap-2 col-xl-4-3fr lg-2-6fr sm-1-12fr">
             <Link to={ROUTES.ADMIN_EMPLOYEES} className="black text-no-u">
                 <div className="border-solid-1 border-smooth box-shadow py-8">
                     <div className="flex flex-col flex-center">
