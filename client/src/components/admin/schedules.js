@@ -228,7 +228,7 @@ export default function AdminSchedules() {
                     }
                 </select>
             </div>
-            <hr className="mx-1" />
+            <hr className="my-1" />
             <div className="flex justify-evenly mb-1">
                 <p className="text-3">Start</p>
                 <select
@@ -263,14 +263,14 @@ export default function AdminSchedules() {
             </div>
             {
                 isUpdating ?
-                    <div className="mx-1">
+                    <div className="my-1">
                         <Loader
                             type='Oval'
                             color='rgb(50, 110, 150)'
                             height={35}
                         />
                     </div>
-                    : <div className="mx-2 w-100 flex justify-evenly">
+                    : <div className="my-2 w-100 flex justify-evenly">
                         <button
                             className="btn-x-sm btn-hovered bg-green off-white"
                             onClick={() => handleSaveShift(u_id, dayIndex, shift.s_id)}
@@ -302,7 +302,7 @@ export default function AdminSchedules() {
         <td
             key={a_i}
             // Keep bg color black if employee is 'NA' for availability
-            className={`border-y text-vw nowrap pointer h-10 ${time === 'NA' ? 'bg-black' : 'bg-light-gray-hovered'}`}
+            className={`border-x text-vw nowrap pointer h-10 ${time === 'NA' ? 'bg-black' : 'bg-light-gray-hovered'}`}
             onClick={() => handleUserClick(u_id, a_i)}
         ></td>
     )
@@ -310,7 +310,7 @@ export default function AdminSchedules() {
     const renderShift = (u_id, a_i, shift_start, shift_end) => (
         <td
             key={a_i}
-            className="border-y text-vw nowrap pointer h-10 bg-light-gray-hovered"
+            className="border-x text-vw nowrap pointer h-10 bg-light-gray-hovered"
             onClick={() => handleEditShift(u_id, a_i, getTimeValue(shift_start), getTimeValue(shift_end))}
         >
             {getTime(shift_start)} -&nbsp;
@@ -377,11 +377,11 @@ export default function AdminSchedules() {
                                                 ? { backgroundColor: 'rgb(235, 235, 235)' }
                                                 : { backgroundColor: 'rbg(255, 255, 255)' }}
                                         >
-                                            <td className="text-vw nowrap px-1">{user.title}</td>
-                                            <td className="text-vw nowrap px-1">{user.first_name} {user.last_name}</td>
+                                            <td className="text-vw nowrap py-1">{user.title}</td>
+                                            <td className="text-vw nowrap py-1">{user.first_name} {user.last_name}</td>
                                             {
                                                 user.availability.map((time, i) => (
-                                                    <td key={i} className={`text-vw nowrap px-1 ${time === 'NA' && 'bg-black'}`}>{time}</td>
+                                                    <td key={i} className={`text-vw nowrap py-1 ${time === 'NA' && 'bg-black'}`}>{time}</td>
                                                 ))
                                             }
                                         </tr>
@@ -438,8 +438,8 @@ export default function AdminSchedules() {
                                             key={u_i}
                                             className="bg-x-light-gray border-bottom"
                                         >
-                                            <td className="border-y text-vw nowrap">{user.title}</td>
-                                            <td className="border-y text-vw nowrap">{user.first_name} {user.last_name}</td>
+                                            <td className="border-x text-vw nowrap">{user.title}</td>
+                                            <td className="border-x text-vw nowrap">{user.first_name} {user.last_name}</td>
                                             {
                                                 user.availability.map((time, a_i) => (
                                                     // Only render edit mode for the selected date and employee

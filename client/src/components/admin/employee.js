@@ -87,7 +87,7 @@ export default function AdminEmployee() {
     }
 
     const renderUserGeneral = () => (
-        <div style={{ height: '200px' }} className="mx-2 flex flex-col justify-evenly">
+        <div style={{ height: '200px' }} className="my-2 flex flex-col justify-evenly">
             <div>
                 <h4>Name</h4>
                 <p>{user.first_name} {user.last_name}</p>
@@ -107,7 +107,7 @@ export default function AdminEmployee() {
     )
 
     const renderUserInfo = () => (
-        <div style={{ height: '250px' }} className="mx-2 flex flex-col justify-evenly">
+        <div style={{ height: '250px' }} className="my-2 flex flex-col justify-evenly">
             <div>
                 <h4>Role</h4>
                 <p>{user.title}</p>
@@ -137,7 +137,7 @@ export default function AdminEmployee() {
     )
 
     const renderEditGeneral = () => (
-        <div style={{ height: '330px' }} className="mx-2 flex flex-col justify-evenly">
+        <div style={{ height: '330px' }} className="my-2 flex flex-col justify-evenly">
             <div>
                 <p>First Name</p>
                 <input
@@ -182,7 +182,7 @@ export default function AdminEmployee() {
     )
 
     const renderEditInfo = () => (
-        <div style={{ height: '280px' }} className="mx-2 flex flex-col justify-evenly">
+        <div style={{ height: '270px' }} className="my-2 flex flex-col justify-evenly">
             <div>
                 <p>Role</p>
                 <select defaultValue={user.role_id} onChange={({ target }) => setRoleId(parseInt(target.value))}>

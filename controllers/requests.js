@@ -64,7 +64,8 @@ exports.getAllRequests = async (req, res) => {
                 ORDER BY requested_date
             ) AS rd
             ON r.r_id = rd.r_id
-            GROUP BY u.u_id, roles.title, first_name, last_name, r.r_id, rd.r_id`
+            GROUP BY u.u_id, roles.title, first_name, last_name, r.r_id, rd.r_id
+            ORDER BY requested_at DESC`
         );
 
         if (!requests.rows.length) return res.status(404).send('No records found');
@@ -110,7 +111,7 @@ exports.editRequestStatus = async (req, res) => {
 
         const editRequest = await client.query(
             `UPDATE requests
-            SET status = $1,
+            SET status = $1
             WHERE r_id = $2`,
             [status, r_id]
         )
