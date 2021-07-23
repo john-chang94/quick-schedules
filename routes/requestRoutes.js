@@ -1,7 +1,7 @@
 const express = require('express');
 const router = express.Router();
 const { createRequest, getRequestsByUserAndDate, getAllRequests, editRequestStatus, deleteRequest, deleteRequestDays, getAllRequestsByStatus } = require('../controllers/requests');
-const { authorizeToken, isAdmin } = require('../middlewares');
+const { authorizeToken } = require('../middlewares');
 
 router.post('/requests', authorizeToken, createRequest);
 router.get('/requests', getAllRequests);

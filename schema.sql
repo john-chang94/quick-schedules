@@ -75,8 +75,12 @@ CREATE TABLE shifts (
 
 CREATE TABLE store (
     store_id SERIAL PRIMARY KEY,
-    store_open INT,
-    store_close INT
+    store_open VARCHAR(25),
+    store_close VARCHAR(25),
+    store_open_value VARCHAR(25),
+    store_close_value VARCHAR(25),
+    store_open_level DECIMAL,
+    store_close_level DECIMAL
 );
 
 INSERT INTO roles (title)

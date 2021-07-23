@@ -1,6 +1,6 @@
 const express = require('express');
 const router = express.Router();
-const { authorizeToken, isAdmin } = require('../middlewares');
+const { authorizeToken } = require('../middlewares');
 const {
     getUserById,
     getAllUsers,
@@ -15,16 +15,16 @@ const {
     getAllUsersAndAvailability,
 } = require('../controllers/users');
 
-router.get('/users', authorizeToken, isAdmin, getAllUsers);
+router.get('/users', authorizeToken, getAllUsers);
 router.get('/users/:u_id', authorizeToken, getUserById);
 router.put('/users/:u_id', authorizeToken, editUserGeneral);
 router.put('/users/reset-pw/:u_id', authorizeToken, editUserPassword);
-router.put('/users/system/:u_id', authorizeToken, isAdmin, editUserSystem);
-router.delete('/users/:u_id', authorizeToken, isAdmin, deleteUser);
-router.post('/users/availability', authorizeToken, isAdmin, addAdvailability);
-router.put('/users/availability/:u_id', authorizeToken, isAdmin, editAvailability);
-router.put('/users/availability/notes/:u_id', authorizeToken, isAdmin, editAvailabilityNotes);
+router.put('/users/system/:u_id', authorizeToken, editUserSystem);
+router.delete('/users/:u_id', authorizeToken, deleteUser);
+router.post('/users/availability', authorizeToken, addAdvailability);
+router.put('/users/availability/:u_id', authorizeToken, editAvailability);
+router.put('/users/availability/notes/:u_id', authorizeToken, editAvailabilityNotes);
 router.get('/users/availability/all', getAllUsersAndAvailability);
-router.get('/users/availability/requests/:u_id/:week_start/:week_end', authorizeToken, isAdmin, getUserAvailabilityAndRequests);
+router.get('/users/availability/requests/:u_id/:week_start/:week_end', authorizeToken, getUserAvailabilityAndRequests);
 
 module.exports = router;

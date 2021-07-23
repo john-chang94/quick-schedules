@@ -164,6 +164,7 @@ export default function AdminSchedules() {
         }
         for (let i = 0; i < times.length; i++) {
             if (shift_start_value === times[i].value) {
+                // Assign only start time level for sorting when displayed in the list
                 level = times[i].level;
                 shift_start = times[i].time;
             }
