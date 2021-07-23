@@ -33,6 +33,15 @@ nav {
   height: 100%;
 }
 
+#manage-presets .absolute {
+  top: 0;
+  opacity: 0;
+}
+
+#manage-presets .absolute:hover {
+  opacity: 100%;
+}
+
 /* SPACING STYLES */
 
 .m-1 {
@@ -593,6 +602,10 @@ nav {
   background-color: rgb(200, 200, 200);
 }
 
+.bg-x-light-gray-hovered:hover {
+  background-color: rgb(230, 230, 230);
+}
+
 .bg-red {
   background-color: red;
 }
@@ -1011,8 +1024,6 @@ select {
 .box-shadow {
   box-shadow: 0 4px 8px rgb(220, 220, 220);
 }
-
-/* CARD STYLES */
 
 /* GRID STYLES */
 

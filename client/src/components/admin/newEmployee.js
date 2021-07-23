@@ -9,7 +9,7 @@ export default function AdminNewEmployee() {
     const [roles, setRoles] = useState(null);
     const [error, setError] = useState('');
 
-    const [role_id, setRoleId] = useState('');
+    const [role_id, setRoleId] = useState(6);
     const [first_name, setFirstName] = useState('');
     const [last_name, setLastName] = useState('');
     const [email, setEmail] = useState('');
@@ -85,7 +85,7 @@ export default function AdminNewEmployee() {
                 </div>
                 <div>
                     <p>Role</p>
-                    <select onChange={({ target }) => setRoleId(parseInt(target.value))}>
+                    <select value={role_id} onChange={({ target }) => setRoleId(parseInt(target.value))}>
                         {
                             roles && roles.map((role, i) => (
                                 <option

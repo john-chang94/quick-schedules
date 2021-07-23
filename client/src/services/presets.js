@@ -26,3 +26,12 @@ export const fetchPresets = async () => {
         return { error: err.response.data };
     }
 }
+
+export const deletePreset = async (p_id, tokenConfig) => {
+    try {
+        const res = await axios.delete(`http://localhost:5000/presets/${p_id}`, tokenConfig);
+        return res.data;
+    } catch (err) {
+        return { error: err.response.data };
+    }
+}

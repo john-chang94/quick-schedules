@@ -8,13 +8,11 @@ import { isAuthenticated } from '../../services/auth';
 export default function AdminRequests() {
     const [requests, setRequests] = useState(null);
     const [isLoading, setIsLoading] = useState(true);
-    const [isUpdating, setIsUpdating] = useState(false);
     const [status, setStatus] = useState('All');
 
     const handleUpdateRequestStatus = async (r_id, status) => {
         const update = window.confirm('Confirm decision?');
         if (update) {
-            setIsUpdating(true);
             const tokenConfig = isAuthenticated();
             const body = { status };
 
@@ -22,7 +20,6 @@ export default function AdminRequests() {
             const requests = await fetchAllRequests();
 
             setRequests(requests);
-            setIsUpdating(false);
         }
     }
 
@@ -64,28 +61,28 @@ export default function AdminRequests() {
                     <p className="mb-2">View by</p>
                     <div className="w-50 lg-w-60 med-w-80 grid gap-2 xs-w-90 col-xl-4-3fr sm-2-6fr">
                         <button
-                            className={`border-solid-1 border-oval py-1 bg-light-gray-hovered w-90 sm-w-60 grid-center
+                            className={`border-solid-1 border-oval pointer-no-u py-1 bg-light-gray-hovered w-90 sm-w-60 grid-center
                                 ${status === 'All' && 'bg-light-gray'}`}
                             onClick={() => handleSortRequests('All')}
                         >
                             All
                         </button>
                         <button
-                            className={`border-solid-1 border-oval py-1 bg-light-gray-hovered w-90 sm-w-60 grid-center
+                            className={`border-solid-1 border-oval pointer-no-u py-1 bg-light-gray-hovered w-90 sm-w-60 grid-center
                                 ${status === 'Pending' && 'bg-light-gray'}`}
                             onClick={() => handleSortRequests('Pending')}
                         >
                             Pending
                         </button>
                         <button
-                            className={`border-solid-1 border-oval py-1 bg-light-gray-hovered w-90 sm-w-60 grid-center
+                            className={`border-solid-1 border-oval pointer-no-u py-1 bg-light-gray-hovered w-90 sm-w-60 grid-center
                                 ${status === 'Approved' && 'bg-light-gray'}`}
                             onClick={() => handleSortRequests('Approved')}
                         >
                             Approved
                         </button>
                         <button
-                            className={`border-solid-1 border-oval py-1 bg-light-gray-hovered w-90 sm-w-60 grid-center
+                            className={`border-solid-1 border-oval pointer-no-u py-1 bg-light-gray-hovered w-90 sm-w-60 grid-center
                                 ${status === 'Denied' && 'bg-light-gray'}`}
                             onClick={() => handleSortRequests('Denied')}
                         >
