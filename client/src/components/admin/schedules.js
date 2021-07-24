@@ -3,9 +3,9 @@ import { Link } from 'react-router-dom';
 import * as ROUTES from '../../constants/routes';
 import { isAuthenticated } from '../../services/auth';
 import { createPreset, fetchPresets, fetchTimes } from '../../services/presets';
-import { createShift, fetchAllUsersSchedulesByDate, deleteShift, updateShift } from '../../services/shifts';
+import { createShift, fetchAllUsersSchedulesByDate, deleteShift, updateShift, createCopyOfWeeklySchedule } from '../../services/shifts';
 import { fetchAllUsersAvailabilities } from '../../services/users';
-import { startOfToday, startOfWeek, addWeeks, subWeeks } from 'date-fns';
+import { startOfToday, startOfWeek, addWeeks, subWeeks, parseISO } from 'date-fns';
 import Loader from 'react-loader-spinner';
 
 export default function AdminSchedules() {
@@ -20,8 +20,8 @@ export default function AdminSchedules() {
     // Used for datepicker
     const [dateISO, setDateISO] = useState(startOfToday())
     // Used for fetching data within dates in ISO string
-    const [startDate, setStartDate] = useState('');
-    const [endDate, setEndDate] = useState('');
+    const [weekStart, setWeekStart] = useState('');
+    const [weekEnd, setWeekEnd] = useState('');
     // Used for getting time values when saving a shift
     const [shift_start_value, setShiftStartValue] = useState('0 0');
     const [shift_end_value, setShiftEndValue] = useState('0 0');
@@ -48,16 +48,17 @@ export default function AdminSchedules() {
             dateToAdd = new Date(dateToAdd.setDate(dateToAdd.getDate() + 1));
         }
 
-        const startDate = daysArray[0];
-        const endDate = daysArray[6];
+        const weekStart = daysArray[0];
+        const weekEnd = daysArray[6];
 
         setDays(daysArray);
-        setStartDate(startDate);
-        setEndDate(endDate);
+        setWeekStart(weekStart);
+        setWeekEnd(weekEnd);
 
-        // // Refresh schedules after date change
-        const users = await fetchAllUsersSchedulesByDate(startDate, endDate);
+        // Refresh schedules after date change
+        const users = await fetchAllUsersSchedulesByDate(weekStart, weekEnd);
         setUsers(users);
+        console.log(`users`, users)
     }
 
     // Can create or update shift based on s_id being provided
@@ -98,12 +99,33 @@ export default function AdminSchedules() {
             await createShift(body, tokenConfig);
         }
 
-        const users = await fetchAllUsersSchedulesByDate(startDate, endDate);
+        const users = await fetchAllUsersSchedulesByDate(weekStart, weekEnd);
         setUsers(users);
 
         setUserData('');
         setAvailabilityIndex('');
         setIsUpdating(false);
+    }
+
+    const handleCopyWeeklySchedule = async () => {
+        let shifts = [];
+        for (let i = 0; i < users.length; i++) {
+            for (let j = 0; j < users[i].shifts.length; j++) {
+                if (users[i].shifts[j].shift_end !== null) {
+                    let shift = {
+                        u_id: users[i].u_id,
+                        shift_start: addWeeks(parseISO(users[i].shifts[j].shift_start), 1),
+                        shift_end: addWeeks(parseISO(users[i].shifts[j].shift_end), 1)
+                    }
+                    shifts.push(shift);
+                }
+            }
+        }
+
+        const body = { shifts, weekStart, weekEnd, willOverwrite: false };
+        console.log(`body`, body)
+        const res = await createCopyOfWeeklySchedule(body);
+        console.log(`res`, res)
     }
 
     const handleCancelShift = () => {
@@ -189,7 +211,7 @@ export default function AdminSchedules() {
             setIsUpdating(true);
             await deleteShift(s_id, tokenConfig);
 
-            const users = await fetchAllUsersSchedulesByDate(startDate, endDate);
+            const users = await fetchAllUsersSchedulesByDate(weekStart, weekEnd);
             setUsers(users);
             setUserData('');
             setAvailabilityIndex('');
@@ -353,6 +375,11 @@ export default function AdminSchedules() {
                     </div>
                     : <div>
                         <h3 className="text-center">Availability</h3>
+
+
+                        <button onClick={() => handleCopyWeeklySchedule()}>TEST</button>
+
+
                         <table id="availability-table" style={{ tableLayout: 'fixed' }} className="border-collapse w-100 text-center">
                             <thead>
                                 <tr className="border-bottom">

@@ -9,6 +9,15 @@ export const createShift = async (body, tokenConfig) => {
     }
 }
 
+export const createCopyOfWeeklySchedule = async (body) => {
+    try {
+        const res = await axios.post('http://localhost:5000/shifts/copy', body);
+        return res.data;
+    } catch (err) {
+        return { error: err.response.data };
+    }
+}
+
 export const fetchShiftsByDate = async (start_date, end_date) => {
     try {
         const res = await axios.get(`http://localhost:5000/shifts/${start_date}/${end_date}`);
