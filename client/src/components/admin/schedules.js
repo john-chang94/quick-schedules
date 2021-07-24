@@ -122,10 +122,15 @@ export default function AdminSchedules() {
             }
         }
 
-        const body = { shifts, weekStart, weekEnd, willOverwrite: false };
-        console.log(`body`, body)
-        const res = await createCopyOfWeeklySchedule(body);
-        console.log(`res`, res)
+        const body = {
+            shifts,
+            weekStart: addWeeks(parseISO(weekStart), 1),
+            weekEnd: addWeeks(parseISO(weekEnd), 1) 
+        };
+
+        await createCopyOfWeeklySchedule(body);
+        const updated = await fetchAllUsersSchedulesByDate(weekStart, weekEnd);
+        setUsers(updated);
     }
 
     const handleCancelShift = () => {

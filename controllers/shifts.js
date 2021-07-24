@@ -18,9 +18,8 @@ exports.createShift = async (req, res) => {
 
 exports.copyWeeklySchedule = async (req, res) => {
     try {
-        const { shifts, weekStart, weekEnd, willOverwrite } = req.body;
+        const { shifts, weekStart, weekEnd } = req.body;
 
-        if (willOverwrite) {
             const deleteShifts = await client.query(
                 `DELETE FROM shifts
                 WHERE shift_start::date >= $1 AND
@@ -28,49 +27,15 @@ exports.copyWeeklySchedule = async (req, res) => {
                 [weekStart, weekEnd]
             )
 
-            let arr = []
             for (let i = 0; i < shifts.length; i++) {
-                // const shift = await client.query(
-                //     `INSERT INTO shifts (u_id, shift_start, shift_end)
-                //     VALUES ($1, $2, $3)`,
-                //     [shifts[i].u_id, shifts[i].shift_start, shifts[i].shift_end]
-                // )
-                arr.push(shifts[i]);
+                const shift = await client.query(
+                    `INSERT INTO shifts (u_id, shift_start, shift_end)
+                    VALUES ($1, $2, $3)`,
+                    [shifts[i].u_id, shifts[i].shift_start, shifts[i].shift_end]
+                )
             }
 
-            // return res.status(201).json({ success: true });
-        } else {
-            const foundShifts = await client.query(
-                `SELECT * FROM shifts
-                WHERE shift_start::date >= $1 AND
-                    shift_start::date <= $2
-                ORDER BY shift_start`,
-                [weekStart, weekEnd]
-            )
-
-            if (foundShifts.rows.length) {
-                let arr = []
-                for (let i = 0; i < shifts.length; i++) {
-                    for (let j = 0; j < foundShifts.rows.length; j++) {
-                        console.log(new Date(shifts[i].shift_start).toISOString().split('T')[0] === new Date(foundShifts.rows[j].shift_start).toISOString().split('T')[0])
-                        if (new Date(shifts[i].shift_start).toISOString().split('T')[0] === new Date(foundShifts.rows[j].shift_start).toISOString().split('T')[0]) {
-                            console.log('CONTINUE')
-                            continue;
-                        } else {
-                            // const shift = await client.query(
-                            //     `INSERT INTO shifts (u_id, shift_start, shift_end)
-                            //     VALUES ($1, $2, $3)`,
-                            //     [shifts[i].u_id, shifts[i].shift_start, shifts[i].shift_end]
-                            // )
-                            arr.push(shifts[i]);
-                        }
-                    }
-                }
-                // console.log(`arr`, arr)
-            }
-
-            // return res.status(201).json({ success: true });
-        }
+            return res.status(201).json({ success: true });
 
     } catch (err) {
         res.status(500).send(err.message);
