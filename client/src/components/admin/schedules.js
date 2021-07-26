@@ -5,7 +5,7 @@ import { isAuthenticated } from '../../services/auth';
 import { createPreset, fetchPresets, fetchTimes } from '../../services/presets';
 import { createShift, fetchAllUsersSchedulesByDate, deleteShift, updateShift, createCopyOfWeeklySchedule } from '../../services/shifts';
 import { fetchAllUsersAvailabilities } from '../../services/users';
-import { startOfToday, startOfWeek, addWeeks, subWeeks, parseISO } from 'date-fns';
+import { startOfToday, startOfWeek, addWeeks, subWeeks, parseISO, format } from 'date-fns';
 import Loader from 'react-loader-spinner';
 
 export default function AdminSchedules() {
@@ -58,7 +58,6 @@ export default function AdminSchedules() {
         // Refresh schedules after date change
         const users = await fetchAllUsersSchedulesByDate(weekStart, weekEnd);
         setUsers(users);
-        console.log(`users`, users)
     }
 
     // Can create or update shift based on s_id being provided
@@ -114,8 +113,8 @@ export default function AdminSchedules() {
                 if (users[i].shifts[j].shift_end !== null) {
                     let shift = {
                         u_id: users[i].u_id,
-                        shift_start: addWeeks(parseISO(users[i].shifts[j].shift_start), 1),
-                        shift_end: addWeeks(parseISO(users[i].shifts[j].shift_end), 1)
+                        shift_start: format(addWeeks(parseISO(users[i].shifts[j].shift_start), 1), "yyyy-MM-dd'T'HH:mm:ss"),
+                        shift_end: format(addWeeks(parseISO(users[i].shifts[j].shift_end), 1), "yyyy-MM-dd'T'HH:mm:ss")
                     }
                     shifts.push(shift);
                 }
