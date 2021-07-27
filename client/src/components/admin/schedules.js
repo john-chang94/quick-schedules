@@ -16,6 +16,7 @@ export default function AdminSchedules() {
     const [presets, setPresets] = useState(null);
     const [isLoading, setIsLoading] = useState(true);
     const [isUpdating, setIsUpdating] = useState(false);
+    const [isCopying, setIsCopying] = useState(false);
 
     // Used for datepicker
     const [dateISO, setDateISO] = useState(startOfToday())
@@ -107,29 +108,35 @@ export default function AdminSchedules() {
     }
 
     const handleCopyWeeklySchedule = async () => {
-        let shifts = [];
-        for (let i = 0; i < users.length; i++) {
-            for (let j = 0; j < users[i].shifts.length; j++) {
-                if (users[i].shifts[j].shift_end !== null) {
-                    let shift = {
-                        u_id: users[i].u_id,
-                        shift_start: format(addWeeks(parseISO(users[i].shifts[j].shift_start), 1), "yyyy-MM-dd'T'HH:mm:ss"),
-                        shift_end: format(addWeeks(parseISO(users[i].shifts[j].shift_end), 1), "yyyy-MM-dd'T'HH:mm:ss")
+        const doCopy = window.confirm('Copy schedule to next week?');
+        if (doCopy) {
+            setIsCopying(true);
+
+            let shifts = [];
+            for (let i = 0; i < users.length; i++) {
+                for (let j = 0; j < users[i].shifts.length; j++) {
+                    if (users[i].shifts[j].shift_end !== null) {
+                        let shift = {
+                            u_id: users[i].u_id,
+                            shift_start: format(addWeeks(parseISO(users[i].shifts[j].shift_start), 1), "yyyy-MM-dd'T'HH:mm:ss"),
+                            shift_end: format(addWeeks(parseISO(users[i].shifts[j].shift_end), 1), "yyyy-MM-dd'T'HH:mm:ss")
+                        }
+                        shifts.push(shift);
                     }
-                    shifts.push(shift);
                 }
             }
+
+            const body = {
+                shifts,
+                weekStart: addWeeks(parseISO(weekStart), 1),
+                weekEnd: addWeeks(parseISO(weekEnd), 1)
+            };
+
+            await createCopyOfWeeklySchedule(body);
+            const updated = await fetchAllUsersSchedulesByDate(weekStart, weekEnd);
+            setUsers(updated);
+            setIsCopying(false);
         }
-
-        const body = {
-            shifts,
-            weekStart: addWeeks(parseISO(weekStart), 1),
-            weekEnd: addWeeks(parseISO(weekEnd), 1) 
-        };
-
-        await createCopyOfWeeklySchedule(body);
-        const updated = await fetchAllUsersSchedulesByDate(weekStart, weekEnd);
-        setUsers(updated);
     }
 
     const handleCancelShift = () => {
@@ -161,7 +168,7 @@ export default function AdminSchedules() {
         setUserData('');
         setAvailabilityIndex('');
     }
-    
+
     const handleNextWeek = () => {
         let date = addWeeks(new Date(dateISO), 1);
         setDateISO(date);
@@ -169,7 +176,7 @@ export default function AdminSchedules() {
         setUserData('');
         setAvailabilityIndex('');
     }
-    
+
     const handleSelectPreset = (shiftValue) => {
         if (!shiftValue) return;
         setShiftStartValue(shiftValue.split('-')[0]);
@@ -379,11 +386,6 @@ export default function AdminSchedules() {
                     </div>
                     : <div>
                         <h3 className="text-center">Availability</h3>
-
-
-                        <button onClick={() => handleCopyWeeklySchedule()}>TEST</button>
-
-
                         <table id="availability-table" style={{ tableLayout: 'fixed' }} className="border-collapse w-100 text-center">
                             <thead>
                                 <tr className="border-bottom">
@@ -424,14 +426,14 @@ export default function AdminSchedules() {
 
                         <div className="flex flex-center mt-7 mb-3" id="select-week">
                             <div className="flex flex-center">
-                                <div className="mr-3 pointer" onClick={() => handlePreviousWeek()}>
+                                <div className="pointer" onClick={() => handlePreviousWeek()}>
                                     <em className="text-3">Previous&nbsp;week</em>
                                     <p className="text-center">
                                         <i className="fas fa-angle-double-left"></i>
                                         <i className="fas fa-angle-double-left"></i>
                                     </p>
                                 </div>
-                                <div className="relative">
+                                <div className="relative mx-3">
                                     <input
                                         type="date"
                                         value={new Date(dateISO).toISOString().split('T')[0]}
@@ -440,7 +442,7 @@ export default function AdminSchedules() {
                                     />
                                     <div className="absolute">&nbsp;</div>
                                 </div>
-                                <div className="ml-3 pointer" onClick={() => handleNextWeek()}>
+                                <div className="pointer" onClick={() => handleNextWeek()}>
                                     <em className="text-3">Next&nbsp;week</em>
                                     <p className="text-center">
                                         <i className="fas fa-angle-double-right"></i>
@@ -448,6 +450,24 @@ export default function AdminSchedules() {
                                     </p>
                                 </div>
                             </div>
+                        </div>
+
+                        <div className="text-center mt-2 mb-4">
+                            <button
+                                className="btn-x-lg btn-hovered"
+                                onClick={() => handleCopyWeeklySchedule()}
+                                disabled={isCopying}
+                            >
+                                {
+                                    isCopying
+                                        ? <Loader
+                                            type='Oval'
+                                            color='rgb(50, 110, 150)'
+                                            height={25}
+                                        />
+                                        : `Copy to Next Week`
+                                }
+                            </button>
                         </div>
 
                         <table style={{ tableLayout: 'fixed' }} className="w-100 mt-1 border-collapse text-center">
