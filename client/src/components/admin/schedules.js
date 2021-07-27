@@ -108,7 +108,7 @@ export default function AdminSchedules() {
     }
 
     const handleCopyWeeklySchedule = async () => {
-        const doCopy = window.confirm('Copy schedule to next week?');
+        const doCopy = window.confirm('Copy schedule to next week? Any shifts already saved will be overwritten.');
         if (doCopy) {
             setIsCopying(true);
 
@@ -241,6 +241,140 @@ export default function AdminSchedules() {
     const getTime = (shift) => {
         return new Date(shift).toLocaleTimeString().replace(':00 ', ' ');
     }
+
+    const renderAvailability = () => (
+        <>
+            <h3 className="text-center">Availability</h3>
+            <table id="availability-table" style={{ tableLayout: 'fixed' }} className="border-collapse w-100 text-center">
+                <thead>
+                    <tr className="border-bottom">
+                        <th className="text-vw pt-2 pb-1">Role</th>
+                        <th className="text-vw pt-2 pb-1">Name</th>
+                        {
+                            // Render the day only
+                            days && days.map((day, i) => (
+                                <th key={i} className="text-vw pt-2 pb-1">
+                                    <p>{new Date(day).toString().split(' ')[0]}</p>
+                                </th>
+                            ))
+                        }
+                    </tr>
+                </thead>
+                <tbody>
+                    {
+                        availabilities && availabilities.map((user, i) => (
+                            <tr
+                                key={i}
+                                className="border-bottom"
+                                style={i % 2 === 0
+                                    ? { backgroundColor: 'rgb(235, 235, 235)' }
+                                    : { backgroundColor: 'rbg(255, 255, 255)' }}
+                            >
+                                <td className="text-vw nowrap py-1">{user.title}</td>
+                                <td className="text-vw nowrap py-1">{user.first_name} {user.last_name}</td>
+                                {
+                                    user.availability.map((time, i) => (
+                                        <td key={i} className={`text-vw nowrap py-1 ${time === 'NA' && 'bg-black'}`}>{time}</td>
+                                    ))
+                                }
+                            </tr>
+                        ))
+                    }
+                </tbody>
+            </table>
+        </>
+    )
+
+    const renderNavigation = () => (
+        <>
+            <div className="flex flex-center mt-7 mb-3" id="select-week">
+                <div className="flex flex-center">
+                    <div className="pointer" onClick={() => handlePreviousWeek()}>
+                        <em className="text-3">Previous&nbsp;week</em>
+                        <p className="text-center">
+                            <i className="fas fa-angle-double-left"></i>
+                            <i className="fas fa-angle-double-left"></i>
+                        </p>
+                    </div>
+                    <div className="relative mx-3">
+                        <input
+                            type="date"
+                            value={new Date(dateISO).toISOString().split('T')[0]}
+                            // Creating a new date obj with yyyy-mm-dd rolls back one day so create with year, month, and date
+                            onChange={({ target }) => getDatesOfTheWeek(new Date(target.value.split('-'[0], target.value.split('-')[1], target.value.split('-')[2])))}
+                        />
+                        <div className="absolute">&nbsp;</div>
+                    </div>
+                    <div className="pointer" onClick={() => handleNextWeek()}>
+                        <em className="text-3">Next&nbsp;week</em>
+                        <p className="text-center">
+                            <i className="fas fa-angle-double-right"></i>
+                            <i className="fas fa-angle-double-right"></i>
+                        </p>
+                    </div>
+                </div>
+            </div>
+
+            <div className="text-center mt-2 mb-4">
+                <button
+                    className="btn-x-lg btn-hovered"
+                    onClick={() => handleCopyWeeklySchedule()}
+                    disabled={isCopying}
+                >
+                    {
+                        isCopying
+                            ? <Loader
+                                type='Oval'
+                                color='rgb(50, 110, 150)'
+                                height={25}
+                            />
+                            : `Copy to Next Week`
+                    }
+                </button>
+            </div>
+        </>
+    )
+
+    const renderSchedule = () => (
+        <table style={{ tableLayout: 'fixed' }} className="w-100 mt-1 border-collapse text-center">
+            <tbody>
+                <tr className="border-bottom">
+                    <td className="text-vw"><strong>Role</strong></td>
+                    <td className="text-vw"><strong>Name</strong></td>
+                    {
+                        days && days.map((day, i) => (
+                            <td className="text-vw" key={i}>
+                                <strong>{new Date(day).toString().split(' ')[0]}</strong>
+                                <p><em>{new Date(day).toLocaleDateString()}</em></p>
+                            </td>
+                        ))
+                    }
+                </tr>
+                {
+                    users && users.map((user, u_i) => (
+                        <tr
+                            key={u_i}
+                            className="bg-x-light-gray border-bottom"
+                        >
+                            <td className="border-x text-vw nowrap">{user.title}</td>
+                            <td className="border-x text-vw nowrap">{user.first_name} {user.last_name}</td>
+                            {
+                                user.availability.map((time, a_i) => (
+                                    // Only render edit mode for the selected date and employee
+                                    (userData === user.u_id && availabilityIndex === a_i)
+                                        ? renderEditShift(user.u_id, a_i, user.shifts[a_i])
+                                        // Render shifts if they exist during the selected week
+                                        : user.shifts[a_i].shift_end === null
+                                            ? renderBlank(user.u_id, a_i, time)
+                                            : renderShift(user.u_id, a_i, user.shifts[a_i].shift_start, user.shifts[a_i].shift_end)
+                                ))
+                            }
+                        </tr>
+                    ))
+                }
+            </tbody>
+        </table>
+    )
 
     const renderEditShift = (u_id, dayIndex, shift) => (
         <td key={dayIndex}>
@@ -385,129 +519,9 @@ export default function AdminSchedules() {
                         />
                     </div>
                     : <div>
-                        <h3 className="text-center">Availability</h3>
-                        <table id="availability-table" style={{ tableLayout: 'fixed' }} className="border-collapse w-100 text-center">
-                            <thead>
-                                <tr className="border-bottom">
-                                    <th className="text-vw pt-2 pb-1">Role</th>
-                                    <th className="text-vw pt-2 pb-1">Name</th>
-                                    {
-                                        // Render the day only
-                                        days && days.map((day, i) => (
-                                            <th key={i} className="text-vw pt-2 pb-1">
-                                                <p>{new Date(day).toString().split(' ')[0]}</p>
-                                            </th>
-                                        ))
-                                    }
-                                </tr>
-                            </thead>
-                            <tbody>
-                                {
-                                    availabilities && availabilities.map((user, i) => (
-                                        <tr
-                                            key={i}
-                                            className="border-bottom"
-                                            style={i % 2 === 0
-                                                ? { backgroundColor: 'rgb(235, 235, 235)' }
-                                                : { backgroundColor: 'rbg(255, 255, 255)' }}
-                                        >
-                                            <td className="text-vw nowrap py-1">{user.title}</td>
-                                            <td className="text-vw nowrap py-1">{user.first_name} {user.last_name}</td>
-                                            {
-                                                user.availability.map((time, i) => (
-                                                    <td key={i} className={`text-vw nowrap py-1 ${time === 'NA' && 'bg-black'}`}>{time}</td>
-                                                ))
-                                            }
-                                        </tr>
-                                    ))
-                                }
-                            </tbody>
-                        </table>
-
-                        <div className="flex flex-center mt-7 mb-3" id="select-week">
-                            <div className="flex flex-center">
-                                <div className="pointer" onClick={() => handlePreviousWeek()}>
-                                    <em className="text-3">Previous&nbsp;week</em>
-                                    <p className="text-center">
-                                        <i className="fas fa-angle-double-left"></i>
-                                        <i className="fas fa-angle-double-left"></i>
-                                    </p>
-                                </div>
-                                <div className="relative mx-3">
-                                    <input
-                                        type="date"
-                                        value={new Date(dateISO).toISOString().split('T')[0]}
-                                        // Creating a new date obj with yyyy-mm-dd rolls back one day so create with year, month, and date
-                                        onChange={({ target }) => getDatesOfTheWeek(new Date(target.value.split('-'[0], target.value.split('-')[1], target.value.split('-')[2])))}
-                                    />
-                                    <div className="absolute">&nbsp;</div>
-                                </div>
-                                <div className="pointer" onClick={() => handleNextWeek()}>
-                                    <em className="text-3">Next&nbsp;week</em>
-                                    <p className="text-center">
-                                        <i className="fas fa-angle-double-right"></i>
-                                        <i className="fas fa-angle-double-right"></i>
-                                    </p>
-                                </div>
-                            </div>
-                        </div>
-
-                        <div className="text-center mt-2 mb-4">
-                            <button
-                                className="btn-x-lg btn-hovered"
-                                onClick={() => handleCopyWeeklySchedule()}
-                                disabled={isCopying}
-                            >
-                                {
-                                    isCopying
-                                        ? <Loader
-                                            type='Oval'
-                                            color='rgb(50, 110, 150)'
-                                            height={25}
-                                        />
-                                        : `Copy to Next Week`
-                                }
-                            </button>
-                        </div>
-
-                        <table style={{ tableLayout: 'fixed' }} className="w-100 mt-1 border-collapse text-center">
-                            <tbody>
-                                <tr className="border-bottom">
-                                    <td className="text-vw"><strong>Role</strong></td>
-                                    <td className="text-vw"><strong>Name</strong></td>
-                                    {
-                                        days && days.map((day, i) => (
-                                            <td className="text-vw" key={i}>
-                                                <strong>{new Date(day).toString().split(' ')[0]}</strong>
-                                                <p><em>{new Date(day).toLocaleDateString()}</em></p>
-                                            </td>
-                                        ))
-                                    }
-                                </tr>
-                                {
-                                    users && users.map((user, u_i) => (
-                                        <tr
-                                            key={u_i}
-                                            className="bg-x-light-gray border-bottom"
-                                        >
-                                            <td className="border-x text-vw nowrap">{user.title}</td>
-                                            <td className="border-x text-vw nowrap">{user.first_name} {user.last_name}</td>
-                                            {
-                                                user.availability.map((time, a_i) => (
-                                                    // Only render edit mode for the selected date and employee
-                                                    (userData === user.u_id && availabilityIndex === a_i)
-                                                        ? renderEditShift(user.u_id, a_i, user.shifts[a_i])
-                                                        // Render shifts if they exist during the selected week
-                                                        : user.shifts[a_i].shift_end === null
-                                                            ? renderBlank(user.u_id, a_i, time)
-                                                            : renderShift(user.u_id, a_i, user.shifts[a_i].shift_start, user.shifts[a_i].shift_end)
-                                                ))
-                                            }
-                                        </tr>
-                                    ))
-                                }
-                            </tbody>
-                        </table>
+                        {renderAvailability()}
+                        {renderNavigation()}
+                        {renderSchedule()}
                     </div>
             }
         </div>
