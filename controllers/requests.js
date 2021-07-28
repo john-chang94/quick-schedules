@@ -107,6 +107,42 @@ exports.getAllRequestsByStatus = async (req, res) => {
     }
 }
 
+exports.getAllRequestsByStatusAndDate = async (req, res) => {
+    try {
+        const { status, weekStart, weekEnd } = req.params;
+
+        const requests = await client.query(
+            `SELECT *
+                FROM
+                    (
+                        SELECT u.u_id, u.first_name, u.last_name, r.status,
+                            array_agg(rd.requested_date) AS requested_dates
+                        FROM users AS u
+                        JOIN requests AS r
+                            ON u.u_id = r.u_id
+                        JOIN request_days AS rd
+                            ON r.r_id = rd.r_id
+                        GROUP BY u.u_id, r.status
+                    ) AS nested
+                WHERE nested.status = $1
+                    AND EXISTS
+                        (
+                            SELECT * FROM
+                            unnest(nested.requested_dates) AS req_day
+                            WHERE req_day::date >= $2
+                                AND req_day::date <= $3
+                        )`,
+            [status, weekStart, weekEnd]
+        )
+
+        if (!requests.rows.length) return res.status(404).send('No records found');
+
+        res.status(200).send(requests.rows);
+    } catch (err) {
+        res.status(500).send(err.message);
+    }
+}
+
 // Run after dependent request days are deleted first
 exports.deleteRequest = async (req, res) => {
     try {
