@@ -9,9 +9,18 @@ export const fetchAllRequests = async () => {
     }
 }
 
-export const fetchAllRequestByStatus = async (status) => {
+export const fetchAllRequestsByStatus = async (status) => {
     try {
         const res = await axios.get(`http://localhost:5000/requests/${status}`);
+        return res.data;
+    } catch (err) {
+        return { error: err.response.data };
+    }
+}
+
+export const fetchAllRequestsByStatusAndDate = async (status, weekStart, weekEnd) => {
+    try {
+        const res = await axios.get(`http://localhost:5000/requests/${status}/${weekStart}/${weekEnd}`);
         return res.data;
     } catch (err) {
         return { error: err.response.data };

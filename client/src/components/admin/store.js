@@ -74,16 +74,19 @@ export default function AdminStore() {
     }
 
     const handleDeletePreset = async (p_id) => {
-        setIsUpdating(true);
-        setUpdatingId(p_id);
-
-        const tokenConfig = isAuthenticated();
-        await deletePreset(p_id, tokenConfig);
-        const presets = await fetchPresets();
-
-        setPresets(presets);
-        setIsUpdating(false);
-        setUpdatingId('');
+        const doDelete = window.confirm('Delete preset?');
+        if (doDelete) {
+            setIsUpdating(true);
+            setUpdatingId(p_id);
+    
+            const tokenConfig = isAuthenticated();
+            await deletePreset(p_id, tokenConfig);
+            const presets = await fetchPresets();
+    
+            setPresets(presets);
+            setIsUpdating(false);
+            setUpdatingId('');
+        }
     }
 
     const renderStoreHours = () => (
@@ -125,7 +128,7 @@ export default function AdminStore() {
 
     const renderPresets = () => (
         <div>
-            <h3 className="my-3">Manage presets</h3>
+            <h3 className="my-2">Manage presets</h3>
             {
                 presets && presets.map((preset, i) => (
                     isUpdating && updatingId === preset.p_id
@@ -195,7 +198,7 @@ export default function AdminStore() {
                         </div>
                         : <div className="flex justify-center">
                             <div className="text-center border-solid-1 border-smooth box-shadow w-50 med-w-70 sm-w-80 xs-w-90">
-                                <h3 className="my-3">Store Hours</h3>
+                                <h3 className="my-2">Store Hours</h3>
                                 {
                                     showEditHours
                                         ? renderStoreHours()
@@ -205,7 +208,7 @@ export default function AdminStore() {
                                                     ? <p className="my-2">{store_open.toString()} - {store_close.toString()}</p>
                                                     : <p className="my-2">N/A</p>
                                             }
-                                            <button className="btn-med btn-hovered mt-1 mb-3" onClick={() => setShowEditHours(true)}>Edit</button>
+                                            <button className="btn-med btn-hovered mt-1 mb-2" onClick={() => setShowEditHours(true)}>Edit</button>
                                         </div>
                                 }
 

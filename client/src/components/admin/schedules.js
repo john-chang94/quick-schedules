@@ -7,11 +7,13 @@ import { createShift, fetchAllUsersSchedulesByDate, deleteShift, updateShift, cr
 import { fetchAllUsersAvailabilities } from '../../services/users';
 import { startOfToday, startOfWeek, addWeeks, subWeeks, parseISO, format } from 'date-fns';
 import Loader from 'react-loader-spinner';
+import { fetchAllRequestsByStatusAndDate } from '../../services/requests';
 
 export default function AdminSchedules() {
-    const [availabilities, setAvailabilities] = useState([]);
+    const [availabilities, setAvailabilities] = useState(null);
     const [users, setUsers] = useState(null);
-    const [days, setDays] = useState([]);
+    const [requests, setRequests] = useState(null);
+    const [days, setDays] = useState(null);
     const [times, setTimes] = useState(null);
     const [presets, setPresets] = useState(null);
     const [isLoading, setIsLoading] = useState(true);
@@ -58,7 +60,9 @@ export default function AdminSchedules() {
 
         // Refresh schedules after date change
         const users = await fetchAllUsersSchedulesByDate(weekStart, weekEnd);
+        const requests = await fetchAllRequestsByStatusAndDate('Approved', weekStart, weekEnd);
         setUsers(users);
+        setRequests(requests);
     }
 
     // Can create or update shift based on s_id being provided
@@ -331,6 +335,31 @@ export default function AdminSchedules() {
                             : `Copy to Next Week`
                     }
                 </button>
+            </div>
+
+            <div className="text-center my-2">
+                <strong>Approved Requests</strong>
+                {
+                    requests.length
+                        ? requests.map((request, i) => (
+                            <div key={i}>
+                                <p>
+                                    {request.first_name} {request.last_name}:
+                                    {request.requested_dates.map((date, r_i) => (
+                                        <span key={r_i}>
+                                            &nbsp;
+                                            {
+                                                r_i === request.requested_dates.length - 1
+                                                    ? new Date(date).toLocaleDateString()
+                                                    : `${new Date(date).toLocaleDateString()},`
+                                            }
+                                        </span>
+                                    ))}
+                                </p>
+                            </div>
+                        ))
+                        : <p>N/A</p>
+                }
             </div>
         </>
     )

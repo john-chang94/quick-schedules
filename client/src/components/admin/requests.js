@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import * as ROUTES from '../../constants/routes';
-import { fetchAllRequestByStatus, fetchAllRequests, updateRequestStatus } from '../../services/requests';
+import { fetchAllRequestsByStatus, fetchAllRequests, updateRequestStatus } from '../../services/requests';
 import Loader from 'react-loader-spinner';
 import { isAuthenticated } from '../../services/auth';
 
@@ -31,7 +31,7 @@ export default function AdminRequests() {
             setStatus(status);
             setIsLoading(false);
         } else {
-            const requests = await fetchAllRequestByStatus(status);
+            const requests = await fetchAllRequestsByStatus(status);
             setRequests(requests);
             setStatus(status);
             setIsLoading(false);
