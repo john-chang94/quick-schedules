@@ -10,6 +10,7 @@ export default function UserProfile() {
     const { verifiedUser } = useContext(UserContext);
 
     const [isLoading, setIsLoading] = useState(true);
+    const [isUpdating, setIsUpdating] = useState(false);
     const [u_id, setUid] = useState('');
     const [user, setUser] = useState(null);
     const [error, setError] = useState('');
@@ -25,18 +26,17 @@ export default function UserProfile() {
     const [confirm_new_password, setConfirmNewPassword] = useState('');
 
     const [showEditGeneral, setShowEditGeneral] = useState(false);
-    const [showEditInfo, setShowEditInfo] = useState(false);
-
-    const isInvalid = password === '' || new_password === '' || confirm_new_password === '';
 
     const handleUpdatePassword = async (e) => {
         e.preventDefault();
+        setIsUpdating(true);
         const tokenConfig = isAuthenticated();
         const body = { password, new_password, confirm_new_password };
 
         const res = await editPassword(u_id, body, tokenConfig);
         if (res.error) {
             setError(res.error);
+            setIsUpdating(false);
         }
         else {
             setError('');
@@ -44,10 +44,12 @@ export default function UserProfile() {
             setPassword('');
             setNewPassword('');
             setConfirmNewPassword('');
+            setIsUpdating(false);
         }
     }
 
     const handleUpdateUserGeneral = async () => {
+        setIsUpdating(true);
         const tokenConfig = isAuthenticated();
         const body = { first_name, last_name, email, phone };
 
@@ -55,11 +57,13 @@ export default function UserProfile() {
 
         if (res.error) {
             setError(res.error);
+            setIsUpdating(false);
         } else {
             const user = await fetchUser(u_id, tokenConfig);
             setError('');
             setUser(user);
             setShowEditGeneral(false);
+            setIsUpdating(false);
         }
     }
 
@@ -122,8 +126,8 @@ export default function UserProfile() {
                 />
             </div>
             <div>
-                <button className="btn-med btn-hovered" onClick={() => handleUpdateUserGeneral()}>Save</button>
-                <button className="btn-med btn-hovered ml-5" onClick={() => setShowEditGeneral(false)}>Cancel</button>
+                <button className="btn-med btn-hovered" disabled={isUpdating} onClick={() => handleUpdateUserGeneral()}>Save</button>
+                <button className="btn-med btn-hovered ml-5" disabled={isUpdating} onClick={() => setShowEditGeneral(false)}>Cancel</button>
             </div>
         </div>
     )
@@ -161,8 +165,8 @@ export default function UserProfile() {
                 </div>
                 <div>
                     <button
-                        className={`btn-med ${isInvalid ? '' : 'btn-hovered'}`}
-                        disabled={isInvalid}
+                        className={`btn-med ${isUpdating ? '' : 'btn-hovered'}`}
+                        disabled={isUpdating}
                     >
                         Update
                     </button>
@@ -173,22 +177,21 @@ export default function UserProfile() {
 
     useEffect(() => {
         async function getData() {
-            // NEED TO GET U_ID BEFORE MOUNT
-            const user = await fetchUser(verifiedUser.u_id);
-            setUid(user.u_id);
-            setUser(user);
-            setFirstName(user.first_name);
-            setLastName(user.last_name);
-            setEmail(user.email);
-            setPhone(user.phone);
-            setIsLoading(false);
+            // verifiedUser is null on init load so add as dependency and check it again to fetch data
+            if (verifiedUser) {
+                const user = await fetchUser(verifiedUser.u_id);
+                setUid(user.u_id);
+                setUser(user);
+                setFirstName(user.first_name);
+                setLastName(user.last_name);
+                setEmail(user.email);
+                setPhone(user.phone);
+                setIsLoading(false);
+            }
         }
 
-        setTimeout(() => {
-            getData();
-            
-        }, 500);
-    }, [])
+        getData();
+    }, [verifiedUser])
 
     return (
         <div>

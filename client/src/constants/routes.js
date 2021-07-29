@@ -12,4 +12,4 @@ export const USER_HOME = '/user/home';
 export const USER_SCHEDULES = '/user/schedules';
 export const USER_REQUESTS = '/user/requests';
 export const USER_AVAILABILITY = '/user/availability';
-export const USER_PROFILE = '/user/profile/:u_id';
+export const USER_PROFILE = '/user/profile';
