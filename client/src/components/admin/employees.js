@@ -26,8 +26,7 @@ export default function AdminEmployees() {
 
     useEffect(() => {
         async function getUsers() {
-            const tokenConfig = isAuthenticated();
-            const users = await fetchAllUsers(tokenConfig);
+            const users = await fetchAllUsers();
             if (users) setUsers(users);
 
             setIsLoading(false);

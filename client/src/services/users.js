@@ -1,17 +1,17 @@
 import axios from 'axios';
 
-export const fetchAllUsers = async (tokenConfig) => {
+export const fetchAllUsers = async () => {
     try {
-        const res = await axios.get('http://localhost:5000/users', tokenConfig);
+        const res = await axios.get('http://localhost:5000/users');
         return res.data;
     } catch (err) {
         return { error: err.response.data };
     }
 }
 
-export const fetchUser = async (u_id, tokenConfig) => {
+export const fetchUser = async (u_id) => {
     try {
-        const res = await axios.get(`http://localhost:5000/users/${u_id}`, tokenConfig);
+        const res = await axios.get(`http://localhost:5000/users/${u_id}`);
         return res.data;
     } catch (err) {
         return { error: err.response.data };
@@ -45,9 +45,9 @@ export const editUserInfo = async (u_id, body, tokenConfig) => {
     }
 }
 
-export const fetchAllUsersAvailabilities = async (tokenConfig) => {
+export const fetchAllUsersAvailabilities = async () => {
     try {
-        const res = await axios.get('http://localhost:5000/users/availability/all', tokenConfig);
+        const res = await axios.get('http://localhost:5000/users/availability/all');
         return res.data;
     } catch (err) {
         return { error: err.response.data };

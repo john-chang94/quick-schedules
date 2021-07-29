@@ -18,6 +18,7 @@ import AdminRequests from './components/admin/requests';
 import AdminStore from './components/admin/store';
 
 import UserHome from './components/user/home';
+import UserProfile from './components/user/profile';
 
 function App() {
   const { setVerifiedUser } = useContext(UserContext);
@@ -52,6 +53,7 @@ function App() {
               <Route path={ROUTES.ADMIN_STORE} component={AdminStore} />
 
               <Route path={ROUTES.USER_HOME} component={UserHome} />
+              <Route path={ROUTES.USER_PROFILE} component={UserProfile} />
             </Switch>
           </div>
         </Suspense>
