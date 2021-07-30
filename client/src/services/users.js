@@ -45,6 +45,15 @@ export const editUserInfo = async (u_id, body, tokenConfig) => {
     }
 }
 
+export const fetchUserAvailability = async (u_id) => {
+    try {
+        const res = await axios.get(`http://localhost:5000/users/availability/${u_id}`);
+        return res.data;
+    } catch (err) {
+        return { error: err.response.data };
+    }
+}
+
 export const fetchAllUsersAvailabilities = async () => {
     try {
         const res = await axios.get('http://localhost:5000/users/availability/all');

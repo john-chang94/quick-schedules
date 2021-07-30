@@ -96,7 +96,6 @@ exports.editUserPassword = async (req, res) => {
     }
 }
 
-// Need to fix between dates
 exports.editUserSystem = async (req, res) => {
     try {
         const { u_id } = req.params;
@@ -118,7 +117,6 @@ exports.editUserSystem = async (req, res) => {
     }
 }
 
-// Need to fix between dates
 exports.deleteUser = async (req, res) => {
     try {
         const { u_id } = req.params;
@@ -134,7 +132,6 @@ exports.deleteUser = async (req, res) => {
     }
 }
 
-// Need to fix between dates
 exports.addAdvailability = async (req, res) => {
     try {
         const { u_id, mon, tue, wed, thur, fri, sat, sun } = req.body;
@@ -151,7 +148,6 @@ exports.addAdvailability = async (req, res) => {
     }
 }
 
-// Need to fix between dates
 exports.editAvailability = async (req, res) => {
     try {
         const { u_id } = req.params;
@@ -177,7 +173,52 @@ exports.editAvailability = async (req, res) => {
     }
 }
 
-// Need to fix between dates
+exports.getUserAvailability = async (req, res) => {
+    try {
+        const { u_id } = req.params;
+
+        const availability = await client.query(
+            `SELECT json_build_array(
+                json_build_object(
+                    'day', 'Monday',
+                    'time', mon
+                ),
+                json_build_object(
+                    'day', 'Tuesday',
+                    'time', tue
+                ),
+                json_build_object(
+                    'day', 'Wednesday',
+                    'time', wed
+                ),
+                json_build_object(
+                    'day', 'Thursday',
+                    'time', thur
+                ),
+                json_build_object(
+                    'day', 'Friday',
+                    'time', fri
+                ),
+                json_build_object(
+                    'day', 'Saturday',
+                    'time', sat
+                ),
+                json_build_object(
+                    'day', 'Sunday',
+                    'time', sun
+                )
+            ) AS avail
+            FROM availability
+            WHERE u_id = $1`,
+            [u_id]
+            )
+
+        res.status(200).send(availability.rows[0]);
+    } catch (err) {
+        res.status(500).send(err.message);
+    }
+}
+
 exports.editAvailabilityNotes = async (req, res) => {
     try {
         const { u_id } = req.params;

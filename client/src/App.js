@@ -19,6 +19,7 @@ import AdminStore from './components/admin/store';
 
 import UserHome from './components/user/home';
 import UserProfile from './components/user/profile';
+import UserAvailability from './components/user/availability';
 
 function App() {
   const { setVerifiedUser } = useContext(UserContext);
@@ -33,6 +34,7 @@ function App() {
     }
 
     getVerifiedUser();
+    // eslint-disable-next-line
   }, [])
 
   return (
@@ -54,6 +56,7 @@ function App() {
 
               <Route path={ROUTES.USER_HOME} component={UserHome} />
               <Route path={ROUTES.USER_PROFILE} component={UserProfile} />
+              <Route path={ROUTES.USER_AVAILABILITY} component={UserAvailability} />
             </Switch>
           </div>
         </Suspense>

@@ -17,6 +17,7 @@ export default function AdminEmployee() {
     const [error, setError] = useState('');
     const [success, setSuccess] = useState('');
     const [isLoading, setIsLoading] = useState(true);
+    const [isUpdating, setIsUpdating] = useState(false);
 
     const [first_name, setFirstName] = useState('');
     const [last_name, setLastName] = useState('');
@@ -34,10 +35,9 @@ export default function AdminEmployee() {
     const [new_password, setNewPassword] = useState('');
     const [confirm_new_password, setConfirmNewPassword] = useState('');
 
-    const isInvalid = password === '' || new_password === '' || confirm_new_password === '';
-
     const handleUpdatePassword = async (e) => {
         e.preventDefault();
+        setIsUpdating(true);
         const tokenConfig = isAuthenticated();
         const body = { password, new_password, confirm_new_password };
 
@@ -51,10 +51,12 @@ export default function AdminEmployee() {
             setPassword('');
             setNewPassword('');
             setConfirmNewPassword('');
+            setIsUpdating(false);
         }
     }
 
     const handleUpdateUserGeneral = async () => {
+        setIsUpdating(true);
         const tokenConfig = isAuthenticated();
         const body = { first_name, last_name, email, phone };
 
@@ -63,14 +65,16 @@ export default function AdminEmployee() {
         if (res.error) {
             setError(res.error);
         } else {
-            const user = await fetchUser(u_id, tokenConfig);
+            const user = await fetchUser(u_id);
             setError('');
             setUser(user);
             setShowEditGeneral(false);
+            setIsUpdating(false);
         }
     }
 
     const handleUpdateUserInfo = async () => {
+        setIsUpdating(true);
         const tokenConfig = isAuthenticated();
         const body = { role_id, hourly_pay, started_at, updated_at: new Date(Date.now()).toLocaleDateString() };
 
@@ -78,11 +82,13 @@ export default function AdminEmployee() {
 
         if (res.error) {
             setError(res.error);
+            setIsUpdating(false);
         } else {
-            const user = await fetchUser(u_id, tokenConfig);
+            const user = await fetchUser(u_id);
             setError('');
             setUser(user);
             setShowEditInfo(false);
+            setIsUpdating(false);
         }
     }
 
@@ -175,8 +181,8 @@ export default function AdminEmployee() {
                 />
             </div>
             <div>
-                <button className="btn-med btn-hovered" onClick={() => handleUpdateUserGeneral()}>Save</button>
-                <button className="btn-med btn-hovered ml-5" onClick={() => setShowEditGeneral(false)}>Cancel</button>
+                <button className="btn-med btn-hovered" disabled={isUpdating} onClick={() => handleUpdateUserGeneral()}>Save</button>
+                <button className="btn-med btn-hovered ml-5" disabled={isUpdating} onClick={() => setShowEditGeneral(false)}>Cancel</button>
             </div>
         </div>
     )
@@ -217,8 +223,8 @@ export default function AdminEmployee() {
                 />
             </div>
             <div>
-                <button className="btn-med btn-hovered" onClick={() => handleUpdateUserInfo()}>Save</button>
-                <button className="btn-med btn-hovered ml-5" onClick={() => setShowEditInfo(false)}>Cancel</button>
+                <button className="btn-med btn-hovered" disabled={isUpdating} onClick={() => handleUpdateUserInfo()}>Save</button>
+                <button className="btn-med btn-hovered ml-5" disabled={isUpdating} onClick={() => setShowEditInfo(false)}>Cancel</button>
             </div>
         </div>
     )
@@ -256,8 +262,8 @@ export default function AdminEmployee() {
                 </div>
                 <div>
                     <button
-                        className={`btn-med ${isInvalid ? '' : 'btn-hovered'}`}
-                        disabled={isInvalid}
+                        className={`btn-med ${isUpdating ? '' : 'btn-hovered'}`}
+                        disabled={isUpdating}
                     >
                         Update
                     </button>
@@ -282,6 +288,7 @@ export default function AdminEmployee() {
             setIsLoading(false);
         }
         getData();
+        // eslint-disable-next-line
     }, [])
 
     return (

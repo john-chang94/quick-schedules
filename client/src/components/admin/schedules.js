@@ -289,7 +289,7 @@ export default function AdminSchedules() {
         </>
     )
 
-    const renderNavigation = () => (
+    const renderController = () => (
         <>
             <div className="flex flex-center mt-7 mb-3" id="select-week">
                 <div className="flex flex-center">
@@ -319,47 +319,48 @@ export default function AdminSchedules() {
                 </div>
             </div>
 
-            <div className="text-center mt-2 mb-4">
-                <button
-                    className="btn-x-lg btn-hovered"
-                    onClick={() => handleCopyWeeklySchedule()}
-                    disabled={isCopying}
-                >
+            <div className="flex align-center justify-evenly my-3">
+                <div>
+                    <strong>Approved Requests</strong>
                     {
-                        isCopying
-                            ? <Loader
-                                type='Oval'
-                                color='rgb(50, 110, 150)'
-                                height={25}
-                            />
-                            : `Copy to Next Week`
+                        requests.length
+                            ? requests.map((request, i) => (
+                                <div key={i}>
+                                    <p>
+                                        {request.first_name} {request.last_name}:
+                                        {request.requested_dates.map((date, r_i) => (
+                                            <span key={r_i}>
+                                                &nbsp;
+                                                {
+                                                    r_i === request.requested_dates.length - 1
+                                                        ? new Date(date).toLocaleDateString()
+                                                        : `${new Date(date).toLocaleDateString()},`
+                                                }
+                                            </span>
+                                        ))}
+                                    </p>
+                                </div>
+                            ))
+                            : <p className="text-center">N/A</p>
                     }
-                </button>
-            </div>
-
-            <div className="text-center my-2">
-                <strong>Approved Requests</strong>
-                {
-                    requests.length
-                        ? requests.map((request, i) => (
-                            <div key={i}>
-                                <p>
-                                    {request.first_name} {request.last_name}:
-                                    {request.requested_dates.map((date, r_i) => (
-                                        <span key={r_i}>
-                                            &nbsp;
-                                            {
-                                                r_i === request.requested_dates.length - 1
-                                                    ? new Date(date).toLocaleDateString()
-                                                    : `${new Date(date).toLocaleDateString()},`
-                                            }
-                                        </span>
-                                    ))}
-                                </p>
-                            </div>
-                        ))
-                        : <p>N/A</p>
-                }
+                </div>
+                <div>
+                    <button
+                        className="btn-x-lg btn-hovered"
+                        onClick={() => handleCopyWeeklySchedule()}
+                        disabled={isCopying}
+                    >
+                        {
+                            isCopying
+                                ? <Loader
+                                    type='Oval'
+                                    color='rgb(50, 110, 150)'
+                                    height={25}
+                                />
+                                : `Copy to Next Week`
+                        }
+                    </button>
+                </div>
             </div>
         </>
     )
@@ -549,7 +550,7 @@ export default function AdminSchedules() {
                     </div>
                     : <div>
                         {renderAvailability()}
-                        {renderNavigation()}
+                        {renderController()}
                         {renderSchedule()}
                     </div>
             }
