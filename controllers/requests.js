@@ -27,6 +27,35 @@ exports.createRequest = async (req, res) => {
     }
 }
 
+exports.getRequestsByUser = async (req, res) => {
+    try {
+        const { u_id } = req.params;
+
+        const requests = await client.query(
+            `SELECT r.r_id, requested_at, notes, status,
+                array_agg(rd.requested_date) AS requested_dates
+            FROM users AS u
+            JOIN requests AS r
+                ON u.u_id = r.u_id
+            JOIN
+            (
+                SELECT r_id, requested_date
+                FROM request_days
+                ORDER BY requested_date
+            ) AS rd
+            ON r.r_id = rd.r_id
+            WHERE u.u_id = $1
+            GROUP BY r.r_id, rd.r_id
+            ORDER BY requested_at DESC`,
+            [u_id]
+        )
+
+        res.status(200).send(requests.rows);
+    } catch (err) {
+        res.status(500).send(err.message);
+    }
+}
+
 exports.getRequestsByUserAndDate = async (req, res) => {
     try {
         const { u_id, date } = req.params;
@@ -98,7 +127,7 @@ exports.getAllRequestsByStatus = async (req, res) => {
             ORDER BY requested_at DESC`,
             [status]
         );
-        
+
         if (!requests.rows.length) return res.status(404).send('No records found');
 
         res.status(200).send(requests.rows);

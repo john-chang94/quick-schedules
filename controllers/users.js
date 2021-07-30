@@ -173,6 +173,14 @@ exports.editAvailability = async (req, res) => {
     }
 }
 
+// exports.addAdvailability2 = async (req, res) => {
+//     try {
+        
+//     } catch (err) {
+//         res.status(500).send(err.message);
+//     }
+// }
+
 exports.getUserAvailability = async (req, res) => {
     try {
         const { u_id } = req.params;

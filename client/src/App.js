@@ -20,6 +20,7 @@ import AdminStore from './components/admin/store';
 import UserHome from './components/user/home';
 import UserProfile from './components/user/profile';
 import UserAvailability from './components/user/availability';
+import UserRequests from './components/user/requests';
 
 function App() {
   const { setVerifiedUser } = useContext(UserContext);
@@ -57,6 +58,7 @@ function App() {
               <Route path={ROUTES.USER_HOME} component={UserHome} />
               <Route path={ROUTES.USER_PROFILE} component={UserProfile} />
               <Route path={ROUTES.USER_AVAILABILITY} component={UserAvailability} />
+              <Route path={ROUTES.USER_REQUESTS} component={UserRequests} />
             </Switch>
           </div>
         </Suspense>

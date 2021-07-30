@@ -16,9 +16,55 @@ export default function UserAvailability() {
     const [availability, setAvailability] = useState(null);
     const [times, setTimes] = useState(null);
 
-    const handleShowEditAvailability = () => {
+    // const [monStart, setMonStart] = useState('');
+    // const [monEnd, setMonEnd] = useState('');
+    // const [tueStart, setTueStart] = useState('');
+    // const [tueEnd, setTueEnd] = useState('');
+    // const [wedStart, setWedStart] = useState('');
+    // const [wedEnd, setWedEnd] = useState('');
+    // const [thurStart, setThurStart] = useState('');
+    // const [thurEnd, setThurEnd] = useState('');
+    // const [friStart, setFriStart] = useState('');
+    // const [friEnd, setFriEnd] = useState('');
+    // const [satStart, setSatStart] = useState('');
+    // const [satEnd, setSatEnd] = useState('');
+    // const [sunStart, setSunStart] = useState('');
+    // const [sunEnd, setSunEnd] = useState('');
 
-    }
+    // const handleShowEditAvailability = (day, time) => {
+    //     let avail = availability.avail;
+
+    //     for (let i = 0; i < avail.length; i++) {
+    //         if (avail[i].time === 'OPEN') {
+
+    //         }
+    //     }
+    //     switch (day) {
+    //         case 'Monday':
+    //             setMonStart(time.split('-')[0].trim());
+    //             setMonEnd(time.split('-')[1].trim());
+    //         case 'Tuesday':
+    //             setTueStart(time.split('-')[0].trim());
+    //             setTueEnd(time.split('-')[1].trim());
+    //         case 'Wednesday':
+    //             setWedStart(time.split('-')[0].trim());
+    //             setWedEnd(time.split('-')[1].trim());
+    //         case 'Thursday':
+    //             setThurStart(time.split('-')[0].trim());
+    //             setThurEnd(time.split('-')[1].trim());
+    //         case 'Friday':
+    //             setFriStart(time.split('-')[0].trim());
+    //             setFriEnd(time.split('-')[1].trim());
+    //         case 'Saturday':
+    //             setSatStart(time.split('-')[0].trim());
+    //             setSatEnd(time.split('-')[1].trim());
+    //         case 'Sunday':
+    //             setSunStart(time.split('-')[0].trim());
+    //             setSunEnd(time.split('-')[1].trim());
+    //         default:
+    //             return;
+    //     }
+    // }
 
     const renderAvailability = () => (
         <div className="flex flex-col align-center mt-4">
@@ -34,7 +80,7 @@ export default function UserAvailability() {
                     }
                 </div>
                 <div>
-                    <button className="btn-sm" onClick={handleShowEditAvailability}>Edit</button>
+                    {/* <button className="btn-sm" onClick={handleShowEditAvailability}>Edit</button> */}
                 </div>
             </div>
         </div>
