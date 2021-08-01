@@ -40,19 +40,24 @@ export default function UserRequests() {
                             color='rgb(50, 110, 150)'
                         />
                     </div>
-                    : <div>
+                    : <div className="flex flex-col align-center">
                         {
                             requests && requests.map((request, i) => (
-                                <div key={i}>
-                                    <p>{new Date(request.requested_at).toLocaleDateString()}</p>
-                                    <p>{request.status}</p>
-                                    {
-                                        request.requested_dates.map((rd, rd_i) => (
-                                            <p key={rd_i}>{new Date(rd).toLocaleDateString()}</p>
-                                        ))
-                                    }
-                                    <p>{request.notes}</p>
-                                </div>
+                                <div key={i} className="border-solid-1 border-smooth w-50 lg-w-60 med-w-80 xs-w-90 grid xl-2-6fr sm-1-12fr">
+                                    {/* <div className="text-center"> */}
+                                        <p>{new Date(request.requested_at).toLocaleDateString()}</p>
+                                        <p>{request.status}</p>
+                                        {
+                                            request.requested_dates.map((rd, rd_i) => (
+                                                <p key={rd_i}>{new Date(rd).toLocaleDateString()}</p>
+                                            ))
+                                        }
+                                        <p>{request.notes}</p>
+                                        <div>
+                                            <button>Delete</button>
+                                        </div>
+                                    </div>
+                                // </div>
                             ))
                         }
                     </div>
