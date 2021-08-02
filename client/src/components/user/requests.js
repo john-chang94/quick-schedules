@@ -11,6 +11,14 @@ export default function UserRequests() {
 
     const [isLoading, setIsLoading] = useState(true);
     const [requests, setRequests] = useState(null);
+    
+    const handleDeleteRequest = () => {
+
+    }
+
+    const handleCreateRequest = () => {
+        
+    }
 
     useEffect(() => {
         async function getData() {
@@ -43,21 +51,39 @@ export default function UserRequests() {
                     : <div className="flex flex-col align-center">
                         {
                             requests && requests.map((request, i) => (
-                                <div key={i} className="border-solid-1 border-smooth w-50 lg-w-60 med-w-80 xs-w-90 grid xl-2-6fr sm-1-12fr">
-                                    {/* <div className="text-center"> */}
-                                        <p>{new Date(request.requested_at).toLocaleDateString()}</p>
-                                        <p>{request.status}</p>
-                                        {
-                                            request.requested_dates.map((rd, rd_i) => (
-                                                <p key={rd_i}>{new Date(rd).toLocaleDateString()}</p>
-                                            ))
-                                        }
-                                        <p>{request.notes}</p>
-                                        <div>
-                                            <button>Delete</button>
+                                <div key={i} className="border-solid-1 border-smooth w-50 lg-w-60 med-w-80 xs-w-90 text-center">
+                                    <div className="grid xl-2-6fr sm-1-12fr">
+                                        <div className="my-2">
+                                            <strong>Submission date</strong>
+                                            <p>{new Date(request.requested_at).toLocaleDateString()}</p>
+                                        </div>
+                                        <div className="my-2">
+                                            <strong>Status</strong>
+                                            <p>{request.status}</p>
+                                        </div>
+                                        <div className="my-2">
+                                            <strong>Requested dates</strong>
+                                            {
+                                                request.requested_dates.map((rd, rd_i) => (
+                                                    <p key={rd_i}>
+                                                        {
+                                                            rd_i === request.requested_dates.length - 1
+                                                                ? new Date(rd).toDateString()
+                                                                : `${new Date(rd).toDateString()},`
+                                                        }
+                                                    </p>
+                                                ))
+                                            }
+                                        </div>
+                                        <div className="my-2">
+                                            <strong>Notes</strong>
+                                            <p>{request.notes}</p>
                                         </div>
                                     </div>
-                                // </div>
+                                    <div className="my-2">
+                                        <button className="btn-sm btn-hovered">Delete</button>
+                                    </div>
+                                </div>
                             ))
                         }
                     </div>
