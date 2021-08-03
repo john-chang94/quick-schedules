@@ -60,7 +60,7 @@ export default function AdminEmployees() {
                     : <div>
                         <div className="mt-6 mb-4 flex flex-center">
                             <button className="btn-x-lg btn-hovered" onClick={handleNewEmployee}>
-                                <p className="text-4"><i className="fas fa-plus"></i> New Employee</p>
+                                <p><i className="fas fa-plus"></i> New Employee</p>
                             </button>
                         </div>
                         <div>

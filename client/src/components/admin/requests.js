@@ -101,10 +101,20 @@ export default function AdminRequests() {
                         : <div className="mt-2 flex flex-col align-center">
                             {
                                 requests.length ? requests.map((request, r_i) => (
-                                    <div key={r_i} className="my-2 border-solid-1 border-smooth box-shadow text-center w-50 lg-w-60 med-w-80 xs-w-90">
+                                    <div key={r_i} className="my-2 border-solid-1 border-smooth box-shadow text-center p-1 w-50 lg-w-60 med-w-80 xs-w-90">
                                         <div className="my-2">
                                             <p><strong>Status</strong></p>
-                                            <em className={request.status === 'Pending' ? 'blue' : request.status === 'Approved' ? 'green' : request.status === 'Denied' ? 'red' : ''}>{request.status}</em>
+                                            <em
+                                                className={
+                                                    request.status === 'Pending'
+                                                        ? 'blue'
+                                                        : request.status === 'Approved'
+                                                            ? 'green'
+                                                            : request.status === 'Denied'
+                                                                ? 'red'
+                                                                : ''}>
+                                                {request.status}
+                                            </em>
                                         </div>
                                         <div className="grid xl-2-6fr sm-1-12fr">
                                             <div className="my-2">
@@ -130,7 +140,7 @@ export default function AdminRequests() {
                                                     ))
                                                 }
                                             </div>
-                                            <div className="my-2 p-1">
+                                            <div className="my-2">
                                                 <strong>Notes</strong>
                                                 <p>{request.notes}</p>
                                             </div>

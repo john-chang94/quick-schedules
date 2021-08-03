@@ -172,27 +172,14 @@ exports.getAllRequestsByStatusAndDate = async (req, res) => {
     }
 }
 
-// Run after dependent request days are deleted first
 exports.deleteRequest = async (req, res) => {
     try {
         const { r_id } = req.params;
 
-        const deleteRequest = await client.query('DELETE FROM requests WHERE r_id = $1', [r_id]);
-
-        res.status(200).json({ success: true });
-    } catch (err) {
-        res.status(500).send(err.message);
-    }
-}
-
-exports.deleteRequestDays = async (req, res) => {
-    try {
-        const { r_id } = req.params;
-
-        const foundRequestDay = await client.query('SELECT * FROM request_days WHERE r_id = $1', [r_id]);
-        if (!foundRequestDay.rows.length) return res.status(404).send('No records found');
-
+        // Delete dependent request days first
         const deleteRequestDay = await client.query('DELETE FROM request_days WHERE r_id = $1', [r_id]);
+        // Then delete the request
+        const deleteRequest = await client.query('DELETE FROM requests WHERE r_id = $1', [r_id]);
 
         res.status(200).json({ success: true });
     } catch (err) {
