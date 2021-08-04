@@ -14,11 +14,15 @@ export default function UserRequests() {
     const [createNew, setCreateNew] = useState(false);
     const [requests, setRequests] = useState(null);
 
+    const [notes, setNotes] = useState('');
+    const [dates, setDates] = useState([]);
+    const [numOfDates, setNumOfDates] = useState(1);
+
     const handleDeleteRequest = async (r_id) => {
         const doDelete = window.confirm('Delete request?');
         if (doDelete) {
             setIsUpdating(true);
-            
+
             const tokenConfig = isAuthenticated();
             await deleteRequest(r_id, tokenConfig);
 
@@ -30,6 +34,36 @@ export default function UserRequests() {
 
     const handleCreateRequest = () => {
 
+    }
+
+    const DateElement = () => (
+        <div className="my-2">
+            <p>Select date</p>
+            <input type="date" onChange={({ target }) => setDates([...dates, target.value])} />
+        </div>
+    )
+
+    const XDateElement = () => (
+        <div className="my-2">
+            <p>Select date</p>
+            <input type="date" onChange={({ target }) => setDates([...dates, target.value])} />
+            <button className="btn-sm btn-hovered mt-2" onClick={() => setNumOfDates(numOfDates - 1)}>
+                <i className="fas fa-minus"></i>&nbsp;Date
+            </button>
+        </div>
+    )
+
+    const renderDateElements = () => {
+        let items = [];
+        for (let i = 0; i < numOfDates; i++) {
+            if (numOfDates > 1 && i === numOfDates - 1) {
+                items.push(<XDateElement key={i} />)
+            } else {
+                items.push(<DateElement key={i} />)
+            }
+        }
+
+        return items;
     }
 
     const renderRequests = () => (
@@ -91,8 +125,10 @@ export default function UserRequests() {
                 createNew
                     ? <div className="border-solid-1 border-smooth p-1 w-50 lg-w-60 med-w-80 xs-w-90 mt-5 flex flex-col align-center">
                         <div className="w-3 text-center">
-                            <p>Select date</p>
-                            <input type="date" />
+                            {renderDateElements()}
+                            <button className="btn-sm btn-hovered mb-2" onClick={() => setNumOfDates(numOfDates + 1)}>
+                                <i className="fas fa-plus"></i>&nbsp;Date
+                            </button>
                         </div>
                         <div>
                             <button className="btn-sm btn-hovered">Submit</button>

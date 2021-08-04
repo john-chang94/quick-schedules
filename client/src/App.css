@@ -981,6 +981,10 @@ select {
   display: inline-block;
 }
 
+.inline {
+  display: inline;
+}
+
 .relative {
   position: relative;
 }
