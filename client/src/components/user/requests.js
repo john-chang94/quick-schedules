@@ -36,30 +36,47 @@ export default function UserRequests() {
 
     }
 
-    const DateElement = () => (
-        <div className="my-2">
-            <p>Select date</p>
-            <input type="date" onChange={({ target }) => setDates([...dates, target.value])} />
-        </div>
-    )
+    useEffect(() => {
+        console.log(`dates`, dates)
+    }, [dates])
 
-    const XDateElement = () => (
+    const handleModifyDatesArray = (index, newDate) => {
+        if (dates[index] !== undefined) {
+            let arrCopy = dates;
+            let removed = arrCopy.splice(index, 1, newDate);
+            setDates(arrCopy);
+        }
+        else {
+            setDates([...dates, newDate]);
+        }
+    }
+
+    const DateElement = ({ index, dates }) => {
+        return (
         <div className="my-2">
             <p>Select date</p>
-            <input type="date" onChange={({ target }) => setDates([...dates, target.value])} />
+            <input type="date" value={dates[index] !== undefined ? dates[index] : ''} onChange={({ target }) => handleModifyDatesArray(index, target.value)} />
+        </div>
+        )
+    }
+
+    const XDateElement = ({ index, dates }) => (
+        <div className="my-2">
+            <p>Select date</p>
+            <input type="date" value={dates[index] !== undefined ? dates[index] : ''} onChange={({ target }) => handleModifyDatesArray(index, target.value)} />
             <button className="btn-sm btn-hovered mt-2" onClick={() => setNumOfDates(numOfDates - 1)}>
                 <i className="fas fa-minus"></i>&nbsp;Date
             </button>
         </div>
     )
 
-    const renderDateElements = () => {
+    const renderDateElements = ({ dates }) => {
         let items = [];
         for (let i = 0; i < numOfDates; i++) {
             if (numOfDates > 1 && i === numOfDates - 1) {
-                items.push(<XDateElement key={i} />)
+                items.push(<XDateElement key={i} index={i} dates={dates} />)
             } else {
-                items.push(<DateElement key={i} />)
+                items.push(<DateElement key={i} index={i} dates={dates} />)
             }
         }
 
@@ -125,7 +142,7 @@ export default function UserRequests() {
                 createNew
                     ? <div className="border-solid-1 border-smooth p-1 w-50 lg-w-60 med-w-80 xs-w-90 mt-5 flex flex-col align-center">
                         <div className="w-3 text-center">
-                            {renderDateElements()}
+                            {renderDateElements(dates)}
                             <button className="btn-sm btn-hovered mb-2" onClick={() => setNumOfDates(numOfDates + 1)}>
                                 <i className="fas fa-plus"></i>&nbsp;Date
                             </button>
