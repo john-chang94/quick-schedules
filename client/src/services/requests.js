@@ -45,6 +45,15 @@ export const updateRequestStatus = async (r_id, body, tokenConfig) => {
     }
 }
 
+export const createRequest = async (body, tokenConfig) => {
+    try {
+        const res = await axios.post('http://localhost:5000/requests', body, tokenConfig);
+        return res.data;
+    } catch (err) {
+        return { error: err.response.data };
+    }
+}
+
 export const deleteRequest = async (r_id, tokenConfig) => {
     try {
         const res = await axios.delete(`http://localhost:5000/requests/${r_id}`, tokenConfig);
