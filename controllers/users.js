@@ -173,13 +173,43 @@ exports.editAvailability = async (req, res) => {
     }
 }
 
-// exports.addAdvailability2 = async (req, res) => {
-//     try {
-        
-//     } catch (err) {
-//         res.status(500).send(err.message);
-//     }
-// }
+exports.addAdvailability2 = async (req, res) => {
+    try {
+        const { u_id, day, start_time, end_time, level } = req.body;
+
+        const availability = await client.query(
+            `INSERT INTO avail (u_id, day, start_time, end_time, level)
+            VALUES ($1, $2, $3, $4, $5)`,
+            [u_id, day, start_time, end_time, level]
+        )
+
+        res.status(201).json({ success: true });
+    } catch (err) {
+        res.status(500).send(err.message);
+    }
+}
+
+exports.editAvailability2 = async (req, res) => {
+    try {
+        const { a_id } = req.params;
+        const { u_id, day, start_time, end_time, level } = req.body;
+
+        const availability = await client.query(
+            `UPDATE avail
+                SET u_id = $1,
+                day = $2,
+                start_time = $3,
+                end_time = $4,
+                level = $5
+            WHERE a_id = $6`,
+            [u_id, day, start_time, end_time, level, a_id]
+        )
+
+        res.status(200).json({ success: true });
+    } catch (err) {
+        res.status(500).send(err.message);
+    }
+}
 
 exports.getUserAvailability = async (req, res) => {
     try {

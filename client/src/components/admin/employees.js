@@ -3,7 +3,6 @@ import { useHistory } from 'react-router';
 import { Link } from 'react-router-dom';
 import { fetchAllUsers } from '../../services/users';
 import * as ROUTES from '../../constants/routes';
-import { isAuthenticated } from '../../services/auth';
 import Loader from 'react-loader-spinner';
 
 export default function AdminEmployees() {

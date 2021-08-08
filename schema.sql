@@ -35,14 +35,14 @@ CREATE TABLE availability (
     updated_at DATE
 );
 
--- CREATE TABLE avail (
---     a_id SERIAL PRIMARY KEY,
---     u_id INT NOT NULL REFERENCES users(u_id),
---     day VARCHAR(25),
---     start_time VARCHAR(25),
---     end_time VARCHAR(25),
---     level INT
--- )
+CREATE TABLE avail (
+    a_id SERIAL PRIMARY KEY,
+    u_id INT NOT NULL REFERENCES users(u_id),
+    day VARCHAR(25),
+    start_time VARCHAR(25),
+    end_time VARCHAR(25),
+    level INT
+)
 
 CREATE TABLE requests (
     r_id SERIAL PRIMARY KEY,
