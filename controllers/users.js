@@ -211,6 +211,18 @@ exports.editAvailability2 = async (req, res) => {
     }
 }
 
+exports.getUserAvailability2 = async (req, res) => {
+    try {
+        const { u_id } = req.params;
+
+        const availability = await client.query('SELECT * FROM avail WHERE u_id = $1 ORDER BY level', [u_id])
+
+        res.status(200).json(availability.rows);
+    } catch (err) {
+        res.status(500).send(err.message);
+    }
+}
+
 exports.getUserAvailability = async (req, res) => {
     try {
         const { u_id } = req.params;
