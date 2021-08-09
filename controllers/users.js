@@ -134,47 +134,6 @@ exports.deleteUser = async (req, res) => {
 
 exports.addAdvailability = async (req, res) => {
     try {
-        const { u_id, mon, tue, wed, thur, fri, sat, sun } = req.body;
-
-        const availability = await client.query(
-            `INSERT INTO availability (u_id, mon, tue, wed, thur, fri, sat, sun)
-            VALUES ($1, $2, $3, $4, $5, $6, $7, $8)`,
-            [u_id, mon, tue, wed, thur, fri, sat, sun]
-        )
-
-        res.status(201).json({ success: true });
-    } catch (err) {
-        res.status(500).send(err.message);
-    }
-}
-
-exports.editAvailability = async (req, res) => {
-    try {
-        const { u_id } = req.params;
-        const { mon, tue, wed, thur, fri, sat, sun, updated_at } = req.body;
-
-        const availability = await client.query(
-            `UPDATE availability
-                SET mon = $1,
-                tue = $2,
-                wed = $3,
-                thur = $4,
-                fri = $5,
-                sat = $6,
-                sun = $7,
-                updated_at = $8
-            WHERE u_id = $9`,
-            [mon, tue, wed, thur, fri, sat, sun, updated_at, u_id]
-        )
-
-        res.status(200).json({ success: true });
-    } catch (err) {
-        res.status(500).send(err.message);
-    }
-}
-
-exports.addAdvailability2 = async (req, res) => {
-    try {
         const { u_id, day, start_time, end_time, level } = req.body;
 
         const availability = await client.query(
@@ -189,7 +148,7 @@ exports.addAdvailability2 = async (req, res) => {
     }
 }
 
-exports.editAvailability2 = async (req, res) => {
+exports.editAvailability = async (req, res) => {
     try {
         const { a_id } = req.params;
         const { u_id, day, start_time, end_time, level } = req.body;
@@ -223,52 +182,6 @@ exports.getUserAvailability2 = async (req, res) => {
     }
 }
 
-exports.getUserAvailability = async (req, res) => {
-    try {
-        const { u_id } = req.params;
-
-        const availability = await client.query(
-            `SELECT json_build_array(
-                json_build_object(
-                    'day', 'Monday',
-                    'time', mon
-                ),
-                json_build_object(
-                    'day', 'Tuesday',
-                    'time', tue
-                ),
-                json_build_object(
-                    'day', 'Wednesday',
-                    'time', wed
-                ),
-                json_build_object(
-                    'day', 'Thursday',
-                    'time', thur
-                ),
-                json_build_object(
-                    'day', 'Friday',
-                    'time', fri
-                ),
-                json_build_object(
-                    'day', 'Saturday',
-                    'time', sat
-                ),
-                json_build_object(
-                    'day', 'Sunday',
-                    'time', sun
-                )
-            ) AS avail
-            FROM availability
-            WHERE u_id = $1`,
-            [u_id]
-            )
-
-        res.status(200).send(availability.rows[0]);
-    } catch (err) {
-        res.status(500).send(err.message);
-    }
-}
-
 exports.editAvailabilityNotes = async (req, res) => {
     try {
         const { u_id } = req.params;
@@ -297,9 +210,20 @@ exports.getAllUsersAndAvailability = async (req, res) => {
                     ON roles.role_id = users.role_id
             ),
             availability AS (
-                SELECT u_id, array[mon, tue, wed, thur, fri, sat, sun] AS availability
-                FROM availability
-                GROUP BY u_id, mon, tue, wed, thur, fri, sat, sun
+                SELECT users.u_id, array_agg(a.av) AS availability FROM users
+                JOIN
+                    (
+                        SELECT u_id, json_build_object(
+                            'a_id', a_id,
+                            'day', day,
+                            'start_time', start_time,
+                            'end_time', end_time
+                        ) AS av
+                        FROM avail
+                        ORDER BY level
+                    ) AS a
+                    ON users.u_id = a.u_id
+                GROUP BY users.u_id
             )
             SELECT u.u_id, u.first_name, u.last_name, u.title, u.acn, u.level, a.availability
             FROM users AS u JOIN availability AS a

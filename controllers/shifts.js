@@ -215,9 +215,20 @@ exports.getAllUsersSchedulesByDate = async (req, res) => {
                     ON roles.role_id = users.role_id
             ),
             availability AS (
-                SELECT u_id, array[mon, tue, wed, thur, fri, sat, sun] AS availability
-                FROM availability
-                GROUP BY u_id, mon, tue, wed, thur, fri, sat, sun
+                SELECT users.u_id, array_agg(a.av) AS availability FROM users
+                JOIN
+                    (
+                        SELECT u_id, json_build_object(
+                            'a_id', a_id,
+                            'day', day,
+                            'start_time', start_time,
+                            'end_time', end_time
+                        ) AS av
+                        FROM avail
+                        ORDER BY level
+                    ) AS a
+                    ON users.u_id = a.u_id
+                GROUP BY users.u_id
             ),
             shifts AS (
                 SELECT u.u_id,

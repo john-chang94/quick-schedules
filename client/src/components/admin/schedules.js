@@ -278,7 +278,9 @@ export default function AdminSchedules() {
                                 <td className="text-vw nowrap py-1">{user.first_name} {user.last_name}</td>
                                 {
                                     user.availability.map((time, i) => (
-                                        <td key={i} className={`text-vw nowrap py-1 ${time === 'NA' && 'bg-black'}`}>{time}</td>
+                                        <td key={i} className={`text-vw nowrap py-1 ${time.start_time === 'N/A' && 'bg-black'}`}>
+                                            {(time.start_time === 'ANY' && time.end_time === 'ANY') ? 'ANY' : `${time.start_time} - ${time.end_time}`}
+                                        </td>
                                     ))
                                 }
                             </tr>
@@ -499,8 +501,8 @@ export default function AdminSchedules() {
     const renderBlank = (u_id, a_i, time) => (
         <td
             key={a_i}
-            // Keep bg color black if employee is 'NA' for availability
-            className={`border-x text-vw nowrap pointer h-10 ${time === 'NA' ? 'bg-black' : 'bg-light-gray-hovered'}`}
+            // Keep bg color black if employee is 'N/A' for availability
+            className={`border-x text-vw nowrap pointer h-10 ${time.start_time === 'N/A' ? 'bg-black' : 'bg-light-gray-hovered'}`}
             onClick={() => handleUserClick(u_id, a_i)}
         ></td>
     )

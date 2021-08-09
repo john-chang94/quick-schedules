@@ -361,7 +361,6 @@ export default function UserAvailability() {
                 setAvailability(availability);
                 setTimes(times);
                 setIsLoading(false);
-                console.log(`availability`, availability)
             }
         }
 

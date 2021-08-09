@@ -17,8 +17,8 @@ export default function UserSchedules() {
     const renderBlank = (a_i, time) => (
         <td
             key={a_i}
-            // Keep bg color black if employee is 'NA' for availability
-            className={`border-x text-vw nowrap h-10 ${time === 'NA' ? 'bg-black' : 'bg-x-light-gray'}`}
+            // Keep bg color black if employee is 'N/A' for availability
+            className={`border-x text-vw nowrap h-10 ${time.start_time === 'N/A' ? 'bg-black' : 'bg-x-light-gray'}`}
         ></td>
     )
 
