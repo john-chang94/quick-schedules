@@ -4,7 +4,7 @@ import * as ROUTES from '../constants/routes';
 import { UserContext } from '../contexts/userContext';
 import { signIn } from '../services/auth';
 
-export default function SignIn() {
+export default function AdminSignIn() {
     const history = useHistory();
     const { setVerifiedUser } = useContext(UserContext);
 
@@ -24,13 +24,13 @@ export default function SignIn() {
 
         if (res.token) {
             if (res.user.is_admin) {
-                alert('Please sign in through the admin portal');
-                history.push(ROUTES.ADMIN_SIGN_IN);
-            }
-            else if (!res.user.is_admin) {
                 setVerifiedUser(res.user); // Set verified user in context for header
                 sessionStorage.setItem('token', res.token);
-                history.push(ROUTES.USER_HOME);
+                history.push(ROUTES.ADMIN_HOME);
+            }
+            else if (!res.user.is_admin) {
+                alert('Please sign in through the user portal');
+                history.push(ROUTES.SIGN_IN);
             }
         }
     }

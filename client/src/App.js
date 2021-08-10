@@ -22,9 +22,13 @@ import UserProfile from './components/user/profile';
 import UserAvailability from './components/user/availability';
 import UserRequests from './components/user/requests';
 import UserSchedules from './components/user/schedules';
+import AdminSignIn from './components/adminSignIn';
+
+import ProtectedRoute from './helpers/protectedRoute';
+import UserRoute from './helpers/userRoute';
 
 function App() {
-  const { setVerifiedUser } = useContext(UserContext);
+  const { verifiedUser, setVerifiedUser } = useContext(UserContext);
 
   useEffect(() => {
     async function getVerifiedUser() {
@@ -47,20 +51,21 @@ function App() {
           <div className="container">
             <Switch>
               <Route exact path={ROUTES.SIGN_IN} component={SignIn} />
+              <Route exact path={ROUTES.ADMIN_SIGN_IN} component={AdminSignIn} />
 
-              <Route path={ROUTES.ADMIN_HOME} component={AdminHome} />
-              <Route exact path={ROUTES.ADMIN_EMPLOYEES} component={AdminEmployees} />
-              <Route path={ROUTES.ADMIN_NEW_EMPLOYEE} component={AdminNewEmployee} />
-              <Route path={ROUTES.ADMIN_EMPLOYEE} component={AdminEmployee} />
-              <Route path={ROUTES.ADMIN_SCHEDULES} component={AdminSchedules} />
-              <Route path={ROUTES.ADMIN_REQUESTS} component={AdminRequests} />
-              <Route path={ROUTES.ADMIN_STORE} component={AdminStore} />
+              <ProtectedRoute user={verifiedUser} path={ROUTES.ADMIN_HOME} component={AdminHome} />
+              <ProtectedRoute exact user={verifiedUser} path={ROUTES.ADMIN_EMPLOYEES} component={AdminEmployees} />
+              <ProtectedRoute user={verifiedUser} path={ROUTES.ADMIN_NEW_EMPLOYEE} component={AdminNewEmployee} />
+              <ProtectedRoute user={verifiedUser} path={ROUTES.ADMIN_EMPLOYEE} component={AdminEmployee} />
+              <ProtectedRoute user={verifiedUser} path={ROUTES.ADMIN_SCHEDULES} component={AdminSchedules} />
+              <ProtectedRoute user={verifiedUser} path={ROUTES.ADMIN_REQUESTS} component={AdminRequests} />
+              <ProtectedRoute user={verifiedUser} path={ROUTES.ADMIN_STORE} component={AdminStore} />
 
-              <Route path={ROUTES.USER_HOME} component={UserHome} />
-              <Route path={ROUTES.USER_PROFILE} component={UserProfile} />
-              <Route path={ROUTES.USER_AVAILABILITY} component={UserAvailability} />
-              <Route path={ROUTES.USER_REQUESTS} component={UserRequests} />
-              <Route path={ROUTES.USER_SCHEDULES} component={UserSchedules} />
+              <UserRoute user={verifiedUser} path={ROUTES.USER_HOME} component={UserHome} />
+              <UserRoute user={verifiedUser} path={ROUTES.USER_PROFILE} component={UserProfile} />
+              <UserRoute user={verifiedUser} path={ROUTES.USER_AVAILABILITY} component={UserAvailability} />
+              <UserRoute user={verifiedUser} path={ROUTES.USER_REQUESTS} component={UserRequests} />
+              <UserRoute user={verifiedUser} path={ROUTES.USER_SCHEDULES} component={UserSchedules} />
             </Switch>
           </div>
         </Suspense>
