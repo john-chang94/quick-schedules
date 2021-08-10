@@ -11,6 +11,7 @@ export default function AdminStore() {
     const [times, setTimes] = useState(null);
     const [presets, setPresets] = useState(null);
     const [isUpdating, setIsUpdating] = useState(false);
+    const [isSettingStoreHours, setIsSettingStoreHours] = useState(false);
     const [updatingId, setUpdatingId] = useState('');
 
     const [store_open, setStoreOpen] = useState('');
@@ -24,6 +25,7 @@ export default function AdminStore() {
 
     const handleSetStoreHours = async () => {
         const tokenConfig = isAuthenticated();
+        setIsSettingStoreHours(true);
 
         setTimeout(() => {
             async function saveData() {
@@ -31,6 +33,8 @@ export default function AdminStore() {
 
                 await setStoreHours(body, tokenConfig);
                 await fetchStoreHours();
+                setIsSettingStoreHours(false);
+                setShowEditHours(false);
             }
 
             saveData();
@@ -40,6 +44,7 @@ export default function AdminStore() {
 
     const handleUpdateStoreHours = async () => {
         const tokenConfig = isAuthenticated();
+        setIsSettingStoreHours(true);
 
         setTimeout(() => {
             async function saveData() {
@@ -47,6 +52,8 @@ export default function AdminStore() {
 
                 await updateStoreHours(body, tokenConfig);
                 await fetchStoreHours();
+                setIsSettingStoreHours(false);
+                setShowEditHours(false);
             }
 
             saveData();
@@ -78,11 +85,11 @@ export default function AdminStore() {
         if (doDelete) {
             setIsUpdating(true);
             setUpdatingId(p_id);
-    
+
             const tokenConfig = isAuthenticated();
             await deletePreset(p_id, tokenConfig);
             const presets = await fetchPresets();
-    
+
             setPresets(presets);
             setIsUpdating(false);
             setUpdatingId('');
@@ -120,9 +127,29 @@ export default function AdminStore() {
                 </select>
             </div>
             <div className="my-3 w-4 flex justify-evenly">
-                <button className="btn-sm btn-hovered" onClick={() => storeFirstTime === true ? handleSetStoreHours() : handleUpdateStoreHours()}>Save</button>
-                <button className="btn-sm btn-hovered" onClick={() => setShowEditHours(false)}>Cancel</button>
+                <button
+                    className={`btn-sm ${!isSettingStoreHours && 'btn-hovered'}`}
+                    disabled={isSettingStoreHours}
+                    onClick={() => storeFirstTime === true ? handleSetStoreHours() : handleUpdateStoreHours()}
+                >
+                    Save
+                </button>
+                <button
+                    className={`btn-sm ${!isSettingStoreHours && 'btn-hovered'}`}
+                    disabled={isSettingStoreHours}
+                    onClick={() => setShowEditHours(false)}
+                >
+                    Cancel
+                </button>
             </div>
+            {
+                isSettingStoreHours &&
+                <Loader
+                    type='ThreeDots'
+                    height={10}
+                    color='rgb(50, 110, 150)'
+                />
+            }
         </div>
     )
 

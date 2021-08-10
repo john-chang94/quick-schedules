@@ -4,8 +4,10 @@ import * as ROUTES from '../../constants/routes';
 import { UserContext } from '../../contexts/userContext';
 import { isAuthenticated } from '../../services/auth';
 import Loader from 'react-loader-spinner';
+import EditAvailability from './editAvailability';
 import { editUserAvailability, fetchUserAvailability } from '../../services/users';
 import { fetchTimes } from '../../services/presets';
+import { fetchStoreHours } from '../../services/store';
 
 export default function UserAvailability() {
     const { verifiedUser } = useContext(UserContext);
@@ -16,6 +18,7 @@ export default function UserAvailability() {
 
     const [availability, setAvailability] = useState(null);
     const [times, setTimes] = useState(null);
+    const [store, setStore] = useState(null);
 
     const [monStart, setMonStart] = useState('');
     const [monEnd, setMonEnd] = useState('');
@@ -136,194 +139,19 @@ export default function UserAvailability() {
                 <div className="flex flex-col text-center">
 
                     <p className="mt-2">Monday</p>
-                    <div className="flex justify-center justify-evenly">
-                        <div>
-                            <p>From</p>
-                            <select value={monStart} onChange={({ target }) => setMonStart(target.value)}>
-                                <option value="ANY">ANY</option>
-                                <option value="N/A">N/A</option>
-                                {
-                                    times && times.map((time, i) => (
-                                        <option key={i} value={time.time}>{time.time}</option>
-                                    ))
-                                }
-                            </select>
-                        </div>
-                        <div>
-                            <p>To</p>
-                            <select value={monEnd} onChange={({ target }) => setMonEnd(target.value)}>
-                                <option value="ANY">ANY</option>
-                                <option value="N/A">N/A</option>
-                                {
-                                    times && times.map((time, i) => (
-                                        <option key={i} value={time.time}>{time.time}</option>
-                                    ))
-                                }
-                            </select>
-                        </div>
-                    </div>
+                    <EditAvailability dayStart={monStart} dayEnd={monEnd} setDayStart={setMonStart} setDayEnd={setMonEnd} times={times} store={store} />
                     <p className="mt-3">Tuesday</p>
-                    <div className="flex justify-center justify-evenly">
-                        <div>
-                            <p>From</p>
-                            <select value={tueStart} onChange={({ target }) => setTueStart(target.value)}>
-                                <option value="ANY">ANY</option>
-                                <option value="N/A">N/A</option>
-                                {
-                                    times && times.map((time, i) => (
-                                        <option key={i} value={time.time}>{time.time}</option>
-                                    ))
-                                }
-                            </select>
-                        </div>
-                        <div>
-                            <p>To</p>
-                            <select value={tueEnd} onChange={({ target }) => setTueEnd(target.value)}>
-                                <option value="ANY">ANY</option>
-                                <option value="N/A">N/A</option>
-                                {
-                                    times && times.map((time, i) => (
-                                        <option key={i} value={time.time}>{time.time}</option>
-                                    ))
-                                }
-                            </select>
-                        </div>
-                    </div>
+                    <EditAvailability dayStart={tueStart} dayEnd={tueEnd} setDayStart={setTueStart} setDayEnd={setTueEnd} times={times} store={store} />
                     <p className="mt-3">Wednesday</p>
-                    <div className="flex justify-center justify-evenly">
-                        <div>
-                            <p>From</p>
-                            <select value={wedStart} onChange={({ target }) => setWedStart(target.value)}>
-                                <option value="ANY">ANY</option>
-                                <option value="N/A">N/A</option>
-                                {
-                                    times && times.map((time, i) => (
-                                        <option key={i} value={time.time}>{time.time}</option>
-                                    ))
-                                }
-                            </select>
-                        </div>
-                        <div>
-                            <p>To</p>
-                            <select value={wedEnd} onChange={({ target }) => setWedEnd(target.value)}>
-                                <option value="ANY">ANY</option>
-                                <option value="N/A">N/A</option>
-                                {
-                                    times && times.map((time, i) => (
-                                        <option key={i} value={time.time}>{time.time}</option>
-                                    ))
-                                }
-                            </select>
-                        </div>
-                    </div>
+                    <EditAvailability dayStart={wedStart} dayEnd={wedEnd} setDayStart={setWedStart} setDayEnd={setWedEnd} times={times} store={store} />
                     <p className="mt-3">Thursday</p>
-                    <div className="flex justify-center justify-evenly">
-                        <div>
-                            <p>From</p>
-                            <select value={thurStart} onChange={({ target }) => setThurStart(target.value)}>
-                                <option value="ANY">ANY</option>
-                                <option value="N/A">N/A</option>
-                                {
-                                    times && times.map((time, i) => (
-                                        <option key={i} value={time.time}>{time.time}</option>
-                                    ))
-                                }
-                            </select>
-                        </div>
-                        <div>
-                            <p>To</p>
-                            <select value={thurEnd} onChange={({ target }) => setThurEnd(target.value)}>
-                                <option value="ANY">ANY</option>
-                                <option value="N/A">N/A</option>
-                                {
-                                    times && times.map((time, i) => (
-                                        <option key={i} value={time.time}>{time.time}</option>
-                                    ))
-                                }
-                            </select>
-                        </div>
-                    </div>
+                    <EditAvailability dayStart={thurStart} dayEnd={thurEnd} setDayStart={setThurStart} setDayEnd={setThurEnd} times={times} store={store} />
                     <p className="mt-3">Friday</p>
-                    <div className="flex justify-center justify-evenly">
-                        <div>
-                            <p>From</p>
-                            <select value={friStart} onChange={({ target }) => setFriStart(target.value)}>
-                                <option value="ANY">ANY</option>
-                                <option value="N/A">N/A</option>
-                                {
-                                    times && times.map((time, i) => (
-                                        <option key={i} value={time.time}>{time.time}</option>
-                                    ))
-                                }
-                            </select>
-                        </div>
-                        <div>
-                            <p>To</p>
-                            <select value={friEnd} onChange={({ target }) => setFriEnd(target.value)}>
-                                <option value="ANY">ANY</option>
-                                <option value="N/A">N/A</option>
-                                {
-                                    times && times.map((time, i) => (
-                                        <option key={i} value={time.time}>{time.time}</option>
-                                    ))
-                                }
-                            </select>
-                        </div>
-                    </div>
+                    <EditAvailability dayStart={friStart} dayEnd={friEnd} setDayStart={setFriStart} setDayEnd={setFriEnd} times={times} store={store} />
                     <p className="mt-3">Saturday</p>
-                    <div className="flex justify-center justify-evenly">
-                        <div>
-                            <p>From</p>
-                            <select value={satStart} onChange={({ target }) => setSatStart(target.value)}>
-                                <option value="ANY">ANY</option>
-                                <option value="N/A">N/A</option>
-                                {
-                                    times && times.map((time, i) => (
-                                        <option key={i} value={time.time}>{time.time}</option>
-                                    ))
-                                }
-                            </select>
-                        </div>
-                        <div>
-                            <p>To</p>
-                            <select value={satEnd} onChange={({ target }) => setSatStart(target.value)}>
-                                <option value="ANY">ANY</option>
-                                <option value="N/A">N/A</option>
-                                {
-                                    times && times.map((time, i) => (
-                                        <option key={i} value={time.time}>{time.time}</option>
-                                    ))
-                                }
-                            </select>
-                        </div>
-                    </div>
+                    <EditAvailability dayStart={satStart} dayEnd={satEnd} setDayStart={setSatStart} setDayEnd={setSatEnd} times={times} store={store} />
                     <p className="mt-3">Sunday</p>
-                    <div className="flex justify-center justify-evenly mb-2">
-                        <div>
-                            <p>From</p>
-                            <select value={sunStart} onChange={({ target }) => setSunStart(target.value)}>
-                                <option value="ANY">ANY</option>
-                                <option value="N/A">N/A</option>
-                                {
-                                    times && times.map((time, i) => (
-                                        <option key={i} value={time.time}>{time.time}</option>
-                                    ))
-                                }
-                            </select>
-                        </div>
-                        <div>
-                            <p>To</p>
-                            <select value={sunEnd} onChange={({ target }) => setSunEnd(target.value)}>
-                                <option value="ANY">ANY</option>
-                                <option value="N/A">N/A</option>
-                                {
-                                    times && times.map((time, i) => (
-                                        <option key={i} value={time.time}>{time.time}</option>
-                                    ))
-                                }
-                            </select>
-                        </div>
-                    </div>
+                    <EditAvailability dayStart={sunStart} dayEnd={sunEnd} setDayStart={setSunStart} setDayEnd={setSunEnd} times={times} store={store} />
 
                     <div className="my-2">
                         <button
@@ -357,9 +185,11 @@ export default function UserAvailability() {
             if (verifiedUser) {
                 const availability = await fetchUserAvailability(verifiedUser.u_id);
                 const times = await fetchTimes();
+                const store = await fetchStoreHours();
 
                 setAvailability(availability);
                 setTimes(times);
+                setStore(store);
                 setIsLoading(false);
             }
         }

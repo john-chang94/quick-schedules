@@ -20,7 +20,7 @@ export const fetchRequestsByUser = async (u_id) => {
 
 export const fetchAllRequestsByStatus = async (status) => {
     try {
-        const res = await axios.get(`http://localhost:5000/requests/${status}`);
+        const res = await axios.get(`http://localhost:5000/requests/status/${status}`);
         return res.data;
     } catch (err) {
         return { error: err.response.data };
@@ -29,7 +29,7 @@ export const fetchAllRequestsByStatus = async (status) => {
 
 export const fetchAllRequestsByStatusAndDate = async (status, weekStart, weekEnd) => {
     try {
-        const res = await axios.get(`http://localhost:5000/requests/${status}/${weekStart}/${weekEnd}`);
+        const res = await axios.get(`http://localhost:5000/requests/status/${status}/${weekStart}/${weekEnd}`);
         return res.data;
     } catch (err) {
         return { error: err.response.data };

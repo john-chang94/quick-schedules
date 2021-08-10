@@ -120,7 +120,7 @@ export default function AdminEmployee() {
             </div>
             <div>
                 <h4>Hourly Pay</h4>
-                <p>{verifiedUser.level <= user.level ? user.hourly_pay : 'N/A'}</p>
+                <p>{verifiedUser.level <= user.level ? user.hourly_pay : '**'}</p>
             </div>
             <div>
                 <h4>Started At</h4>

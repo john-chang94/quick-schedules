@@ -8,6 +8,7 @@ import { fetchAllUsersAvailabilities } from '../../services/users';
 import { startOfToday, startOfWeek, addWeeks, subWeeks, parseISO, format } from 'date-fns';
 import Loader from 'react-loader-spinner';
 import { fetchAllRequestsByStatusAndDate } from '../../services/requests';
+import { fetchStoreHours } from '../../services/store';
 
 export default function AdminSchedules() {
     const [availabilities, setAvailabilities] = useState(null);
@@ -16,6 +17,7 @@ export default function AdminSchedules() {
     const [days, setDays] = useState(null);
     const [times, setTimes] = useState(null);
     const [presets, setPresets] = useState(null);
+    const [store, setStore] = useState(null);
     const [isLoading, setIsLoading] = useState(true);
     const [isUpdating, setIsUpdating] = useState(false);
     const [isCopying, setIsCopying] = useState(false);
@@ -136,9 +138,12 @@ export default function AdminSchedules() {
                 weekEnd: addWeeks(parseISO(weekEnd), 1)
             };
 
+
             await createCopyOfWeeklySchedule(body);
             const updated = await fetchAllUsersSchedulesByDate(weekStart, weekEnd);
             setUsers(updated);
+            // Display following week after copying schedule
+            handleNextWeek();
             setIsCopying(false);
         }
     }
@@ -152,8 +157,8 @@ export default function AdminSchedules() {
     const handleUserClick = (u_id, index) => {
         setUserData(u_id);
         setAvailabilityIndex(index);
-        setShiftStartValue('0 0');
-        setShiftEndValue('0 0');
+        setShiftStartValue(store.store_open_value);
+        setShiftEndValue(store.store_close_value);
     }
 
     // Render edit shift (update)
@@ -438,7 +443,11 @@ export default function AdminSchedules() {
                     onChange={({ target }) => setShiftStartValue(target.value)}>
                     {
                         times && times.map((time, i) => (
-                            <option key={i} value={time.value}>
+                            <option
+                                key={i}
+                                value={time.value}
+                                disabled={time.level < parseFloat(store.store_open_level) || time.level > parseFloat(store.store_close_level)}
+                            >
                                 {time.time}
                             </option>
                         ))
@@ -454,7 +463,11 @@ export default function AdminSchedules() {
                     onChange={({ target }) => setShiftEndValue(target.value)}>
                     {
                         times && times.map((time, i) => (
-                            <option key={i} value={time.value}>
+                            <option
+                                key={i}
+                                value={time.value}
+                                disabled={time.level < parseFloat(store.store_open_level) || time.level > parseFloat(store.store_close_level)}
+                            >
                                 {time.time}
                             </option>
                         ))
@@ -472,19 +485,22 @@ export default function AdminSchedules() {
                     </div>
                     : <div className="my-2 w-100 flex justify-evenly">
                         <button
-                            className="btn-x-sm btn-hovered bg-green off-white"
+                            className="btn-x-sm btn-hovered"
+                            style={{ border: 'solid 1px gray' }}
                             onClick={() => handleSaveShift(u_id, dayIndex, shift.s_id)}
                         >
                             <i className="fas fa-check"></i>
                         </button>
                         <button
-                            className="btn-x-sm btn-hovered bg-dark-gray white"
+                            className="btn-x-sm btn-hovered"
+                            style={{ border: 'solid 1px gray' }}
                             onClick={() => handleSavePreset()}
                         >
                             <i className="fas fa-star"></i>
                         </button>
                         <button
-                            className="btn-x-sm btn-hovered bg-red off-white"
+                            className="btn-x-sm btn-hovered"
+                            style={{ border: 'solid 1px gray' }}
                             onClick={() => shift.s_id ? handleRemoveShift(shift.s_id) : handleCancelShift()}
                         >
                             {
@@ -523,11 +539,15 @@ export default function AdminSchedules() {
             const times = await fetchTimes();
             const availabilities = await fetchAllUsersAvailabilities();
             const presets = await fetchPresets();
+            const store = await fetchStoreHours();
             await getDatesOfTheWeek();
 
             setTimes(times);
             setAvailabilities(availabilities);
             setPresets(presets);
+            setStore(store);
+            setShiftStartValue(store.store_open_value);
+            setShiftEndValue(store.store_close_value);
             setIsLoading(false);
         }
 
