@@ -101,7 +101,7 @@ export default function AdminRequests() {
                         : <div className="mt-2 flex flex-col align-center">
                             {
                                 requests.length ? requests.map((request, r_i) => (
-                                    <div key={r_i} className="my-2 border-solid-1 border-smooth box-shadow text-center p-1 w-50 lg-w-60 med-w-80 xs-w-90">
+                                    <div key={r_i} className="my-2 border-solid-1 border-smooth box-shadow flex flex-col align-center text-center p-1 w-50 lg-w-60 med-w-80 xs-w-90">
                                         <div className="my-2">
                                             <p><strong>Status</strong></p>
                                             <em
@@ -116,7 +116,7 @@ export default function AdminRequests() {
                                                 {request.status}
                                             </em>
                                         </div>
-                                        <div className="grid xl-2-6fr sm-1-12fr">
+                                        <div className="w-100 grid xl-2-6fr sm-1-12fr">
                                             <div className="my-2">
                                                 <strong>{request.first_name} {request.last_name}</strong>
                                                 <p>{request.title}</p>
@@ -145,7 +145,7 @@ export default function AdminRequests() {
                                                 <p>{request.notes}</p>
                                             </div>
                                         </div>
-                                        <div className="my-3">
+                                        <div className="my-3 w-50 lg-w-60 med-w-80 xs-w-90 flex justify-evenly">
                                             <button
                                                 className="btn-med btn-hovered pointer-no-u"
                                                 onClick={() => handleUpdateRequestStatus(request.r_id, 'Approved')}
@@ -153,7 +153,7 @@ export default function AdminRequests() {
                                                 Approve
                                             </button>
                                             <button
-                                                className="btn-med btn-hovered ml-7 pointer-no-u"
+                                                className="btn-med btn-hovered pointer-no-u"
                                                 onClick={() => handleUpdateRequestStatus(request.r_id, 'Denied')}
                                             >
                                                 Deny

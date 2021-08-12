@@ -254,15 +254,15 @@ export default function AdminSchedules() {
     const renderAvailability = () => (
         <>
             <h3 className="text-center">Availability</h3>
-            <table id="availability-table" style={{ tableLayout: 'fixed' }} className="border-collapse w-100 text-center">
+            <table id="availability-table" className="border-collapse w-100 text-center">
                 <thead>
                     <tr className="border-bottom">
-                        <th className="text-vw pt-2 pb-1">Role</th>
-                        <th className="text-vw pt-2 pb-1">Name</th>
+                        <th className=" pt-2 pb-1">Role</th>
+                        <th className=" pt-2 pb-1">Name</th>
                         {
                             // Render the day only
                             days && days.map((day, i) => (
-                                <th key={i} className="text-vw pt-2 pb-1">
+                                <th key={i} className=" pt-2 pb-1">
                                     <p>{new Date(day).toString().split(' ')[0]}</p>
                                 </th>
                             ))
@@ -279,11 +279,11 @@ export default function AdminSchedules() {
                                     ? { backgroundColor: 'rgb(235, 235, 235)' }
                                     : { backgroundColor: 'rbg(255, 255, 255)' }}
                             >
-                                <td className="text-vw nowrap py-1">{user.title}</td>
-                                <td className="text-vw nowrap py-1">{user.first_name} {user.last_name}</td>
+                                <td className=" nowrap py-1">{user.title}</td>
+                                <td className=" nowrap py-1">{user.first_name} {user.last_name}</td>
                                 {
                                     user.availability.map((time, i) => (
-                                        <td key={i} className={`text-vw nowrap py-1 ${time.start_time === 'N/A' && 'bg-black'}`}>
+                                        <td key={i} className={` nowrap py-1 ${time.start_time === 'N/A' && 'bg-black'}`}>
                                             {(time.start_time === 'ANY' && time.end_time === 'ANY') ? 'ANY' : `${time.start_time} - ${time.end_time}`}
                                         </td>
                                     ))
@@ -373,14 +373,14 @@ export default function AdminSchedules() {
     )
 
     const renderSchedule = () => (
-        <table style={{ tableLayout: 'fixed' }} className="w-100 mt-1 border-collapse text-center">
+        <table className="w-100 mt-1 border-collapse text-center">
             <tbody>
                 <tr className="border-bottom">
-                    <td className="text-vw"><strong>Role</strong></td>
-                    <td className="text-vw"><strong>Name</strong></td>
+                    <td><strong>Role</strong></td>
+                    <td><strong>Name</strong></td>
                     {
                         days && days.map((day, i) => (
-                            <td className="text-vw" key={i}>
+                            <td key={i}>
                                 <strong>{new Date(day).toString().split(' ')[0]}</strong>
                                 <p><em>{new Date(day).toLocaleDateString()}</em></p>
                             </td>
@@ -393,8 +393,8 @@ export default function AdminSchedules() {
                             key={u_i}
                             className="bg-x-light-gray border-bottom"
                         >
-                            <td className="border-x text-vw nowrap">{user.title}</td>
-                            <td className="border-x text-vw nowrap">{user.first_name} {user.last_name}</td>
+                            <td className="border-x  nowrap">{user.title}</td>
+                            <td className="border-x  nowrap">{user.first_name} {user.last_name}</td>
                             {
                                 user.availability.map((time, a_i) => (
                                     // Only render edit mode for the selected date and employee
@@ -518,7 +518,7 @@ export default function AdminSchedules() {
         <td
             key={a_i}
             // Keep bg color black if employee is 'N/A' for availability
-            className={`border-x text-vw nowrap pointer h-10 ${time.start_time === 'N/A' ? 'bg-black' : 'bg-light-gray-hovered'}`}
+            className={`border-x  nowrap pointer h-10 ${time.start_time === 'N/A' ? 'bg-black' : 'bg-light-gray-hovered'}`}
             onClick={() => handleUserClick(u_id, a_i)}
         ></td>
     )
@@ -526,7 +526,7 @@ export default function AdminSchedules() {
     const renderShift = (u_id, a_i, shift_start, shift_end) => (
         <td
             key={a_i}
-            className="border-x text-vw nowrap pointer h-10 bg-light-gray-hovered"
+            className="border-x  nowrap pointer h-10 bg-light-gray-hovered"
             onClick={() => handleEditShift(u_id, a_i, getTimeValue(shift_start), getTimeValue(shift_end))}
         >
             {getTime(shift_start)} -&nbsp;

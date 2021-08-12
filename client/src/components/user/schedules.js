@@ -18,14 +18,14 @@ export default function UserSchedules() {
         <td
             key={a_i}
             // Keep bg color black if employee is 'N/A' for availability
-            className={`border-x text-vw nowrap h-10 ${time.start_time === 'N/A' ? 'bg-black' : 'bg-x-light-gray'}`}
+            className={`border-x nowrap h-10 ${time.start_time === 'N/A' ? 'bg-black' : 'bg-x-light-gray'}`}
         ></td>
     )
 
     const renderShift = (a_i, shift_start, shift_end) => (
         <td
             key={a_i}
-            className="border-x text-vw nowrap h-10 bg-x-light-gray"
+            className="border-x nowrap h-10 bg-x-light-gray"
         >
             {getTime(shift_start)} -&nbsp;
             {getTime(shift_end)}
@@ -66,14 +66,14 @@ export default function UserSchedules() {
                         />
                     </div>
                     : <div className="mt-5">
-                        <table style={{ tableLayout: 'fixed' }} className="w-100 mt-1 border-collapse text-center">
+                        <table className="w-100 mt-1 border-collapse text-center">
                             <tbody>
                                 <tr className="border-bottom">
-                                    <td className="text-vw"><strong>Role</strong></td>
-                                    <td className="text-vw"><strong>Name</strong></td>
+                                    <td><strong>Role</strong></td>
+                                    <td><strong>Name</strong></td>
                                     {
                                         days && days.map((day, i) => (
-                                            <td className="text-vw" key={i}>
+                                            <td key={i}>
                                                 <strong>{new Date(day).toString().split(' ')[0]}</strong>
                                                 <p><em>{new Date(day).toLocaleDateString()}</em></p>
                                             </td>
@@ -86,8 +86,8 @@ export default function UserSchedules() {
                                             key={u_i}
                                             className="bg-x-light-gray border-bottom"
                                         >
-                                            <td className="border-x text-vw nowrap">{user.title}</td>
-                                            <td className="border-x text-vw nowrap">{user.first_name} {user.last_name}</td>
+                                            <td className="border-x nowrap">{user.title}</td>
+                                            <td className="border-x nowrap">{user.first_name} {user.last_name}</td>
                                             {
                                                 user.availability.map((time, a_i) => (
                                                     user.shifts[a_i].shift_end === null

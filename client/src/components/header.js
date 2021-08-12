@@ -10,7 +10,8 @@ export default function Header() {
     const handleSignOut = () => {
         sessionStorage.removeItem('token');
         setVerifiedUser(null); // Remove verified user from context
-        history.push(ROUTES.SIGN_IN);
+        if (verifiedUser.is_admin) history.push(ROUTES.ADMIN_SIGN_IN);
+        else history.push(ROUTES.SIGN_IN);
     }
 
     return (
@@ -21,8 +22,8 @@ export default function Header() {
                     <div className="mr-5">
                         <p className="off-white">Welcome, {verifiedUser && verifiedUser.first_name}</p>
                     </div>
-                    <div className="pointer-no-u" onClick={handleSignOut}>
-                        <p className="off-white">Sign Out <i className="fas fa-sign-out-alt text-6"></i></p>
+                    <div className="pointer-no-u" style={{ marginTop: '2px' }} onClick={handleSignOut}>
+                        <p className="off-white"><i className="fas fa-sign-out-alt text-6"></i></p>
                     </div>
                 </div>
             }
