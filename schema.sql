@@ -21,20 +21,6 @@ CREATE TABLE users (
     updated_at DATE
 );
 
-CREATE TABLE availability (
-    a_id SERIAL PRIMARY KEY,
-    u_id INT NOT NULL REFERENCES users(u_id),
-    mon VARCHAR(50),
-    tue VARCHAR(50),
-    wed VARCHAR(50),
-    thur VARCHAR(50),
-    fri VARCHAR(50),
-    sat VARCHAR(50),
-    sun VARCHAR(50),
-    notes VARCHAR(255),
-    updated_at DATE
-);
-
 CREATE TABLE avail (
     a_id SERIAL PRIMARY KEY,
     u_id INT NOT NULL REFERENCES users(u_id),

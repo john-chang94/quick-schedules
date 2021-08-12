@@ -10,15 +10,7 @@ export default function ProtectedRoute({ user, component: Component, ...rest }) 
         <Route {...rest} render={({ location }) => {
             if (user && user.is_admin) {
                 return <Component />;
-            }
-            if (user && !user.is_admin) {
-                return (
-                    <div className="text-center mt-5">
-                        Unauthorized
-                    </div>
-                )
-            }
-            else {
+            } else {
                 sessionStorage.removeItem('token');
                 setVerifiedUser(null);
                 return (

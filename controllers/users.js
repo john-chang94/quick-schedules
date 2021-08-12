@@ -170,7 +170,7 @@ exports.editAvailability = async (req, res) => {
     }
 }
 
-exports.getUserAvailability2 = async (req, res) => {
+exports.getUserAvailability = async (req, res) => {
     try {
         const { u_id } = req.params;
 

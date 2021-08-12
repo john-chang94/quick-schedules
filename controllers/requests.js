@@ -56,24 +56,6 @@ exports.getRequestsByUser = async (req, res) => {
     }
 }
 
-exports.getRequestsByUserAndDate = async (req, res) => {
-    try {
-        const { u_id, date } = req.params;
-
-        const requests = await client.query(
-            `SELECT * FROM requests
-            WHERE u_id = $1 AND date >= $2`,
-            [u_id, date]
-        )
-
-        if (!requests.rows.length) return res.status(404).send('No records found');
-
-        res.status(200).json(requests.rows);
-    } catch (err) {
-        res.status(500).send(err.message);
-    }
-}
-
 exports.getAllRequests = async (req, res) => {
     try {
         const { date } = req.params;
