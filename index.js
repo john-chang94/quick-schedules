@@ -16,10 +16,14 @@ app.use('/', require('./routes/shiftRoutes'));
 app.use('/', require('./routes/requestRoutes'));
 app.use('/', require('./routes/storeRoutes'));
 
-const path = require('path');
-app.get('*', (req, res) => {
-    res.sendFile(path.join(__dirname, 'client/public/index.html'));
-})
+if (process.env.NODE_ENV === 'production') {
+    app.use(express.static('client/build'));
+    
+    const path = require('path');
+    app.get('*', (req, res) => {
+        res.sendFile(path.join(__dirname, 'client', 'build', 'index.html'));
+    })
+}
 
 console.log(new Date(2021, 6, 24, 0).toLocaleTimeString())
 
