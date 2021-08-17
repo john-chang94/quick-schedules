@@ -1,6 +1,7 @@
 require('dotenv').config();
 const express = require('express');
 const app = express();
+const path = require('path');
 const cors = require('cors');
 const expressValidator = require('express-validator');
 
@@ -16,16 +17,19 @@ app.use('/', require('./routes/shiftRoutes'));
 app.use('/', require('./routes/requestRoutes'));
 app.use('/', require('./routes/storeRoutes'));
 
-if (process.env.NODE_ENV === 'production') {
-    app.use(express.static('client/build'));
+// if (process.env.NODE_ENV === 'production') {
+//     app.use(express.static('client/build'));
     
-    const path = require('path');
-    app.get('*', (req, res) => {
-        res.sendFile(path.join(__dirname, 'client', 'build', 'index.html'));
-    })
-}
+//     const path = require('path');
+//     app.get('*', (req, res) => {
+//         res.sendFile(path.join(__dirname, 'client', 'build', 'index.html'));
+//     })
+// }
+app.use(express.static(path.join(__dirname, 'build')));
 
-console.log(new Date(2021, 6, 24, 0).toLocaleTimeString())
+app.get('*', function (req, res) {
+ res.sendFile(path.join(__dirname, 'build', 'index.html'));
+});
 
 const PORT = process.env.PORT || 5000;
 app.listen(PORT, () => console.log(`Server is running on port: ${PORT}`));
