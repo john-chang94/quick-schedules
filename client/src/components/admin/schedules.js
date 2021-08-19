@@ -254,7 +254,7 @@ export default function AdminSchedules() {
     const renderAvailability = () => (
         <>
             <h3 className="text-center">Availability</h3>
-            <table id="availability-table" className="border-collapse w-100 text-center">
+            <table id="availability-table" className="border-collapse w-100 text-center" style={{ tableLayout: 'fixed' }}>
                 <thead>
                     <tr className="border-bottom">
                         <th className=" pt-2 pb-1">Role</th>
@@ -373,7 +373,7 @@ export default function AdminSchedules() {
     )
 
     const renderSchedule = () => (
-        <table className="w-100 mt-1 border-collapse text-center">
+        <table className="w-100 mt-1 border-collapse text-center" style={{ tableLayout: 'fixed' }}>
             <tbody>
                 <tr className="border-bottom">
                     <td><strong>Role</strong></td>
