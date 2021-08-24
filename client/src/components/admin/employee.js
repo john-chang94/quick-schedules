@@ -132,7 +132,7 @@ export default function AdminEmployee() {
             </div>
             <div>
                 <button
-                    className="btn-med btn-hovered"
+                    className={`btn-med ${verifiedUser.level > user.level ? '' : 'btn-hovered'}`}
                     onClick={() => setShowEditInfo(true)}
                     disabled={verifiedUser.level > user.level}
                 >

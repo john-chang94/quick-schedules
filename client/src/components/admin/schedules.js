@@ -21,6 +21,7 @@ export default function AdminSchedules() {
     const [isLoading, setIsLoading] = useState(true);
     const [isUpdating, setIsUpdating] = useState(false);
     const [isCopying, setIsCopying] = useState(false);
+    const [isLoadingSchedule, setIsLoadingSchedule] = useState(false);
 
     // Used for datepicker
     const [dateISO, setDateISO] = useState(startOfToday())
@@ -37,6 +38,7 @@ export default function AdminSchedules() {
 
     // For init load and datepicker
     const getDatesOfTheWeek = async (selectedDate) => {
+        setIsLoadingSchedule(true);
         let date;
         if (selectedDate) {
             date = startOfWeek(new Date(selectedDate), { weekStartsOn: 1 });
@@ -65,6 +67,7 @@ export default function AdminSchedules() {
         const requests = await fetchAllRequestsByStatusAndDate('Approved', weekStart, weekEnd);
         setUsers(users);
         setRequests(requests);
+        setIsLoadingSchedule(false);
     }
 
     // Can create or update shift based on s_id being provided
@@ -117,6 +120,7 @@ export default function AdminSchedules() {
         const doCopy = window.confirm('Copy schedule to next week? Any shifts already saved will be overwritten.');
         if (doCopy) {
             setIsCopying(true);
+            setIsLoadingSchedule(true);
 
             let shifts = [];
             for (let i = 0; i < users.length; i++) {
@@ -353,19 +357,11 @@ export default function AdminSchedules() {
                 </div>
                 <div>
                     <button
-                        className="btn-x-lg btn-hovered"
+                        className={`btn-x-lg ${isCopying ? '' : 'btn-hovered'}`}
                         onClick={() => handleCopyWeeklySchedule()}
                         disabled={isCopying}
                     >
-                        {
-                            isCopying
-                                ? <Loader
-                                    type='Oval'
-                                    color='rgb(50, 110, 150)'
-                                    height={25}
-                                />
-                                : `Copy to Next Week`
-                        }
+                        Copy to Next Week
                     </button>
                 </div>
             </div>
@@ -374,42 +370,50 @@ export default function AdminSchedules() {
 
     const renderSchedule = () => (
         <table className="w-100 mt-1 border-collapse text-center" style={{ tableLayout: 'fixed' }}>
-            <tbody>
-                <tr className="border-bottom">
-                    <td><strong>Role</strong></td>
-                    <td><strong>Name</strong></td>
-                    {
-                        days && days.map((day, i) => (
-                            <td key={i}>
-                                <strong>{new Date(day).toString().split(' ')[0]}</strong>
-                                <p><em>{new Date(day).toLocaleDateString()}</em></p>
-                            </td>
-                        ))
-                    }
-                </tr>
-                {
-                    users && users.map((user, u_i) => (
-                        <tr
-                            key={u_i}
-                            className="bg-x-light-gray border-bottom"
-                        >
-                            <td className="border-x  nowrap">{user.title}</td>
-                            <td className="border-x  nowrap">{user.first_name} {user.last_name}</td>
+            {
+                isLoadingSchedule
+                    ? <Loader
+                        type='ThreeDots'
+                        height={20}
+                        color='rgb(50, 110, 150)'
+                    />
+                    : <tbody>
+                        <tr className="border-bottom">
+                            <td><strong>Role</strong></td>
+                            <td><strong>Name</strong></td>
                             {
-                                user.availability.map((time, a_i) => (
-                                    // Only render edit mode for the selected date and employee
-                                    (userData === user.u_id && availabilityIndex === a_i)
-                                        ? renderEditShift(user.u_id, a_i, user.shifts[a_i])
-                                        // Render shifts if they exist during the selected week
-                                        : user.shifts[a_i].shift_end === null
-                                            ? renderBlank(user.u_id, a_i, time)
-                                            : renderShift(user.u_id, a_i, user.shifts[a_i].shift_start, user.shifts[a_i].shift_end)
+                                days && days.map((day, i) => (
+                                    <td key={i}>
+                                        <strong>{new Date(day).toString().split(' ')[0]}</strong>
+                                        <p><em>{new Date(day).toLocaleDateString()}</em></p>
+                                    </td>
                                 ))
                             }
                         </tr>
-                    ))
-                }
-            </tbody>
+                        {
+                            users && users.map((user, u_i) => (
+                                <tr
+                                    key={u_i}
+                                    className="bg-x-light-gray border-bottom"
+                                >
+                                    <td className="border-x nowrap">{user.title}</td>
+                                    <td className="border-x nowrap">{user.first_name} {user.last_name}</td>
+                                    {
+                                        user.availability.map((time, a_i) => (
+                                            // Only render edit mode for the selected date and employee
+                                            (userData === user.u_id && availabilityIndex === a_i)
+                                                ? renderEditShift(user.u_id, a_i, user.shifts[a_i])
+                                                // Render shifts if they exist during the selected week
+                                                : user.shifts[a_i].shift_end === null
+                                                    ? renderBlank(user.u_id, a_i, time)
+                                                    : renderShift(user.u_id, a_i, user.shifts[a_i].shift_start, user.shifts[a_i].shift_end)
+                                        ))
+                                    }
+                                </tr>
+                            ))
+                        }
+                    </tbody>
+            }
         </table>
     )
 
@@ -478,9 +482,9 @@ export default function AdminSchedules() {
                 isUpdating ?
                     <div className="my-1">
                         <Loader
-                            type='Oval'
+                            type='ThreeDots'
                             color='rgb(50, 110, 150)'
-                            height={35}
+                            height={12}
                         />
                     </div>
                     : <div className="my-2 w-100 flex justify-evenly">
@@ -518,7 +522,7 @@ export default function AdminSchedules() {
         <td
             key={a_i}
             // Keep bg color black if employee is 'N/A' for availability
-            className={`border-x  nowrap pointer h-10 ${time.start_time === 'N/A' ? 'bg-black' : 'bg-light-gray-hovered'}`}
+            className={`border-x nowrap pointer h-10 ${time.start_time === 'N/A' ? 'bg-black' : 'bg-light-gray-hovered'}`}
             onClick={() => handleUserClick(u_id, a_i)}
         ></td>
     )
@@ -526,7 +530,7 @@ export default function AdminSchedules() {
     const renderShift = (u_id, a_i, shift_start, shift_end) => (
         <td
             key={a_i}
-            className="border-x  nowrap pointer h-10 bg-light-gray-hovered"
+            className="border-x nowrap pointer h-10 bg-light-gray-hovered"
             onClick={() => handleEditShift(u_id, a_i, getTimeValue(shift_start), getTimeValue(shift_end))}
         >
             {getTime(shift_start)} -&nbsp;
