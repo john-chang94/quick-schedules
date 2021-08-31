@@ -1,6 +1,6 @@
 export default function EditAvailability({ dayStart, dayEnd, setDayStart, setDayEnd, times, store }) {
     return (
-        <div className="flex justify-center justify-evenly">
+        <div className="flex justify-center justify-evenly w-50 lg-w-60 med-w-80 xs-w-90">
             <div>
                 <p>From</p>
                 <select value={dayStart} onChange={({ target }) => setDayStart(target.value)}>

@@ -255,10 +255,30 @@ export default function AdminSchedules() {
         return new Date(shift).toLocaleTimeString().replace(':00 ', ' ');
     }
 
+    const renderShift = (u_id, a_i, shift_start, shift_end) => (
+        <td
+            key={a_i}
+            className="border-x nowrap pointer h-10 bg-light-gray-hovered"
+            onClick={() => handleEditShift(u_id, a_i, getTimeValue(shift_start), getTimeValue(shift_end))}
+        >
+            {getTime(shift_start)} -&nbsp;
+            {getTime(shift_end)}
+        </td>
+    )
+
+    const renderBlank = (u_id, a_i, time) => (
+        <td
+            key={a_i}
+            // Keep bg color black if employee is 'N/A' for availability
+            className={`border-x nowrap pointer h-10 ${time.start_time === 'N/A' ? 'bg-black' : 'bg-light-gray-hovered'}`}
+            onClick={() => handleUserClick(u_id, a_i)}
+        ></td>
+    )
+
     const renderAvailability = () => (
         <>
             <h3 className="text-center">Availability</h3>
-            <table id="availability-table" className="border-collapse w-100 text-center" style={{ tableLayout: 'fixed' }}>
+            <table id="availability-table" className="border-collapse w-100 text-center">
                 <thead>
                     <tr className="border-bottom">
                         <th className=" pt-2 pb-1">Role</th>
@@ -369,7 +389,7 @@ export default function AdminSchedules() {
     )
 
     const renderSchedule = () => (
-        <table className="w-100 mt-1 border-collapse text-center" style={{ tableLayout: 'fixed' }}>
+        <table className="w-100 mt-1 border-collapse text-center">
             {
                 isLoadingSchedule
                     ? <Loader
@@ -515,26 +535,6 @@ export default function AdminSchedules() {
                         </button>
                     </div>
             }
-        </td>
-    )
-
-    const renderBlank = (u_id, a_i, time) => (
-        <td
-            key={a_i}
-            // Keep bg color black if employee is 'N/A' for availability
-            className={`border-x nowrap pointer h-10 ${time.start_time === 'N/A' ? 'bg-black' : 'bg-light-gray-hovered'}`}
-            onClick={() => handleUserClick(u_id, a_i)}
-        ></td>
-    )
-
-    const renderShift = (u_id, a_i, shift_start, shift_end) => (
-        <td
-            key={a_i}
-            className="border-x nowrap pointer h-10 bg-light-gray-hovered"
-            onClick={() => handleEditShift(u_id, a_i, getTimeValue(shift_start), getTimeValue(shift_end))}
-        >
-            {getTime(shift_start)} -&nbsp;
-            {getTime(shift_end)}
         </td>
     )
 

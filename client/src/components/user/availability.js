@@ -136,7 +136,7 @@ export default function UserAvailability() {
     const renderEditAvailability = () => (
         <div className="flex justify-center mt-4">
             <div className="border-solid-1 border-smooth w-50 lg-w-60 med-w-80 xs-w-90">
-                <div className="flex flex-col text-center">
+                <div className="flex flex-col align-center text-center">
 
                     <p className="mt-2">Monday</p>
                     <EditAvailability dayStart={monStart} dayEnd={monEnd} setDayStart={setMonStart} setDayEnd={setMonEnd} times={times} store={store} />
@@ -153,15 +153,15 @@ export default function UserAvailability() {
                     <p className="mt-3">Sunday</p>
                     <EditAvailability dayStart={sunStart} dayEnd={sunEnd} setDayStart={setSunStart} setDayEnd={setSunEnd} times={times} store={store} />
 
-                    <div className="my-2">
+                    <div className="my-2 w-50 lg-w-60 med-w-80 xs-w-90 flex justify-evenly">
                         <button
-                            className={`btn-sm mx-3 ${!isUpdating && 'btn-hovered'}`}
+                            className={`btn-sm ${!isUpdating && 'btn-hovered'}`}
                             disabled={isUpdating}
                             onClick={() => handleSaveAvailability()}
                         >
                             Save
                         </button>
-                        <button className={`btn-sm mx-3 ${!isUpdating && 'btn-hovered'}`} disabled={isUpdating} onClick={() => setShowEditAvailability(false)}>Cancel</button>
+                        <button className={`btn-sm ${!isUpdating && 'btn-hovered'}`} disabled={isUpdating} onClick={() => setShowEditAvailability(false)}>Cancel</button>
                     </div>
 
                     {

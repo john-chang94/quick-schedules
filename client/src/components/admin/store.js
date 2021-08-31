@@ -98,10 +98,9 @@ export default function AdminStore() {
 
     const renderStoreHours = () => (
         <div className="flex flex-col align-center">
-            <div className="my-1">
+            <div className="my-1 w-50 lg-w-60 med-w-80 xs-w-90">
                 <p>Open</p>
                 <select
-                    className="w-3"
                     value={store_open}
                     onChange={({ target }) => handleSelectStoreOpen(target.value)}
                 >
@@ -112,10 +111,9 @@ export default function AdminStore() {
                     }
                 </select>
             </div>
-            <div className="my-1">
+            <div className="my-1 w-50 lg-w-60 med-w-80 xs-w-90">
                 <p>Close</p>
                 <select
-                    className="w-3"
                     value={store_close}
                     onChange={({ target }) => handleSelectStoreClose(target.value)}
                 >
@@ -126,7 +124,7 @@ export default function AdminStore() {
                     }
                 </select>
             </div>
-            <div className="my-3 w-4 flex justify-evenly">
+            <div className="my-3 flex justify-evenly w-50 lg-w-60 med-w-80 xs-w-90">
                 <button
                     className={`btn-sm ${!isSettingStoreHours && 'btn-hovered'}`}
                     disabled={isSettingStoreHours}
