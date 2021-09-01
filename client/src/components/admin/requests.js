@@ -8,11 +8,13 @@ import { isAuthenticated } from '../../services/auth';
 export default function AdminRequests() {
     const [requests, setRequests] = useState(null);
     const [isLoading, setIsLoading] = useState(true);
+    const [isUpdating, setIsUpdating] = useState(false);
     const [status, setStatus] = useState('All');
 
     const handleUpdateRequestStatus = async (r_id, status) => {
         const update = window.confirm('Confirm decision?');
         if (update) {
+            setIsUpdating(true);
             const tokenConfig = isAuthenticated();
             const body = { status };
 
@@ -20,6 +22,7 @@ export default function AdminRequests() {
             const requests = await fetchAllRequests();
 
             setRequests(requests);
+            setIsUpdating(false);
         }
     }
 
@@ -147,14 +150,16 @@ export default function AdminRequests() {
                                         </div>
                                         <div className="my-3 w-50 lg-w-60 med-w-80 xs-w-90 flex justify-evenly">
                                             <button
-                                                className="btn-med btn-hovered pointer-no-u"
+                                                className={`btn-med ${isUpdating ? '' : 'btn-hovered pointer-no-u'}`}
                                                 onClick={() => handleUpdateRequestStatus(request.r_id, 'Approved')}
+                                                disabled={isUpdating}
                                             >
                                                 Approve
                                             </button>
                                             <button
-                                                className="btn-med btn-hovered pointer-no-u"
+                                                className={`btn-med ${isUpdating ? '' : 'btn-hovered pointer-no-u'}`}
                                                 onClick={() => handleUpdateRequestStatus(request.r_id, 'Denied')}
+                                                disabled={isUpdating}
                                             >
                                                 Deny
                                             </button>
