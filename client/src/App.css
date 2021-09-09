@@ -1051,6 +1051,10 @@ select {
   grid-gap: 10px;
 }
 
+.xl-3-6-3 {
+  grid-template-columns: 3fr 6fr 3fr;
+}
+
 .xl-2-6fr {
   grid-template: repeat(2, 6fr) / repeat(2, 6fr);
 }
@@ -1163,6 +1167,10 @@ select {
   .sm-w-90 {
     width: 90%;
   }
+
+  .sm-flex-col {
+    flex-direction: column;
+  }
 }
 
 @media screen and (max-width: 380px) {
@@ -1200,5 +1208,9 @@ select {
 
   .xs-w-90 {
     width: 90%;
+  }
+
+  .xs-1-12f {
+    grid-template: repeat(1, 12fr) / repeat(1, 12fr);
   }
 }

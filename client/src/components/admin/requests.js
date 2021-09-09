@@ -64,28 +64,28 @@ export default function AdminRequests() {
                     <p className="mb-2">View by</p>
                     <div className="w-50 lg-w-60 med-w-80 xs-w-90 grid gap-2 col-xl-4-3fr sm-2-6fr">
                         <button
-                            className={`border-solid-1 border-oval pointer-no-u py-1 bg-light-gray-hovered w-90 sm-w-60 grid-center
+                            className={`border-solid-1 border-oval pointer-no-u py-1 bg-light-gray-hovered w-90 sm-w-80 grid-center
                                 ${status === 'All' && 'bg-light-gray'}`}
                             onClick={() => handleSortRequests('All')}
                         >
                             All
                         </button>
                         <button
-                            className={`border-solid-1 border-oval pointer-no-u py-1 bg-light-gray-hovered w-90 sm-w-60 grid-center
+                            className={`border-solid-1 border-oval pointer-no-u py-1 bg-light-gray-hovered w-90 sm-w-80 grid-center
                                 ${status === 'Pending' && 'bg-light-gray'}`}
                             onClick={() => handleSortRequests('Pending')}
                         >
                             Pending
                         </button>
                         <button
-                            className={`border-solid-1 border-oval pointer-no-u py-1 bg-light-gray-hovered w-90 sm-w-60 grid-center
+                            className={`border-solid-1 border-oval pointer-no-u py-1 bg-light-gray-hovered w-90 sm-w-80 grid-center
                                 ${status === 'Approved' && 'bg-light-gray'}`}
                             onClick={() => handleSortRequests('Approved')}
                         >
                             Approved
                         </button>
                         <button
-                            className={`border-solid-1 border-oval pointer-no-u py-1 bg-light-gray-hovered w-90 sm-w-60 grid-center
+                            className={`border-solid-1 border-oval pointer-no-u py-1 bg-light-gray-hovered w-90 sm-w-80 grid-center
                                 ${status === 'Denied' && 'bg-light-gray'}`}
                             onClick={() => handleSortRequests('Denied')}
                         >

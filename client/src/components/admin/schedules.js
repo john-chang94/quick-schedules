@@ -322,11 +322,11 @@ export default function AdminSchedules() {
 
     const renderController = () => (
         <>
-            <div className="flex flex-center mt-7 mb-3" id="select-week">
-                <div className="flex flex-center">
-                    <div className="pointer" onClick={() => handlePreviousWeek()}>
+            <div className="flex flex-center mt-5 mb-3" id="select-week">
+                <div className="grid xl-3-6-3 xs-1-12f align-center">
+                    <div className="pointer text-center my-2" onClick={() => handlePreviousWeek()}>
                         <em className="text-3">Previous&nbsp;week</em>
-                        <p className="text-center">
+                        <p>
                             <i className="fas fa-angle-double-left"></i>
                             <i className="fas fa-angle-double-left"></i>
                         </p>
@@ -340,9 +340,9 @@ export default function AdminSchedules() {
                         />
                         <div className="absolute">&nbsp;</div>
                     </div>
-                    <div className="pointer" onClick={() => handleNextWeek()}>
+                    <div className="pointer text-center my-2" onClick={() => handleNextWeek()}>
                         <em className="text-3">Next&nbsp;week</em>
-                        <p className="text-center">
+                        <p>
                             <i className="fas fa-angle-double-right"></i>
                             <i className="fas fa-angle-double-right"></i>
                         </p>
@@ -350,8 +350,8 @@ export default function AdminSchedules() {
                 </div>
             </div>
 
-            <div className="flex align-center justify-evenly my-3">
-                <div>
+            <div className="flex align-center justify-evenly sm-flex-col">
+                <div className="my-2">
                     <strong>Approved Requests</strong>
                     {
                         requests.length
@@ -375,7 +375,7 @@ export default function AdminSchedules() {
                             : <p className="text-center">N/A</p>
                     }
                 </div>
-                <div>
+                <div className="my-2">
                     <button
                         className={`btn-x-lg ${isCopying ? '' : 'btn-hovered'}`}
                         onClick={() => handleCopyWeeklySchedule()}
