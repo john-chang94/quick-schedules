@@ -78,7 +78,8 @@ export default function UserRequests() {
         if (dates[index] !== undefined) {
             let arrCopy = dates;
             // eslint-disable-next-line
-            let removed = dates.splice(index, 1, newDate); // Replace old date with selected date
+            // let removed = dates.splice(index, 1, newDate); // Replace old date with selected date
+            arrCopy.push(newDate)
             setDates(arrCopy);
             setDidUpdate(!didUpdate); // Refresh date input values
         }
@@ -90,7 +91,8 @@ export default function UserRequests() {
     const handleRemoveDate = (index) => {
         let arrCopy = dates;
         // eslint-disable-next-line
-        let removed = dates.splice(index, 1); // Remove selected date from dates array
+        let removed = arrCopy.splice(index, 1); // Remove selected date from dates array
+        // let removed = arrCopy.pop();
         setDates(arrCopy);
         setNumOfDateInputs(numOfDateInputs - 1);
     }
@@ -126,17 +128,18 @@ export default function UserRequests() {
         )
     }
 
+    // Render date inputs based on numOfDateInputs
     const renderDateElements = () => {
-        let items = [];
+        let dateElements = [];
         for (let i = 0; i < numOfDateInputs; i++) {
             if (numOfDateInputs > 1 && i === numOfDateInputs - 1) {
-                items.push(<XDateElement key={i} index={i} />)
+                dateElements.push(<XDateElement key={i} index={i} />)
             } else {
-                items.push(<DateElement key={i} index={i} />)
+                dateElements.push(<DateElement key={i} index={i} />)
             }
         }
 
-        return items; // Return date inputs to render
+        return dateElements; // Return date inputs to render
     }
 
     const renderNewRequest = () => (

@@ -68,6 +68,8 @@ export default function AdminSchedules() {
         setUsers(users);
         setRequests(requests);
         setIsLoadingSchedule(false);
+
+        console.log(`users`, users)
     }
 
     // Can create or update shift based on s_id being provided
