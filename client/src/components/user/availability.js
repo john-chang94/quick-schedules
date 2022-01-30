@@ -35,6 +35,58 @@ export default function UserAvailability() {
     const [sunStart, setSunStart] = useState('');
     const [sunEnd, setSunEnd] = useState('');
 
+    const days = [
+        {
+            day: "Monday",
+            dayStart: monStart,
+            dayEnd: monEnd,
+            setDayStart: setMonStart,
+            setDayEnd: setMonEnd
+        },
+        {
+            day: "Tuesday",
+            dayStart: tueStart,
+            dayEnd: tueEnd,
+            setDayStart: setTueStart,
+            setDayEnd: setTueEnd
+        },
+        {
+            day: "Wednesday",
+            dayStart: wedStart,
+            dayEnd: wedEnd,
+            setDayStart: setWedStart,
+            setDayEnd: setWedEnd
+        },
+        {
+            day: "Thursday",
+            dayStart: thurStart,
+            dayEnd: thurEnd,
+            setDayStart: setThurStart,
+            setDayEnd: setThurEnd
+        },
+        {
+            day: "Friday",
+            dayStart: friStart,
+            dayEnd: friEnd,
+            setDayStart: setFriStart,
+            setDayEnd: setFriEnd
+        },
+        {
+            day: "Saturday",
+            dayStart: satStart,
+            dayEnd: satEnd,
+            setDayStart: setSatStart,
+            setDayEnd: setSatEnd
+        },
+        {
+            day: "Sunday",
+            dayStart: sunStart,
+            dayEnd: sunEnd,
+            setDayStart: setSunStart,
+            setDayEnd: setSunEnd
+        },
+    ]
+
     const handleShowEditAvailability = () => {
         for (let i = 0; i < availability.length; i++) {
             switch (availability[i].day) {
@@ -79,20 +131,17 @@ export default function UserAvailability() {
         const tokenConfig = isAuthenticated();
         let data = [];
 
-        let mon = { u_id: verifiedUser.u_id, day: availability[0].day, start_time: monStart, end_time: monEnd, level: 1 };
-        data.push(mon);
-        let tue = { u_id: verifiedUser.u_id, day: availability[1].day, start_time: tueStart, end_time: tueEnd, level: 2 };
-        data.push(tue);
-        let wed = { u_id: verifiedUser.u_id, day: availability[2].day, start_time: wedStart, end_time: wedEnd, level: 3 };
-        data.push(wed);
-        let thur = { u_id: verifiedUser.u_id, day: availability[3].day, start_time: thurStart, end_time: thurEnd, level: 4 };
-        data.push(thur);
-        let fri = { u_id: verifiedUser.u_id, day: availability[4].day, start_time: friStart, end_time: friEnd, level: 5 };
-        data.push(fri);
-        let sat = { u_id: verifiedUser.u_id, day: availability[5].day, start_time: satStart, end_time: satEnd, level: 6 };
-        data.push(sat);
-        let sun = { u_id: verifiedUser.u_id, day: availability[6].day, start_time: sunStart, end_time: sunEnd, level: 7 };
-        data.push(sun);
+        for (let i = 0; i < days.length; i++) {
+            let obj = {
+                u_id: verifiedUser.u_id,
+                day: availability[i].day,
+                start_time: days[i].dayStart,
+                end_time: days[i].dayEnd,
+                level: ++i
+            }
+
+            data.push(obj);
+        }
 
         // Check if N/A is paired with a time value
         for (let i = 0; i < data.length; i++) {
@@ -103,6 +152,7 @@ export default function UserAvailability() {
             }
         }
 
+        // Availability for each day is one record per update in db
         for (let i = 0; i < data.length; i++) {
             await editUserAvailability(availability[i].a_id, data[i], tokenConfig);
         }
@@ -118,7 +168,7 @@ export default function UserAvailability() {
             <div className="border-solid-1 border-smooth w-50 lg-w-60 med-w-80 xs-w-90">
                 <div>
                     {
-                        availability && availability.map((avail, i) => (
+                        availability.length && availability.map((avail, i) => (
                             <div key={i} className="text-center my-2">
                                 <p className="my-1"><strong>{avail.day}</strong></p>
                                 <p>{avail.start_time} - {avail.end_time}</p>
@@ -137,21 +187,19 @@ export default function UserAvailability() {
         <div className="flex justify-center mt-4">
             <div className="border-solid-1 border-smooth w-50 lg-w-60 med-w-80 xs-w-90">
                 <div className="flex flex-col align-center text-center">
-
-                    <p className="mt-2">Monday</p>
-                    <EditAvailability dayStart={monStart} dayEnd={monEnd} setDayStart={setMonStart} setDayEnd={setMonEnd} times={times} store={store} />
-                    <p className="mt-3">Tuesday</p>
-                    <EditAvailability dayStart={tueStart} dayEnd={tueEnd} setDayStart={setTueStart} setDayEnd={setTueEnd} times={times} store={store} />
-                    <p className="mt-3">Wednesday</p>
-                    <EditAvailability dayStart={wedStart} dayEnd={wedEnd} setDayStart={setWedStart} setDayEnd={setWedEnd} times={times} store={store} />
-                    <p className="mt-3">Thursday</p>
-                    <EditAvailability dayStart={thurStart} dayEnd={thurEnd} setDayStart={setThurStart} setDayEnd={setThurEnd} times={times} store={store} />
-                    <p className="mt-3">Friday</p>
-                    <EditAvailability dayStart={friStart} dayEnd={friEnd} setDayStart={setFriStart} setDayEnd={setFriEnd} times={times} store={store} />
-                    <p className="mt-3">Saturday</p>
-                    <EditAvailability dayStart={satStart} dayEnd={satEnd} setDayStart={setSatStart} setDayEnd={setSatEnd} times={times} store={store} />
-                    <p className="mt-3">Sunday</p>
-                    <EditAvailability dayStart={sunStart} dayEnd={sunEnd} setDayStart={setSunStart} setDayEnd={setSunEnd} times={times} store={store} />
+                    {days.map(({ day, dayStart, dayEnd, setDayStart, setDayEnd }, i) => (
+                        <>
+                            <p key={i} className="mt-3">{day}</p>
+                            <EditAvailability
+                                dayStart={dayStart}
+                                dayEnd={dayEnd}
+                                setDayStart={setDayStart}
+                                setDayEnd={setDayEnd}
+                                times={times}
+                                store={store}
+                            />
+                        </>
+                    ))}
 
                     <div className="my-2 w-50 lg-w-60 med-w-80 xs-w-90 flex justify-evenly">
                         <button
