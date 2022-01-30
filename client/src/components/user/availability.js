@@ -130,14 +130,15 @@ export default function UserAvailability() {
         setIsUpdating(true);
         const tokenConfig = isAuthenticated();
         let data = [];
+        let counter = 1;
 
         for (let i = 0; i < days.length; i++) {
             let obj = {
                 u_id: verifiedUser.u_id,
-                day: availability[i].day,
+                day: days[i].day,
                 start_time: days[i].dayStart,
                 end_time: days[i].dayEnd,
-                level: ++i
+                level: counter++
             }
 
             data.push(obj);
@@ -168,7 +169,7 @@ export default function UserAvailability() {
             <div className="border-solid-1 border-smooth w-50 lg-w-60 med-w-80 xs-w-90">
                 <div>
                     {
-                        availability.length && availability.map((avail, i) => (
+                        availability && availability.map((avail, i) => (
                             <div key={i} className="text-center my-2">
                                 <p className="my-1"><strong>{avail.day}</strong></p>
                                 <p>{avail.start_time} - {avail.end_time}</p>
@@ -189,7 +190,7 @@ export default function UserAvailability() {
                 <div className="flex flex-col align-center text-center">
                     {days.map(({ day, dayStart, dayEnd, setDayStart, setDayEnd }, i) => (
                         <>
-                            <p key={i} className="mt-3">{day}</p>
+                            <p className="mt-3">{day}</p>
                             <EditAvailability
                                 dayStart={dayStart}
                                 dayEnd={dayEnd}
