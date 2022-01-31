@@ -165,8 +165,8 @@ export default function UserAvailability() {
     }
 
     const renderAvailability = () => (
-        <div className="flex flex-col align-center mt-4">
-            <div className="border-solid-1 border-smooth w-50 lg-w-60 med-w-80 xs-w-90">
+        <div className="mt-4 grid2">
+            <div className="border-solid-1 border-smooth s10-offset-1 l6-offset-3">
                 <div>
                     {
                         availability && availability.map((avail, i) => (
@@ -185,46 +185,49 @@ export default function UserAvailability() {
     )
 
     const renderEditAvailability = () => (
-        <div className="flex justify-center mt-4">
-            <div className="border-solid-1 border-smooth w-50 lg-w-60 med-w-80 xs-w-90">
-                <div className="flex flex-col align-center text-center">
-                    {days.map(({ day, dayStart, dayEnd, setDayStart, setDayEnd }, i) => (
-                        <>
-                            <p className="mt-3">{day}</p>
-                            <EditAvailability
-                                dayStart={dayStart}
-                                dayEnd={dayEnd}
-                                setDayStart={setDayStart}
-                                setDayEnd={setDayEnd}
-                                times={times}
-                                store={store}
-                            />
-                        </>
-                    ))}
+        <div className="mt-4 grid2">
+            <div className="border-solid-1 border-smooth s10-offset-1 l6-offset-3 text-center">
+                {days.map(({ day, dayStart, dayEnd, setDayStart, setDayEnd }, i) => (
+                    <>
+                        <EditAvailability
+                            day={day}
+                            dayStart={dayStart}
+                            dayEnd={dayEnd}
+                            setDayStart={setDayStart}
+                            setDayEnd={setDayEnd}
+                            times={times}
+                            store={store}
+                        />
+                    </>
+                ))}
 
-                    <div className="my-2 w-50 lg-w-60 med-w-80 xs-w-90 flex justify-evenly">
-                        <button
-                            className={`btn-sm ${!isUpdating && 'btn-hovered'}`}
-                            disabled={isUpdating}
-                            onClick={() => handleSaveAvailability()}
-                        >
-                            Save
-                        </button>
-                        <button className={`btn-sm ${!isUpdating && 'btn-hovered'}`} disabled={isUpdating} onClick={() => setShowEditAvailability(false)}>Cancel</button>
-                    </div>
-
-                    {
-                        isUpdating &&
-                        <div className="text-center my-1">
-                            <Loader
-                                type='ThreeDots'
-                                height={10}
-                                color='rgb(50, 110, 150)'
-                            />
-                        </div>
-                    }
-
+                <div className="m-2">
+                    <button
+                        className={`btn-sm m-2 ${!isUpdating && 'btn-hovered'}`}
+                        disabled={isUpdating}
+                        onClick={() => handleSaveAvailability()}
+                    >
+                        Save
+                    </button>
+                    <button
+                        className={`btn-sm m-2 ${!isUpdating && 'btn-hovered'}`}
+                        disabled={isUpdating}
+                        onClick={() => setShowEditAvailability(false)}
+                    >
+                        Cancel
+                    </button>
                 </div>
+
+                {
+                    isUpdating &&
+                    <div className="text-center my-1">
+                        <Loader
+                            type='ThreeDots'
+                            height={10}
+                            color='rgb(50, 110, 150)'
+                        />
+                    </div>
+                }
             </div>
         </div>
     )

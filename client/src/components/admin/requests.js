@@ -62,30 +62,30 @@ export default function AdminRequests() {
             <div className="mt-4">
                 <div className="flex flex-col align-center">
                     <p className="mb-2">View by</p>
-                    <div className="w-50 lg-w-60 med-w-80 xs-w-90 grid gap-2 col-xl-4-3fr sm-2-6fr">
+                    <div className="w-50 lg-w-60 med-w-80 xs-w-90 grid2">
                         <button
-                            className={`border-solid-1 border-oval pointer-no-u py-1 bg-light-gray-hovered w-90 sm-w-80 grid-center
+                            className={`border-solid-1 border-oval pointer-no-u py-1 bg-light-gray-hovered s6 l3
                                 ${status === 'All' && 'bg-light-gray'}`}
                             onClick={() => handleSortRequests('All')}
                         >
                             All
                         </button>
                         <button
-                            className={`border-solid-1 border-oval pointer-no-u py-1 bg-light-gray-hovered w-90 sm-w-80 grid-center
+                            className={`border-solid-1 border-oval pointer-no-u py-1 bg-light-gray-hovered s6 l3
                                 ${status === 'Pending' && 'bg-light-gray'}`}
                             onClick={() => handleSortRequests('Pending')}
                         >
                             Pending
                         </button>
                         <button
-                            className={`border-solid-1 border-oval pointer-no-u py-1 bg-light-gray-hovered w-90 sm-w-80 grid-center
+                            className={`border-solid-1 border-oval pointer-no-u py-1 bg-light-gray-hovered s6 l3
                                 ${status === 'Approved' && 'bg-light-gray'}`}
                             onClick={() => handleSortRequests('Approved')}
                         >
                             Approved
                         </button>
                         <button
-                            className={`border-solid-1 border-oval pointer-no-u py-1 bg-light-gray-hovered w-90 sm-w-80 grid-center
+                            className={`border-solid-1 border-oval pointer-no-u py-1 bg-light-gray-hovered s6 l3
                                 ${status === 'Denied' && 'bg-light-gray'}`}
                             onClick={() => handleSortRequests('Denied')}
                         >
@@ -101,10 +101,10 @@ export default function AdminRequests() {
                                 color='rgb(50, 110, 150)'
                             />
                         </div>
-                        : <div className="mt-2 flex flex-col align-center">
+                        : <div className="mt-2 grid2">
                             {
                                 requests.length ? requests.map((request, r_i) => (
-                                    <div key={r_i} className="my-2 border-solid-1 border-smooth box-shadow flex flex-col align-center text-center p-1 w-50 lg-w-60 med-w-80 xs-w-90">
+                                    <div key={r_i} className="my-2 p-1 border-solid-1 border-smooth box-shadow flex flex-col align-center text-center xs12 s10-offset-1 m8-offset-2 l6-offset-3">
                                         <div className="my-2">
                                             <p><strong>Status</strong></p>
                                             <em
@@ -119,16 +119,16 @@ export default function AdminRequests() {
                                                 {request.status}
                                             </em>
                                         </div>
-                                        <div className="w-100 grid xl-2-6fr sm-1-12fr">
-                                            <div className="my-2">
+                                        <div className="w-100 grid2">
+                                            <div className="my-1 s12 l6">
                                                 <strong>{request.first_name} {request.last_name}</strong>
                                                 <p>{request.title}</p>
                                             </div>
-                                            <div className="my-2">
+                                            <div className="my-1 s12 l6">
                                                 <strong>Submission date</strong>
                                                 <p>{new Date(request.requested_at).toDateString()}</p>
                                             </div>
-                                            <div className="my-2">
+                                            <div className="my-1 s12 l6">
                                                 <strong>Requested dates</strong>
                                                 {
                                                     request.requested_dates.map((rd, rd_i) => (
@@ -143,21 +143,21 @@ export default function AdminRequests() {
                                                     ))
                                                 }
                                             </div>
-                                            <div className="my-2">
+                                            <div className="my-1 s12 l6">
                                                 <strong>Notes</strong>
                                                 <p>{request.notes}</p>
                                             </div>
                                         </div>
-                                        <div className="my-3 w-50 lg-w-60 med-w-80 xs-w-90 flex justify-evenly">
+                                        <div>
                                             <button
-                                                className={`btn-med ${isUpdating ? '' : 'btn-hovered pointer-no-u'}`}
+                                                className={`btn-med m-2 ${isUpdating ? '' : 'btn-hovered pointer-no-u'}`}
                                                 onClick={() => handleUpdateRequestStatus(request.r_id, 'Approved')}
                                                 disabled={isUpdating}
                                             >
                                                 Approve
                                             </button>
                                             <button
-                                                className={`btn-med ${isUpdating ? '' : 'btn-hovered pointer-no-u'}`}
+                                                className={`btn-med m-2 ${isUpdating ? '' : 'btn-hovered pointer-no-u'}`}
                                                 onClick={() => handleUpdateRequestStatus(request.r_id, 'Denied')}
                                                 disabled={isUpdating}
                                             >

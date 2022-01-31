@@ -2,7 +2,7 @@ import axios from 'axios';
 
 export const fetchAllRequests = async () => {
     try {
-        const res = await axios.get('/requests');
+        const res = await axios.get('http://localhost:5000/requests');
         return res.data;
     } catch (err) {
         return { error: err.response.data };
@@ -20,7 +20,7 @@ export const fetchRequestsByUser = async (u_id) => {
 
 export const fetchAllRequestsByStatus = async (status) => {
     try {
-        const res = await axios.get(`/requests/status/${status}`);
+        const res = await axios.get(`http://localhost:5000/requests/status/${status}`);
         return res.data;
     } catch (err) {
         return { error: err.response.data };
