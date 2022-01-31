@@ -68,28 +68,28 @@ export default function UserProfile() {
     }
 
     const renderUserGeneral = () => (
-        <div style={{ height: '200px' }} className="my-2 flex flex-col justify-evenly">
-            <div>
+        <div className="my-2">
+            <div className="py-1">
                 <h4>Name</h4>
                 <p>{user.first_name} {user.last_name}</p>
             </div>
-            <div>
+            <div className="py-1">
                 <h4>Email</h4>
                 <p>{user.email}</p>
             </div>
-            <div>
+            <div className="py-1">
                 <h4>Phone</h4>
                 <p>{user.phone}</p>
             </div>
-            <div>
+            <div className="py-1">
                 <button className="btn-med btn-hovered" onClick={() => setShowEditGeneral(true)}>Edit</button>
             </div>
         </div>
     )
 
     const renderEditGeneral = () => (
-        <div style={{ height: '330px' }} className="my-2 flex flex-col justify-evenly">
-            <div>
+        <div className="my-2">
+            <div className="py-1">
                 <p>First Name</p>
                 <input
                     type="text"
@@ -98,7 +98,7 @@ export default function UserProfile() {
                     onChange={({ target }) => setFirstName(target.value)}
                 />
             </div>
-            <div>
+            <div className="py-1">
                 <p>Last Name</p>
                 <input
                     type="text"
@@ -107,7 +107,7 @@ export default function UserProfile() {
                     onChange={({ target }) => setLastName(target.value)}
                 />
             </div>
-            <div>
+            <div className="py-1">
                 <p>Email</p>
                 <input
                     type="text"
@@ -116,7 +116,7 @@ export default function UserProfile() {
                     onChange={({ target }) => setEmail(target.value)}
                 />
             </div>
-            <div>
+            <div className="py-1">
                 <p>Phone</p>
                 <input
                     type="text"
@@ -125,7 +125,7 @@ export default function UserProfile() {
                     onChange={({ target }) => setPhone(target.value)}
                 />
             </div>
-            <div>
+            <div className="py-1">
                 <button className="btn-med btn-hovered" disabled={isUpdating} onClick={() => handleUpdateUserGeneral()}>Save</button>
                 <button className="btn-med btn-hovered ml-5" disabled={isUpdating} onClick={() => setShowEditGeneral(false)}>Cancel</button>
             </div>
@@ -135,8 +135,8 @@ export default function UserProfile() {
     const renderEditPassword = () => (
         <div>
             <h4 className="mt-2">Update Password</h4>
-            <form onSubmit={handleUpdatePassword} style={{ height: '230px' }} className="flex flex-col justify-evenly">
-                <div>
+            <form onSubmit={handleUpdatePassword}>
+                <div className="py-2">
                     <input
                         type="password"
                         className="form-input"
@@ -145,7 +145,7 @@ export default function UserProfile() {
                         onChange={({ target }) => setPassword(target.value)}
                     />
                 </div>
-                <div>
+                <div className="py-2">
                     <input
                         type="password"
                         className="form-input"
@@ -154,7 +154,7 @@ export default function UserProfile() {
                         onChange={({ target }) => setNewPassword(target.value)}
                     />
                 </div>
-                <div>
+                <div className="py-2">
                     <input
                         type="password"
                         className="form-input"
@@ -163,7 +163,7 @@ export default function UserProfile() {
                         onChange={({ target }) => setConfirmNewPassword(target.value)}
                     />
                 </div>
-                <div>
+                <div className="py-2">
                     <button
                         className={`btn-med ${isUpdating ? '' : 'btn-hovered'}`}
                         disabled={isUpdating}

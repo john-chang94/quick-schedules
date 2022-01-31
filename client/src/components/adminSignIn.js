@@ -36,19 +36,19 @@ export default function AdminSignIn() {
     }
 
     return (
-        <div className="flex flex-center vh-80">
-            <div className="w-100">
+        <div className="sign-in grid2">
+            <div className="xs10-offset-1 l8-offset-2">
                 <h2 className="mb-2">Sign In</h2>
-                <form onSubmit={handleSignIn} className="flex flex-col flex-center">
-                    <div className="mb-1 w-100">
+                <form onSubmit={handleSignIn} className="flex flex-col">
+                    <div className="mb-1">
                         <p>Email</p>
                         <input type="email" className="form-input" onChange={({ target }) => setEmail(target.value)} />
                     </div>
-                    <div className="mb-3 w-100">
+                    <div className="mb-3">
                         <p>Password</p>
                         <input type="password" className="form-input" onChange={({ target }) => setPassword(target.value)} />
                     </div>
-                    <div>
+                    <div className="align-self-center">
                         <button className={`btn-lg ${!isInvalid && 'btn-hovered'}`} disabled={isInvalid}>Sign In</button>
                     </div>
                     {error ? <p className="mt-2 red">{error}</p> : null}

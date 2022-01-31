@@ -29,7 +29,14 @@ export default function AdminStore() {
 
         setTimeout(() => {
             async function saveData() {
-                const body = { store_open, store_close, store_open_value, store_close_value, store_open_level, store_close_level };
+                const body = {
+                    store_open,
+                    store_close,
+                    store_open_value,
+                    store_close_value,
+                    store_open_level,
+                    store_close_level
+                };
 
                 await setStoreHours(body, tokenConfig);
                 await fetchStoreHours();
@@ -48,7 +55,14 @@ export default function AdminStore() {
 
         setTimeout(() => {
             async function saveData() {
-                const body = { store_open, store_close, store_open_value, store_close_value, store_open_level, store_close_level };
+                const body = {
+                    store_open,
+                    store_close,
+                    store_open_value,
+                    store_close_value,
+                    store_open_level,
+                    store_close_level
+                };
 
                 await updateStoreHours(body, tokenConfig);
                 await fetchStoreHours();
@@ -221,8 +235,8 @@ export default function AdminStore() {
                                 color='rgb(50, 110, 150)'
                             />
                         </div>
-                        : <div className="flex justify-center">
-                            <div className="text-center border-solid-1 border-smooth box-shadow w-50 med-w-70 sm-w-80 xs-w-90">
+                        : <div className="grid2">
+                            <div className="text-center border-solid-1 border-smooth box-shadow xs10-offset-1 l8-offset-2">
                                 <h3 className="my-2">Store Hours</h3>
                                 {
                                     showEditHours

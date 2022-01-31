@@ -3,8 +3,8 @@ import * as ROUTES from '../../constants/routes';
 
 export default function UserHome() {
     return (
-        <div id="home" className="grid gap-2 col-xl-4-3fr lg-2-6fr sm-1-12fr">
-            <Link to={ROUTES.USER_SCHEDULES} className="black text-no-u">
+        <div id="home" className="grid2">
+            <Link to={ROUTES.USER_SCHEDULES} className="s12 m6 l3 black text-no-u">
                 <div className="border-solid-1 border-smooth box-shadow bg-x-light-gray-hovered py-8">
                     <div className="flex flex-col flex-center">
                         <h2>Schedules</h2>
@@ -14,7 +14,7 @@ export default function UserHome() {
                     </div>
                 </div>
             </Link>
-            <Link to={ROUTES.USER_REQUESTS} className="black text-no-u">
+            <Link to={ROUTES.USER_REQUESTS} className="s12 m6 l3 black text-no-u">
                 <div className="border-solid-1 border-smooth box-shadow bg-x-light-gray-hovered py-8">
                     <div className="flex flex-col flex-center">
                         <h2>Requests</h2>
@@ -24,7 +24,7 @@ export default function UserHome() {
                     </div>
                 </div>
             </Link>
-            <Link to={ROUTES.USER_AVAILABILITY} className="black text-no-u">
+            <Link to={ROUTES.USER_AVAILABILITY} className="s12 m6 l3 black text-no-u">
                 <div className="border-solid-1 border-smooth box-shadow bg-x-light-gray-hovered py-8">
                     <div className="flex flex-col flex-center">
                         <h2>Availability</h2>
@@ -34,7 +34,7 @@ export default function UserHome() {
                     </div>
                 </div>
             </Link>
-            <Link to={ROUTES.USER_PROFILE} className="black text-no-u">
+            <Link to={ROUTES.USER_PROFILE} className="s12 m6 l3 black text-no-u">
                 <div className="border-solid-1 border-smooth box-shadow bg-x-light-gray-hovered py-8">
                     <div className="flex flex-col flex-center">
                         <h2>Profile</h2>
