@@ -68,8 +68,6 @@ export default function AdminSchedules() {
         setUsers(users);
         setRequests(requests);
         setIsLoadingSchedule(false);
-
-        console.log(`users`, users)
     }
 
     // Can create or update shift based on s_id being provided
@@ -283,8 +281,8 @@ export default function AdminSchedules() {
             <table id="availability-table" className="border-collapse w-100 text-center">
                 <thead>
                     <tr className="border-bottom">
-                        <th className=" pt-2 pb-1">Role</th>
-                        <th className=" pt-2 pb-1">Name</th>
+                        <th className="pt-2 pb-1">Role</th>
+                        <th className="pt-2 pb-1">Name</th>
                         {
                             // Render the day only
                             days && days.map((day, i) => (
@@ -305,11 +303,11 @@ export default function AdminSchedules() {
                                     ? { backgroundColor: 'rgb(235, 235, 235)' }
                                     : { backgroundColor: 'rbg(255, 255, 255)' }}
                             >
-                                <td className=" nowrap py-1">{user.title}</td>
-                                <td className=" nowrap py-1">{user.first_name} {user.last_name}</td>
+                                <td className="nowrap py-1">{user.title}</td>
+                                <td className="nowrap py-1">{user.first_name} {user.last_name}</td>
                                 {
                                     user.availability.map((time, i) => (
-                                        <td key={i} className={` nowrap py-1 ${time.start_time === 'N/A' && 'bg-black'}`}>
+                                        <td key={i} className={`nowrap py-1 ${time.start_time === 'N/A' && 'bg-black'}`}>
                                             {(time.start_time === 'ANY' && time.end_time === 'ANY') ? 'ANY' : `${time.start_time} - ${time.end_time}`}
                                         </td>
                                     ))

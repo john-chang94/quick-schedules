@@ -138,16 +138,16 @@ export default function AdminStore() {
                     }
                 </select>
             </div>
-            <div className="my-3 flex justify-evenly w-50 lg-w-60 med-w-80 xs-w-90">
+            <div>
                 <button
-                    className={`btn-sm ${!isSettingStoreHours && 'btn-hovered'}`}
+                    className={`m-2 btn-sm ${!isSettingStoreHours && 'btn-hovered'}`}
                     disabled={isSettingStoreHours}
                     onClick={() => storeFirstTime === true ? handleSetStoreHours() : handleUpdateStoreHours()}
                 >
                     Save
                 </button>
                 <button
-                    className={`btn-sm ${!isSettingStoreHours && 'btn-hovered'}`}
+                    className={`m-2 btn-sm ${!isSettingStoreHours && 'btn-hovered'}`}
                     disabled={isSettingStoreHours}
                     onClick={() => setShowEditHours(false)}
                 >
@@ -236,7 +236,7 @@ export default function AdminStore() {
                             />
                         </div>
                         : <div className="grid2">
-                            <div className="text-center border-solid-1 border-smooth box-shadow xs10-offset-1 l8-offset-2">
+                            <div className="text-center border-solid-1 border-smooth box-shadow xs10-offset-1 m8-offset-2 l7-offset-3">
                                 <h3 className="my-2">Store Hours</h3>
                                 {
                                     showEditHours

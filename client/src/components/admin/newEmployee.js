@@ -98,7 +98,7 @@ export default function AdminNewEmployee() {
                         }
                     </select>
                 </div>
-                <div>
+                <div className="text-center mt-2">
                     <button className="btn-med btn-hovered">Submit</button>
                 </div>
             </form>

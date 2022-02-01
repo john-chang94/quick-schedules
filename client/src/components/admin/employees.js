@@ -15,7 +15,7 @@ export default function AdminEmployees() {
         history.push(`${ROUTES.ADMIN_EMPLOYEES}/${u_id}`);
     }
 
-    const handleNewEmployee = () => {
+    const handleAddEmployee = () => {
         history.push(ROUTES.ADMIN_NEW_EMPLOYEE);
     }
 
@@ -58,8 +58,8 @@ export default function AdminEmployees() {
                     </div>
                     : <div>
                         <div className="mt-6 mb-4 flex flex-center">
-                            <button className="btn-x-lg btn-hovered" onClick={handleNewEmployee}>
-                                <p><i className="fas fa-plus"></i> New Employee</p>
+                            <button className="btn-x-lg btn-hovered" onClick={handleAddEmployee}>
+                                <p>Add Employee</p>
                             </button>
                         </div>
                         <div>

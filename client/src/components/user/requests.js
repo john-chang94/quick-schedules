@@ -159,11 +159,11 @@ export default function UserRequests() {
                     <i className="fas fa-plus"></i>&nbsp;Date
                 </button>
             </div>
-            <div className="">
+            <div>
                 <p>Notes</p>
                 <textarea className="h-10 p-1" onChange={({ target }) => setNotes(target.value)}></textarea>
             </div>
-            <div className="">
+            <div>
                 <button className="btn-med btn-hovered m-3" disabled={isSubmitting} onClick={() => handleCreateRequest()}>Submit</button>
                 <button className="btn-med btn-hovered m-3" disabled={isSubmitting} onClick={() => handleCancelCreateNewRequest()}>Cancel</button>
             </div>
