@@ -133,8 +133,10 @@ export default function UserRequests() {
         let dateElements = [];
         for (let i = 0; i < numOfDateInputs; i++) {
             if (numOfDateInputs > 1 && i === numOfDateInputs - 1) {
+                // Render additional date inputs
                 dateElements.push(<XDateElement key={i} index={i} />)
             } else {
+                // Render initial date input
                 dateElements.push(<DateElement key={i} index={i} />)
             }
         }
@@ -143,8 +145,8 @@ export default function UserRequests() {
     }
 
     const renderNewRequest = () => (
-        <div className="border-solid-1 border-smooth p-1 w-50 lg-w-60 med-w-80 xs-w-90 mt-5 flex flex-col align-center text-center">
-            <div className="w-3">
+        <div className="border-solid-1 border-smooth my-2 flex flex-col align-center text-center xs12 s10-offset-1 m8-offset-2 l6-offset-3">
+            <div className="w-50">
                 {
                     // Render custom date elements and functions from above
                     renderDateElements()
@@ -157,56 +159,60 @@ export default function UserRequests() {
                     <i className="fas fa-plus"></i>&nbsp;Date
                 </button>
             </div>
-            <div className="w-50 lg-w-60 med-w-80 xs-w-90 my-1">
+            <div className="">
                 <p>Notes</p>
-                <textarea className="h-10 w-90 p-1" onChange={({ target }) => setNotes(target.value)}></textarea>
+                <textarea className="h-10 p-1" onChange={({ target }) => setNotes(target.value)}></textarea>
             </div>
-            <div className="my-2 w-50 lg-w-60 med-w-80 xs-w-90 flex justify-evenly">
-                <button className="btn-sm btn-hovered" disabled={isSubmitting} onClick={() => handleCreateRequest()}>Submit</button>
-                <button className="btn-sm btn-hovered" disabled={isSubmitting} onClick={() => handleCancelCreateNewRequest()}>Cancel</button>
+            <div className="">
+                <button className="btn-med btn-hovered m-3" disabled={isSubmitting} onClick={() => handleCreateRequest()}>Submit</button>
+                <button className="btn-med btn-hovered m-3" disabled={isSubmitting} onClick={() => handleCancelCreateNewRequest()}>Cancel</button>
             </div>
         </div>
     )
 
     const renderRequests = () => (
         requests && requests.map((request, i) => (
-            <div key={i} className="border-solid-1 border-smooth p-1 w-50 lg-w-60 med-w-80 xs-w-90 text-center my-2">
-                <div className="grid xl-2-6fr sm-1-12fr">
-                    <div className="my-2">
-                        <strong>Submission date</strong>
-                        <p>{new Date(request.requested_at).toLocaleDateString()}</p>
+            <div key={i} className="border-solid-1 border-smooth my-2 text-center xs12 s10-offset-1 m8-offset-2 l6-offset-3">
+                <div className="flex">
+                    <div className="flex-1">
+                        <div className="m-2">
+                            <strong>Submission date</strong>
+                            <p>{new Date(request.requested_at).toLocaleDateString()}</p>
+                        </div>
+                        <div className="m-2">
+                            <p><strong>Status</strong></p>
+                            <em
+                                className={
+                                    request.status === 'Pending'
+                                        ? 'blue'
+                                        : request.status === 'Approved'
+                                            ? 'green'
+                                            : request.status === 'Denied'
+                                                ? 'red'
+                                                : ''}>
+                                {request.status}
+                            </em>
+                        </div>
                     </div>
-                    <div className="my-2">
-                        <p><strong>Status</strong></p>
-                        <em
-                            className={
-                                request.status === 'Pending'
-                                    ? 'blue'
-                                    : request.status === 'Approved'
-                                        ? 'green'
-                                        : request.status === 'Denied'
-                                            ? 'red'
-                                            : ''}>
-                            {request.status}
-                        </em>
-                    </div>
-                    <div className="my-2">
-                        <strong>Requested dates</strong>
-                        {
-                            request.requested_dates.map((rd, rd_i) => (
-                                <p key={rd_i}>
-                                    {
-                                        rd_i === request.requested_dates.length - 1
-                                            ? new Date(rd).toDateString()
-                                            : `${new Date(rd).toDateString()},`
-                                    }
-                                </p>
-                            ))
-                        }
-                    </div>
-                    <div className="my-2">
-                        <strong>Notes</strong>
-                        <p>{request.notes}</p>
+                    <div className="flex-1">
+                        <div className="m-2">
+                            <strong>Requested dates</strong>
+                            {
+                                request.requested_dates.map((rd, rd_i) => (
+                                    <p key={rd_i}>
+                                        {
+                                            rd_i === request.requested_dates.length - 1
+                                                ? new Date(rd).toDateString()
+                                                : `${new Date(rd).toDateString()},`
+                                        }
+                                    </p>
+                                ))
+                            }
+                        </div>
+                        <div className="m-2">
+                            <strong>Notes</strong>
+                            <p>{request.notes}</p>
+                        </div>
                     </div>
                 </div>
                 <div className="my-2">
@@ -249,12 +255,12 @@ export default function UserRequests() {
                             color='rgb(50, 110, 150)'
                         />
                     </div>
-                    : <div className="flex flex-col align-center">
+                    : <div className="grid2">
                         {renderRequests()}
                         {
                             createNewRequest
                                 ? renderNewRequest()
-                                : <div className="mt-5">
+                                : <div className="mt-4 xs12 s10-offset-1 m8-offset-2 l6-offset-3 text-center">
                                     <button className="btn-lg btn-hovered" onClick={() => setCreateNewRequest(true)}>
                                         <p><i className="fas fa-plus"></i> New Request</p>
                                     </button>
