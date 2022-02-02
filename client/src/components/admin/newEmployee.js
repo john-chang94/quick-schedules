@@ -8,6 +8,7 @@ import { createUser } from '../../services/auth';
 export default function AdminNewEmployee() {
     const [roles, setRoles] = useState(null);
     const [error, setError] = useState('');
+    const [success, setSuccess] = useState(false);
 
     const [role_id, setRoleId] = useState(6);
     const [first_name, setFirstName] = useState('');
@@ -35,6 +36,7 @@ export default function AdminNewEmployee() {
             setPhone('');
             setPassword('');
             setHourlyPay('');
+            setSuccess(true);
         }
     }
 
@@ -54,55 +56,58 @@ export default function AdminNewEmployee() {
                     <i className="fas fa-arrow-left"></i> Back
                 </Link>
             </div>
-            <form onSubmit={handleSubmit} style={{ height: '630px' }} className="flex flex-col justify-evenly mt-2">
-                <div>
-                    <p>First Name</p>
-                    <input type="text" className="form-input" onChange={({ target }) => setFirstName(target.value)} />
-                </div>
-                <div>
-                    <p>Last Name</p>
-                    <input type="text" className="form-input" onChange={({ target }) => setLastName(target.value)} />
-                </div>
-                <div>
-                    <p>Email</p>
-                    <input type="email" className="form-input" onChange={({ target }) => setEmail(target.value)} />
-                </div>
-                <div>
-                    <p>Phone</p>
-                    <input type="text" className="form-input" onChange={({ target }) => setPhone(target.value)} />
-                </div>
-                <div>
-                    <p>Password</p>
-                    <input type="password" className="form-input" onChange={({ target }) => setPassword(target.value)} />
-                </div>
-                <div>
-                    <p>Hourly Pay</p>
-                    <input type="text" className="form-input" onChange={({ target }) => setHourlyPay(target.value)} />
-                </div>
-                <div>
-                    <p>Starting Date</p>
-                    <input type="date" className="form-input" onChange={({ target }) => setStartedAt(target.value)} />
-                </div>
-                <div>
-                    <p>Role</p>
-                    <select value={role_id} onChange={({ target }) => setRoleId(parseInt(target.value))}>
-                        {
-                            roles && roles.map((role, i) => (
-                                <option
-                                    key={i}
-                                    value={role.role_id}
-                                >
-                                    {role.title}
-                                </option>
-                            ))
-                        }
-                    </select>
-                </div>
-                <div className="text-center mt-2">
-                    <button className="btn-med btn-hovered">Submit</button>
-                </div>
-            </form>
-            {error ? <p className="red">{error}</p> : null}
+            <div className="grid2">
+                <form onSubmit={handleSubmit} className="xs12 s10-offset-1 m8-offset-2 l6-offset-3">
+                    <div className="my-2">
+                        <p>First Name</p>
+                        <input type="text" value={first_name} className="form-input" onChange={({ target }) => setFirstName(target.value)} />
+                    </div>
+                    <div className="my-2">
+                        <p>Last Name</p>
+                        <input type="text" value={last_name} className="form-input" onChange={({ target }) => setLastName(target.value)} />
+                    </div>
+                    <div className="my-2">
+                        <p>Email</p>
+                        <input type="email" value={email} className="form-input" onChange={({ target }) => setEmail(target.value)} />
+                    </div>
+                    <div className="my-2">
+                        <p>Phone</p>
+                        <input type="text" value={phone} className="form-input" onChange={({ target }) => setPhone(target.value)} />
+                    </div>
+                    <div className="my-2">
+                        <p>Password</p>
+                        <input type="password" value={password} className="form-input" onChange={({ target }) => setPassword(target.value)} />
+                    </div>
+                    <div className="my-2">
+                        <p>Hourly Pay</p>
+                        <input type="text" value={hourly_pay} className="form-input" onChange={({ target }) => setHourlyPay(target.value)} />
+                    </div>
+                    <div className="my-2">
+                        <p>Starting Date</p>
+                        <input type="date" value={started_at} className="form-input" onChange={({ target }) => setStartedAt(target.value)} />
+                    </div>
+                    <div className="my-2">
+                        <p>Role</p>
+                        <select value={role_id} onChange={({ target }) => setRoleId(parseInt(target.value))}>
+                            {
+                                roles && roles.map((role, i) => (
+                                    <option
+                                        key={i}
+                                        value={role.role_id}
+                                    >
+                                        {role.title}
+                                    </option>
+                                ))
+                            }
+                        </select>
+                    </div>
+                    <div className="text-center mt-5">
+                        <button className="btn-med btn-hovered">Submit</button>
+                    </div>
+                    {error ? <p className="red mt-3">{error}</p> : null}
+                    {success ? <p className="green mt-3">Profile successfully added!</p> : null}
+                </form>
+            </div>
         </div>
     )
 }

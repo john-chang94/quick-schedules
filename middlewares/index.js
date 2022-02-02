@@ -49,4 +49,6 @@ exports.createUserValidator = (req, res, next) => {
     if (errors) {
         return res.status(400).send(errors[0].msg);
     }
+
+    next();
 }

@@ -44,6 +44,7 @@ export default function AdminEmployee() {
         const res = await editPassword(u_id, body, tokenConfig);
         if (res.error) {
             setError(res.error);
+            setIsUpdating(false);
         }
         else {
             setError('');
@@ -93,44 +94,44 @@ export default function AdminEmployee() {
     }
 
     const renderUserGeneral = () => (
-        <div style={{ height: '200px' }} className="my-2 flex flex-col justify-evenly">
-            <div>
+        <div className="my-2">
+            <div className="my-2">
                 <h4>Name</h4>
                 <p>{user.first_name} {user.last_name}</p>
             </div>
-            <div>
+            <div className="my-2">
                 <h4>Email</h4>
                 <p>{user.email}</p>
             </div>
-            <div>
+            <div className="my-2">
                 <h4>Phone</h4>
                 <p>{user.phone}</p>
             </div>
-            <div>
+            <div className="my-2">
                 <button className="btn-med btn-hovered" onClick={() => setShowEditGeneral(true)}>Edit</button>
             </div>
         </div>
     )
 
     const renderUserInfo = () => (
-        <div style={{ height: '250px' }} className="my-2 flex flex-col justify-evenly">
-            <div>
+        <div className="my-2">
+            <div className="my-2">
                 <h4>Role</h4>
                 <p>{user.title}</p>
             </div>
-            <div>
+            <div className="my-2">
                 <h4>Hourly Pay</h4>
                 <p>{verifiedUser.level <= user.level ? user.hourly_pay : '**'}</p>
             </div>
-            <div>
+            <div className="my-2">
                 <h4>Started At</h4>
                 <p>{new Date(user.started_at).toLocaleDateString()}</p>
             </div>
-            <div>
+            <div className="my-2">
                 <h4>Updated At</h4>
                 <p>{user.updated_at ? new Date(user.updated_at).toLocaleDateString() : 'N/A'}</p>
             </div>
-            <div>
+            <div className="my-2">
                 <button
                     className={`btn-med ${verifiedUser.level > user.level ? '' : 'btn-hovered'}`}
                     onClick={() => setShowEditInfo(true)}
@@ -143,8 +144,8 @@ export default function AdminEmployee() {
     )
 
     const renderEditGeneral = () => (
-        <div style={{ height: '330px' }} className="my-2 flex flex-col justify-evenly">
-            <div>
+        <div className="my-2">
+            <div className="my-2">
                 <p>First Name</p>
                 <input
                     type="text"
@@ -153,7 +154,7 @@ export default function AdminEmployee() {
                     onChange={({ target }) => setFirstName(target.value)}
                 />
             </div>
-            <div>
+            <div className="my-2">
                 <p>Last Name</p>
                 <input
                     type="text"
@@ -162,7 +163,7 @@ export default function AdminEmployee() {
                     onChange={({ target }) => setLastName(target.value)}
                 />
             </div>
-            <div>
+            <div className="my-2">
                 <p>Email</p>
                 <input
                     type="text"
@@ -171,7 +172,7 @@ export default function AdminEmployee() {
                     onChange={({ target }) => setEmail(target.value)}
                 />
             </div>
-            <div>
+            <div className="my-2">
                 <p>Phone</p>
                 <input
                     type="text"
@@ -180,7 +181,7 @@ export default function AdminEmployee() {
                     onChange={({ target }) => setPhone(target.value)}
                 />
             </div>
-            <div>
+            <div className="my-3">
                 <button className="btn-med btn-hovered" disabled={isUpdating} onClick={() => handleUpdateUserGeneral()}>Save</button>
                 <button className="btn-med btn-hovered ml-5" disabled={isUpdating} onClick={() => setShowEditGeneral(false)}>Cancel</button>
             </div>
@@ -188,8 +189,8 @@ export default function AdminEmployee() {
     )
 
     const renderEditInfo = () => (
-        <div style={{ height: '270px' }} className="my-2 flex flex-col justify-evenly">
-            <div>
+        <div className="my-2">
+            <div className="my-2">
                 <p>Role</p>
                 <select defaultValue={user.role_id} onChange={({ target }) => setRoleId(parseInt(target.value))}>
                     {
@@ -204,7 +205,7 @@ export default function AdminEmployee() {
                     }
                 </select>
             </div>
-            <div>
+            <div className="my-2">
                 <p>Hourly Pay</p>
                 <input
                     type="text"
@@ -213,7 +214,7 @@ export default function AdminEmployee() {
                     onChange={({ target }) => setHourlyPay(target.value)}
                 />
             </div>
-            <div>
+            <div className="my-2">
                 <p>Started At</p>
                 <input
                     type="text"
@@ -222,7 +223,7 @@ export default function AdminEmployee() {
                     onChange={({ target }) => setStartedAt(target.value)}
                 />
             </div>
-            <div>
+            <div className="my-3">
                 <button className="btn-med btn-hovered" disabled={isUpdating} onClick={() => handleUpdateUserInfo()}>Save</button>
                 <button className="btn-med btn-hovered ml-5" disabled={isUpdating} onClick={() => setShowEditInfo(false)}>Cancel</button>
             </div>
@@ -232,8 +233,8 @@ export default function AdminEmployee() {
     const renderEditPassword = () => (
         <div>
             <h4 className="mt-2">Update Password</h4>
-            <form onSubmit={handleUpdatePassword} style={{ height: '230px' }} className="flex flex-col justify-evenly">
-                <div>
+            <form onSubmit={handleUpdatePassword} className="">
+                <div className="my-2">
                     <input
                         type="password"
                         className="form-input"
@@ -242,7 +243,7 @@ export default function AdminEmployee() {
                         onChange={({ target }) => setPassword(target.value)}
                     />
                 </div>
-                <div>
+                <div className="my-2">
                     <input
                         type="password"
                         className="form-input"
@@ -251,7 +252,7 @@ export default function AdminEmployee() {
                         onChange={({ target }) => setNewPassword(target.value)}
                     />
                 </div>
-                <div>
+                <div className="my-2">
                     <input
                         type="password"
                         className="form-input"
@@ -260,7 +261,7 @@ export default function AdminEmployee() {
                         onChange={({ target }) => setConfirmNewPassword(target.value)}
                     />
                 </div>
-                <div>
+                <div className="my-3">
                     <button
                         className={`btn-med ${isUpdating ? '' : 'btn-hovered'}`}
                         disabled={isUpdating}
