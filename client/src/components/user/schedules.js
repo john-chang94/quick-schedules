@@ -18,14 +18,14 @@ export default function UserSchedules() {
         <td
             key={a_i}
             // Keep bg color black if employee is 'N/A' for availability
-            className={`border-x nowrap h-10 ${time.start_time === 'N/A' ? 'bg-black' : 'bg-x-light-gray'}`}
+            className={`${time.start_time === 'N/A' ? 'bg-black' : 'bg-x-light-gray'}`}
         ></td>
     )
 
     const renderShift = (a_i, shift_start, shift_end) => (
         <td
             key={a_i}
-            className="border-x nowrap h-10 bg-x-light-gray"
+            className="bg-x-light-gray"
         >
             {getTime(shift_start)} -&nbsp;
             {getTime(shift_end)}
@@ -66,10 +66,9 @@ export default function UserSchedules() {
                         />
                     </div>
                     : <div className="mt-5">
-                        <table className="w-100 mt-1 border-collapse text-center">
+                        <table className="schedules-table w-100 mt-1 border-collapse text-center table-fixed schedules-text">
                             <tbody>
-                                <tr className="border-bottom">
-                                    <td><strong>Role</strong></td>
+                                <tr>
                                     <td><strong>Name</strong></td>
                                     {
                                         days && days.map((day, i) => (
@@ -84,10 +83,14 @@ export default function UserSchedules() {
                                     users && users.map((user, u_i) => (
                                         <tr
                                             key={u_i}
-                                            className="bg-x-light-gray border-bottom"
+                                            className="bg-x-light-gray"
                                         >
-                                            <td className="border-x nowrap">{user.title}</td>
-                                            <td className="border-x nowrap">{user.first_name} {user.last_name}</td>
+                                            <td className="py-1">
+                                                <p>
+                                                    <strong>{user.first_name} {user.last_name}</strong>
+                                                </p>
+                                                <em>{user.title}</em>
+                                            </td>
                                             {
                                                 user.availability.map((time, a_i) => (
                                                     user.shifts[a_i].shift_end === null

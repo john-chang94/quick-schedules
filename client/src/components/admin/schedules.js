@@ -258,7 +258,7 @@ export default function AdminSchedules() {
     const renderShift = (u_id, a_i, shift_start, shift_end) => (
         <td
             key={a_i}
-            className="border-x nowrap pointer h-10 bg-light-gray-hovered"
+            className="pointer schedules-text hovered"
             onClick={() => handleEditShift(u_id, a_i, getTimeValue(shift_start), getTimeValue(shift_end))}
         >
             {getTime(shift_start)} -&nbsp;
@@ -270,7 +270,7 @@ export default function AdminSchedules() {
         <td
             key={a_i}
             // Keep bg color black if employee is 'N/A' for availability
-            className={`border-x nowrap pointer h-10 ${time.start_time === 'N/A' ? 'bg-black' : 'bg-light-gray-hovered'}`}
+            className={`pointer ${time.start_time === 'N/A' ? 'bg-black' : 'hovered'}`}
             onClick={() => handleUserClick(u_id, a_i)}
         ></td>
     )
@@ -278,15 +278,14 @@ export default function AdminSchedules() {
     const renderAvailability = () => (
         <>
             <h3 className="text-center">Availability</h3>
-            <table id="availability-table" className="border-collapse w-100 text-center">
+            <table id="availability-table" className="border-collapse w-100 text-center schedules-text">
                 <thead>
-                    <tr className="border-bottom">
-                        <th className="pt-2 pb-1">Role</th>
+                    <tr>
                         <th className="pt-2 pb-1">Name</th>
                         {
                             // Render the day only
                             days && days.map((day, i) => (
-                                <th key={i} className=" pt-2 pb-1">
+                                <th key={i} className="pt-2 pb-1">
                                     <p>{new Date(day).toString().split(' ')[0]}</p>
                                 </th>
                             ))
@@ -298,16 +297,19 @@ export default function AdminSchedules() {
                         availabilities && availabilities.map((user, i) => (
                             <tr
                                 key={i}
-                                className="border-bottom"
                                 style={i % 2 === 0
                                     ? { backgroundColor: 'rgb(235, 235, 235)' }
                                     : { backgroundColor: 'rbg(255, 255, 255)' }}
                             >
-                                <td className="nowrap py-1">{user.title}</td>
-                                <td className="nowrap py-1">{user.first_name} {user.last_name}</td>
+                                <td className="py-1">
+                                    <p>
+                                        <strong>{user.first_name} {user.last_name}</strong>
+                                    </p>
+                                    <em>{user.title}</em>
+                                </td>
                                 {
                                     user.availability.map((time, i) => (
-                                        <td key={i} className={`nowrap py-1 ${time.start_time === 'N/A' && 'bg-black'}`}>
+                                        <td key={i} className={` ${time.start_time === 'N/A' && 'bg-black'}`}>
                                             {(time.start_time === 'ANY' && time.end_time === 'ANY') ? 'ANY' : `${time.start_time} - ${time.end_time}`}
                                         </td>
                                     ))
@@ -389,7 +391,7 @@ export default function AdminSchedules() {
     )
 
     const renderSchedule = () => (
-        <table className="w-100 mt-1 border-collapse text-center">
+        <table className="schedules-table w-100 mt-1 border-collapse text-center table-fixed schedules-text">
             {
                 isLoadingSchedule
                     ? <Loader
@@ -398,8 +400,7 @@ export default function AdminSchedules() {
                         color='rgb(50, 110, 150)'
                     />
                     : <tbody>
-                        <tr className="border-bottom">
-                            <td><strong>Role</strong></td>
+                        <tr>
                             <td><strong>Name</strong></td>
                             {
                                 days && days.map((day, i) => (
@@ -414,10 +415,14 @@ export default function AdminSchedules() {
                             users && users.map((user, u_i) => (
                                 <tr
                                     key={u_i}
-                                    className="bg-x-light-gray border-bottom"
+                                    className="bg-x-light-gray"
                                 >
-                                    <td className="border-x nowrap">{user.title}</td>
-                                    <td className="border-x nowrap">{user.first_name} {user.last_name}</td>
+                                    <td className="py-1">
+                                        <p>
+                                            <strong>{user.first_name} {user.last_name}</strong>
+                                        </p>
+                                        <em>{user.title}</em>
+                                    </td>
                                     {
                                         user.availability.map((time, a_i) => (
                                             // Only render edit mode for the selected date and employee
@@ -440,9 +445,9 @@ export default function AdminSchedules() {
     const renderEditShift = (u_id, dayIndex, shift) => (
         <td key={dayIndex}>
             <div className="flex justify-evenly mt-1">
-                <p className="text-3">Preset</p>
+                <p>Preset</p>
                 <select
-                    className="w-60"
+                    className="w-60 schedules-text"
                     defaultValue='0 0'
                     disabled={isUpdating}
                     onChange={({ target }) => handleSelectPreset(target.value)}
@@ -459,9 +464,9 @@ export default function AdminSchedules() {
             </div>
             <hr className="my-1" />
             <div className="flex justify-evenly mb-1">
-                <p className="text-3">Start</p>
+                <p>Start</p>
                 <select
-                    className="w-60"
+                    className="w-60 schedules-text"
                     value={shift_start_value}
                     disabled={isUpdating}
                     onChange={({ target }) => setShiftStartValue(target.value)}>
@@ -479,9 +484,9 @@ export default function AdminSchedules() {
                 </select>
             </div>
             <div className="flex justify-evenly mb-1">
-                <p className="text-3 mr-1">End</p>
+                <p className="mr-1">End</p>
                 <select
-                    className="w-60"
+                    className="w-60 schedules-text"
                     value={shift_end_value}
                     disabled={isUpdating}
                     onChange={({ target }) => setShiftEndValue(target.value)}>
@@ -513,14 +518,14 @@ export default function AdminSchedules() {
                             style={{ border: 'solid 1px gray' }}
                             onClick={() => handleSaveShift(u_id, dayIndex, shift.s_id)}
                         >
-                            <i className="fas fa-check"></i>
+                            <i className="fas fa-check schedules-text"></i>
                         </button>
                         <button
                             className="btn-x-sm btn-hovered"
                             style={{ border: 'solid 1px gray' }}
                             onClick={() => handleSavePreset()}
                         >
-                            <i className="fas fa-star"></i>
+                            <i className="fas fa-star schedules-text"></i>
                         </button>
                         <button
                             className="btn-x-sm btn-hovered"
@@ -529,8 +534,8 @@ export default function AdminSchedules() {
                         >
                             {
                                 shift.shift_end === null
-                                    ? <i className="fas fa-times"></i>
-                                    : <i className="fas fa-trash-alt"></i>
+                                    ? <i className="fas fa-times schedules-text"></i>
+                                    : <i className="fas fa-trash-alt schedules-text"></i>
                             }
                         </button>
                     </div>
