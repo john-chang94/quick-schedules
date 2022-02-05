@@ -28,7 +28,7 @@ td {
 
 nav {
   height: 60px;
-  background-color: gray;
+  background-color: rgb(54, 121, 208);
   margin-bottom: 25px;
   display: flex;
   justify-content: flex-end;
@@ -58,11 +58,11 @@ nav {
   font-size: calc(5px + 0.8vmin);
 }
 
-#availability-table th,td {
+.schedules-table th,td {
   border: solid 1px rgb(177, 177, 177);
 }
 
-#schedules-table th,td {
+#availability-table th,td {
   border: solid 1px rgb(177, 177, 177);
 }
 

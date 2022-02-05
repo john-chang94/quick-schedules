@@ -7,6 +7,7 @@ export default function ProtectedRoute({ user, component: Component, ...rest }) 
     const { setVerifiedUser } = useContext(UserContext);
     
     return (
+        // ...rest is the path from props
         <Route {...rest} render={({ location }) => {
             if (user && user.is_admin) {
                 return <Component />;

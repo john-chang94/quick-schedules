@@ -1,5 +1,5 @@
 import './App.css';
-import { Suspense, useEffect, useContext } from 'react';
+import { useEffect, useContext, useState } from 'react';
 import { BrowserRouter as Router, Switch, Route } from 'react-router-dom';
 import * as ROUTES from './constants/routes';
 import { isAuthenticated, verifyUser } from './services/auth';
@@ -26,9 +26,11 @@ import AdminSignIn from './components/adminSignIn';
 
 import ProtectedRoute from './helpers/protectedRoute';
 import UserRoute from './helpers/userRoute';
+import IsLoaded from './isLoaded';
 
 function App() {
   const { verifiedUser, setVerifiedUser } = useContext(UserContext);
+  const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
     async function getVerifiedUser() {
@@ -37,6 +39,7 @@ function App() {
         const verifiedUser = await verifyUser(tokenConfig);
         setVerifiedUser(verifiedUser); // Set verified user in context for header
       }
+      setIsLoading(false);
     }
 
     getVerifiedUser();
@@ -46,7 +49,7 @@ function App() {
   return (
     <div>
       <Router>
-        <Suspense fallback={<p>Loading...</p>}>
+        <IsLoaded isLoading={isLoading} children>
           <Header />
           <div className="container">
             <Switch>
@@ -68,7 +71,7 @@ function App() {
               <UserRoute user={verifiedUser} path={ROUTES.USER_SCHEDULES} component={UserSchedules} />
             </Switch>
           </div>
-        </Suspense>
+        </IsLoaded>
       </Router>
     </div>
   );
