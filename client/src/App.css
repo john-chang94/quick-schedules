@@ -4,12 +4,17 @@
   font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
 }
 
+body {
+  overflow: hidden;
+}
+
 td {
   padding: 0 3px;
 }
 
 .container {
-  margin: 0 12%;
+  height: 95vh;
+  overflow-y: auto;
 }
 
 .pointer:hover {
@@ -26,13 +31,17 @@ td {
   background-color:rgba(0, 0, 0, 0.1);
 }
 
-nav {
+header {
   height: 60px;
   background-color: rgb(54, 121, 208);
-  margin-bottom: 25px;
   display: flex;
   justify-content: flex-end;
   align-items: center;
+}
+
+.navbar {
+  background-color: rgb(54, 121, 208);
+  height: 100vh;
 }
 
 .sign-in {
@@ -1080,6 +1089,11 @@ select {
   grid-template-columns: repeat(12, 1fr);
   /* grid-template-columns: repeat(auto-fill, fit-content); */
   gap: 12px;
+}
+
+.container-grid {
+  display: grid;
+  grid-template-columns: 2fr 10fr;
 }
 
 .grid-center {

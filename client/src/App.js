@@ -27,6 +27,7 @@ import AdminSignIn from './components/adminSignIn';
 import ProtectedRoute from './helpers/protectedRoute';
 import UserRoute from './helpers/userRoute';
 import IsLoaded from './isLoaded';
+import Navbar from './components/admin/navbar';
 
 function App() {
   const { verifiedUser, setVerifiedUser } = useContext(UserContext);
@@ -47,33 +48,38 @@ function App() {
   }, [])
 
   return (
-    <div>
+    // <div>
       <Router>
         <IsLoaded isLoading={isLoading} children>
           <Header />
-          <div className="container">
-            <Switch>
-              <Route exact path={ROUTES.SIGN_IN} component={SignIn} />
-              <Route exact path={ROUTES.ADMIN_SIGN_IN} component={AdminSignIn} />
+          <div className="container-grid">
+            <Navbar />
+            <div className="container">
+              <div className="m-2">
+                <Switch>
+                  <Route exact path={ROUTES.SIGN_IN} component={SignIn} />
+                  <Route exact path={ROUTES.ADMIN_SIGN_IN} component={AdminSignIn} />
 
-              <ProtectedRoute user={verifiedUser} path={ROUTES.ADMIN_HOME} component={AdminHome} />
-              <ProtectedRoute exact user={verifiedUser} path={ROUTES.ADMIN_EMPLOYEES} component={AdminEmployees} />
-              <ProtectedRoute user={verifiedUser} path={ROUTES.ADMIN_NEW_EMPLOYEE} component={AdminNewEmployee} />
-              <ProtectedRoute user={verifiedUser} path={ROUTES.ADMIN_EMPLOYEE} component={AdminEmployee} />
-              <ProtectedRoute user={verifiedUser} path={ROUTES.ADMIN_SCHEDULES} component={AdminSchedules} />
-              <ProtectedRoute user={verifiedUser} path={ROUTES.ADMIN_REQUESTS} component={AdminRequests} />
-              <ProtectedRoute user={verifiedUser} path={ROUTES.ADMIN_STORE} component={AdminStore} />
+                  <ProtectedRoute user={verifiedUser} path={ROUTES.ADMIN_HOME} component={AdminHome} />
+                  <ProtectedRoute exact user={verifiedUser} path={ROUTES.ADMIN_EMPLOYEES} component={AdminEmployees} />
+                  <ProtectedRoute user={verifiedUser} path={ROUTES.ADMIN_NEW_EMPLOYEE} component={AdminNewEmployee} />
+                  <ProtectedRoute user={verifiedUser} path={ROUTES.ADMIN_EMPLOYEE} component={AdminEmployee} />
+                  <ProtectedRoute user={verifiedUser} path={ROUTES.ADMIN_SCHEDULES} component={AdminSchedules} />
+                  <ProtectedRoute user={verifiedUser} path={ROUTES.ADMIN_REQUESTS} component={AdminRequests} />
+                  <ProtectedRoute user={verifiedUser} path={ROUTES.ADMIN_STORE} component={AdminStore} />
 
-              <UserRoute user={verifiedUser} path={ROUTES.USER_HOME} component={UserHome} />
-              <UserRoute user={verifiedUser} path={ROUTES.USER_PROFILE} component={UserProfile} />
-              <UserRoute user={verifiedUser} path={ROUTES.USER_AVAILABILITY} component={UserAvailability} />
-              <UserRoute user={verifiedUser} path={ROUTES.USER_REQUESTS} component={UserRequests} />
-              <UserRoute user={verifiedUser} path={ROUTES.USER_SCHEDULES} component={UserSchedules} />
-            </Switch>
+                  <UserRoute user={verifiedUser} path={ROUTES.USER_HOME} component={UserHome} />
+                  <UserRoute user={verifiedUser} path={ROUTES.USER_PROFILE} component={UserProfile} />
+                  <UserRoute user={verifiedUser} path={ROUTES.USER_AVAILABILITY} component={UserAvailability} />
+                  <UserRoute user={verifiedUser} path={ROUTES.USER_REQUESTS} component={UserRequests} />
+                  <UserRoute user={verifiedUser} path={ROUTES.USER_SCHEDULES} component={UserSchedules} />
+                </Switch>
+              </div>
+            </div>
           </div>
         </IsLoaded>
       </Router>
-    </div>
+    // </div>
   );
 }
 

@@ -27,10 +27,10 @@ export default function Header() {
     }, [])
 
     return (
-        <nav>
+        <header>
             {
                 verifiedUser &&
-                <div className="flex container">
+                <div className="flex" style={{ marginRight: "2%" }}>
                     <div className="mr-5">
                         <p className="off-white">Welcome, {verifiedUser && verifiedUser.first_name}</p>
                     </div>
@@ -39,6 +39,6 @@ export default function Header() {
                     </div>
                 </div>
             }
-        </nav>
+        </header>
     )
 }
