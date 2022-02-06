@@ -44,6 +44,10 @@ header {
   height: 100vh;
 }
 
+.navbar-top {
+  display: none;
+}
+
 .sign-in {
   margin-top: 20%;
 }
@@ -1271,6 +1275,19 @@ select {
   .s10-offset-1 {
     grid-column: 2 / span 10;
   }
+  .navbar-top {
+    display: block;
+    background-color: rgb(54, 121, 208);
+    position: absolute;
+    left: -20px;
+    margin-top: 12px;
+  }
+  .dropdown {
+    position: absolute;
+    top: -47px;
+    left: 20px;
+    padding: 3px;
+  }
 }
 
 @media screen and (max-width: 440px) {
@@ -1321,10 +1338,6 @@ select {
 /* OTHER MEDIA QUERIES */
 
 @media screen and (max-width: 1240px) {
-  .container {
-    margin: 0 10%;
-  }
-
   .lg-2-6fr {
     grid-template: repeat(2, 6fr) / repeat(2, 6fr);
   }
@@ -1393,10 +1406,6 @@ select {
 }
 
 @media screen and (max-width: 580px) {
-  .container {
-    margin: 0 7%;
-  }
-  
   .sm-1-12fr {
     grid-template: repeat(1, 12fr) / repeat(1, 12fr);
   }

@@ -1,10 +1,9 @@
-import { useContext, useState, useEffect } from 'react';
+import { useContext } from 'react';
 import { useHistory } from 'react-router';
 import * as ROUTES from '../constants/routes';
 import { UserContext } from '../contexts/userContext';
 
 export default function Header() {
-    const [width, setWidth] = useState(null);
     const { verifiedUser, setVerifiedUser } = useContext(UserContext);
     const history = useHistory();
 
@@ -14,17 +13,6 @@ export default function Header() {
         if (verifiedUser.is_admin) history.push(ROUTES.ADMIN_SIGN_IN);
         else history.push(ROUTES.SIGN_IN);
     }
-
-    const setWindowWidth = () => {
-        setWidth(window.innerWidth);
-    }
-
-    useEffect(() => {
-        setWidth(window.innerWidth);
-        window.addEventListener('resize', setWindowWidth);
-
-        return () => window.removeEventListener('resize', setWindowWidth);
-    }, [])
 
     return (
         <header>

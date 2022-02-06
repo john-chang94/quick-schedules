@@ -4,10 +4,13 @@ import { BrowserRouter as Router, Switch, Route } from 'react-router-dom';
 import * as ROUTES from './constants/routes';
 import { isAuthenticated, verifyUser } from './services/auth';
 import { UserContext } from './contexts/userContext';
+import { DimensionContext } from './contexts/dimensionContext';
 import "react-loader-spinner/dist/loader/css/react-spinner-loader.css";
 
 import Header from './components/header';
+import Navbar from './components/admin/navbar';
 import SignIn from './components/signIn';
+import AdminSignIn from './components/adminSignIn';
 
 import AdminHome from './components/admin/home';
 import AdminEmployees from './components/admin/employees';
@@ -22,15 +25,14 @@ import UserProfile from './components/user/profile';
 import UserAvailability from './components/user/availability';
 import UserRequests from './components/user/requests';
 import UserSchedules from './components/user/schedules';
-import AdminSignIn from './components/adminSignIn';
 
 import ProtectedRoute from './helpers/protectedRoute';
 import UserRoute from './helpers/userRoute';
 import IsLoaded from './isLoaded';
-import Navbar from './components/admin/navbar';
 
 function App() {
   const { verifiedUser, setVerifiedUser } = useContext(UserContext);
+  const { isMobile } = useContext(DimensionContext);
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
@@ -48,38 +50,36 @@ function App() {
   }, [])
 
   return (
-    // <div>
-      <Router>
-        <IsLoaded isLoading={isLoading} children>
-          <Header />
-          <div className="container-grid">
-            <Navbar />
-            <div className="container">
-              <div className="m-2">
-                <Switch>
-                  <Route exact path={ROUTES.SIGN_IN} component={SignIn} />
-                  <Route exact path={ROUTES.ADMIN_SIGN_IN} component={AdminSignIn} />
+    <Router>
+      <IsLoaded isLoading={isLoading} children>
+        <Header />
+        <div className={`relative ${(verifiedUser && !isMobile) && "container-grid"}`}>
+          <Navbar />
+          <div className="container">
+            <div className="m-2">
+              <Switch>
+                <Route exact path={ROUTES.SIGN_IN} component={SignIn} />
+                <Route exact path={ROUTES.ADMIN_SIGN_IN} component={AdminSignIn} />
 
-                  <ProtectedRoute user={verifiedUser} path={ROUTES.ADMIN_HOME} component={AdminHome} />
-                  <ProtectedRoute exact user={verifiedUser} path={ROUTES.ADMIN_EMPLOYEES} component={AdminEmployees} />
-                  <ProtectedRoute user={verifiedUser} path={ROUTES.ADMIN_NEW_EMPLOYEE} component={AdminNewEmployee} />
-                  <ProtectedRoute user={verifiedUser} path={ROUTES.ADMIN_EMPLOYEE} component={AdminEmployee} />
-                  <ProtectedRoute user={verifiedUser} path={ROUTES.ADMIN_SCHEDULES} component={AdminSchedules} />
-                  <ProtectedRoute user={verifiedUser} path={ROUTES.ADMIN_REQUESTS} component={AdminRequests} />
-                  <ProtectedRoute user={verifiedUser} path={ROUTES.ADMIN_STORE} component={AdminStore} />
+                <ProtectedRoute user={verifiedUser} path={ROUTES.ADMIN_HOME} component={AdminHome} />
+                <ProtectedRoute exact user={verifiedUser} path={ROUTES.ADMIN_EMPLOYEES} component={AdminEmployees} />
+                <ProtectedRoute user={verifiedUser} path={ROUTES.ADMIN_NEW_EMPLOYEE} component={AdminNewEmployee} />
+                <ProtectedRoute user={verifiedUser} path={ROUTES.ADMIN_EMPLOYEE} component={AdminEmployee} />
+                <ProtectedRoute user={verifiedUser} path={ROUTES.ADMIN_SCHEDULES} component={AdminSchedules} />
+                <ProtectedRoute user={verifiedUser} path={ROUTES.ADMIN_REQUESTS} component={AdminRequests} />
+                <ProtectedRoute user={verifiedUser} path={ROUTES.ADMIN_STORE} component={AdminStore} />
 
-                  <UserRoute user={verifiedUser} path={ROUTES.USER_HOME} component={UserHome} />
-                  <UserRoute user={verifiedUser} path={ROUTES.USER_PROFILE} component={UserProfile} />
-                  <UserRoute user={verifiedUser} path={ROUTES.USER_AVAILABILITY} component={UserAvailability} />
-                  <UserRoute user={verifiedUser} path={ROUTES.USER_REQUESTS} component={UserRequests} />
-                  <UserRoute user={verifiedUser} path={ROUTES.USER_SCHEDULES} component={UserSchedules} />
-                </Switch>
-              </div>
+                <UserRoute user={verifiedUser} path={ROUTES.USER_HOME} component={UserHome} />
+                <UserRoute user={verifiedUser} path={ROUTES.USER_PROFILE} component={UserProfile} />
+                <UserRoute user={verifiedUser} path={ROUTES.USER_AVAILABILITY} component={UserAvailability} />
+                <UserRoute user={verifiedUser} path={ROUTES.USER_REQUESTS} component={UserRequests} />
+                <UserRoute user={verifiedUser} path={ROUTES.USER_SCHEDULES} component={UserSchedules} />
+              </Switch>
             </div>
           </div>
-        </IsLoaded>
-      </Router>
-    // </div>
+        </div>
+      </IsLoaded>
+    </Router>
   );
 }
 
