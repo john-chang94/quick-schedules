@@ -13,7 +13,7 @@ td {
 }
 
 .container {
-  height: 95vh;
+  height: 94vh;
   overflow-y: auto;
 }
 
@@ -28,7 +28,7 @@ td {
 }
 
 .hovered:hover {
-  background-color:rgba(0, 0, 0, 0.1);
+  background-color:rgba(0, 0, 0, 0.15);
 }
 
 header {
@@ -670,6 +670,10 @@ header {
 
 .bg-green {
   background-color: green;
+}
+
+.bg-x-light-green {
+  background-color: rgba(181, 238, 141, 0.822);
 }
 
 .bg-blue {

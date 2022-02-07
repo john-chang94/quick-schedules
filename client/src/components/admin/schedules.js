@@ -258,7 +258,7 @@ export default function AdminSchedules() {
     const renderShift = (u_id, a_i, shift_start, shift_end) => (
         <td
             key={a_i}
-            className="pointer schedules-text hovered"
+            className="pointer schedules-text hovered bg-x-light-green"
             onClick={() => handleEditShift(u_id, a_i, getTimeValue(shift_start), getTimeValue(shift_end))}
         >
             {getTime(shift_start)} -&nbsp;
@@ -401,10 +401,12 @@ export default function AdminSchedules() {
                     />
                     : <tbody>
                         <tr>
-                            <td><strong>Name</strong></td>
+                            <td className="bg-x-light-gray">
+                                <strong>Name</strong>
+                            </td>
                             {
                                 days && days.map((day, i) => (
-                                    <td key={i}>
+                                    <td key={i} className="bg-x-light-gray">
                                         <strong>{new Date(day).toString().split(' ')[0]}</strong>
                                         <p><em>{new Date(day).toLocaleDateString()}</em></p>
                                     </td>
@@ -413,10 +415,7 @@ export default function AdminSchedules() {
                         </tr>
                         {
                             users && users.map((user, u_i) => (
-                                <tr
-                                    key={u_i}
-                                    className="bg-x-light-gray"
-                                >
+                                <tr key={u_i}>
                                     <td className="py-1">
                                         <p>
                                             <strong>{user.first_name} {user.last_name}</strong>
