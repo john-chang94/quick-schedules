@@ -19,11 +19,11 @@ export default function Header() {
             {
                 verifiedUser &&
                 <div className="flex" style={{ marginRight: "2%" }}>
-                    <div className="mr-5">
+                    <div className="mr-4">
                         <p className="off-white">Welcome, {verifiedUser && verifiedUser.first_name}</p>
                     </div>
                     <div className="pointer-no-u" style={{ marginTop: '2px' }} onClick={handleSignOut}>
-                        <p className="off-white"><i className="fas fa-sign-out-alt text-6"></i></p>
+                        <p className="off-white"><i className="fas fa-sign-out-alt text-5"></i></p>
                     </div>
                 </div>
             }

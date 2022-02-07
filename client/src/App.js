@@ -4,7 +4,6 @@ import { BrowserRouter as Router, Switch, Route } from 'react-router-dom';
 import * as ROUTES from './constants/routes';
 import { isAuthenticated, verifyUser } from './services/auth';
 import { UserContext } from './contexts/userContext';
-import { DimensionContext } from './contexts/dimensionContext';
 import "react-loader-spinner/dist/loader/css/react-spinner-loader.css";
 
 import Header from './components/header';
@@ -32,7 +31,6 @@ import IsLoaded from './isLoaded';
 
 function App() {
   const { verifiedUser, setVerifiedUser } = useContext(UserContext);
-  const { isMobile } = useContext(DimensionContext);
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
@@ -53,7 +51,7 @@ function App() {
     <Router>
       <IsLoaded isLoading={isLoading} children>
         <Header />
-        <div className={`relative ${(verifiedUser && !isMobile) && "container-grid"}`}>
+        <div className={`relative ${(verifiedUser) && "container-grid"}`}>
           <Navbar />
           <div className="container">
             <div className="m-2">

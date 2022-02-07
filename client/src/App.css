@@ -44,7 +44,16 @@ header {
   height: 100vh;
 }
 
+.navbar-top p {
+  padding-left: 60px;
+  padding-right: 60px;
+}
+
 .navbar-top {
+  display: none;
+}
+
+.dropdown {
   display: none;
 }
 
@@ -1275,6 +1284,13 @@ select {
   .s10-offset-1 {
     grid-column: 2 / span 10;
   }
+  .container-grid {
+    display: grid;
+    grid-template-columns: 12fr;
+  }
+  .navbar {
+    display: none;
+  }
   .navbar-top {
     display: block;
     background-color: rgb(54, 121, 208);
@@ -1283,6 +1299,7 @@ select {
     margin-top: 12px;
   }
   .dropdown {
+    display: block;
     position: absolute;
     top: -47px;
     left: 20px;

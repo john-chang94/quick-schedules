@@ -2,19 +2,17 @@ import React, { useContext, useState, useEffect } from 'react';
 import { Link } from "react-router-dom";
 import * as ROUTES from "../../constants/routes";
 import { UserContext } from '../../contexts/userContext';
-import { DimensionContext } from '../../contexts/dimensionContext';
 
 export default function Navbar() {
     const [dropDown, setDropDown] = useState(false);
     const { verifiedUser } = useContext(UserContext);
-    const { isMobile } = useContext(DimensionContext);
 
     // Navbar for large screens
     const renderSideNav = () => (
         <div className="navbar text-center">
             <Link to={ROUTES.ADMIN_EMPLOYEES} className="s12 m6 l3 text-no-u">
                 <div className="hovered py-2 off-white">
-                    <h4>Employees</h4>
+                    <p className="text-5">Employees</p>
                     <p className="text-7">
                         <i className="fas fa-users"></i>
                     </p>
@@ -22,7 +20,7 @@ export default function Navbar() {
             </Link>
             <Link to={ROUTES.ADMIN_SCHEDULES} className="s12 m6 l3 text-no-u">
                 <div className="hovered py-2 off-white">
-                    <h4>Schedules</h4>
+                    <p className="text-5">Schedules</p>
                     <p className="text-7">
                         <i className="fas fa-calendar-alt"></i>
                     </p>
@@ -30,7 +28,7 @@ export default function Navbar() {
             </Link>
             <Link to={ROUTES.ADMIN_REQUESTS} className="s12 m6 l3 text-no-u">
                 <div className="hovered py-2 off-white">
-                    <h4>Requests</h4>
+                    <p className="text-5">Requests</p>
                     <p className="text-7">
                         <i className="fas fa-inbox"></i>
                     </p>
@@ -38,7 +36,7 @@ export default function Navbar() {
             </Link>
             <Link to={ROUTES.ADMIN_STORE} className="s12 m6 l3 text-no-u">
                 <div className="hovered py-2 off-white">
-                    <h4>Store</h4>
+                    <p className="text-5">Store</p>
                     <p className="text-7">
                         <i className="fas fa-wrench"></i>
                     </p>
@@ -48,32 +46,37 @@ export default function Navbar() {
     )
 
     // Navbar for small screens
-    const renderTopNav = () => {
-        return dropDown ? (
-            <div className="navbar-top px-7 py-1 text-center">
-                <Link to={ROUTES.ADMIN_EMPLOYEES} className="s12 m6 l3 text-no-u">
-                    <div className="py-4 off-white">
-                        <p className="text-6">Employees</p>
+    const renderDropDown = () => {
+        return (
+            <div className="dropdown off-white text-7 pointer" onClick={() => setDropDown(!dropDown)}>
+                <i className="fas fa-bars"></i>
+                {dropDown ? (
+                    <div className="navbar-top text-center">
+                        <Link to={ROUTES.ADMIN_EMPLOYEES} className="s12 m6 l3 text-no-u">
+                            <div className="py-4 hovered off-white">
+                                <p className="text-4">Employees</p>
+                            </div>
+                        </Link>
+                        <Link to={ROUTES.ADMIN_SCHEDULES} className="s12 m6 l3 text-no-u">
+                            <div className="py-4 hovered off-white">
+                                <p className="text-4">Schedules</p>
+                            </div>
+                        </Link>
+                        <Link to={ROUTES.ADMIN_REQUESTS} className="s12 m6 l3 text-no-u">
+                            <div className="py-4 hovered off-white">
+                                <p className="text-4">Requests</p>
+                            </div>
+                        </Link>
+                        <Link to={ROUTES.ADMIN_STORE} className="s12 m6 l3 text-no-u">
+                            <div className="py-4 hovered off-white">
+                                <p className="text-4">Store</p>
+                            </div>
+                        </Link>
                     </div>
-                </Link>
-                <Link to={ROUTES.ADMIN_SCHEDULES} className="s12 m6 l3 text-no-u">
-                    <div className="py-4 off-white">
-                        <p className="text-6">Schedules</p>
-                    </div>
-                </Link>
-                <Link to={ROUTES.ADMIN_REQUESTS} className="s12 m6 l3 text-no-u">
-                    <div className="py-4 off-white">
-                        <p className="text-6">Requests</p>
-                    </div>
-                </Link>
-                <Link to={ROUTES.ADMIN_STORE} className="s12 m6 l3 text-no-u">
-                    <div className="py-4 off-white">
-                        <p className="text-6">Store</p>
-                    </div>
-                </Link>
+                ) : (
+                    null
+                )}
             </div>
-        ) : (
-            null
         )
     }
 
@@ -90,12 +93,10 @@ export default function Navbar() {
 
     if (!verifiedUser) return null;
 
-    return isMobile ? (
-        <div className="dropdown off-white text-7 pointer" onClick={() => setDropDown(!dropDown)}>
-            <i className="fas fa-bars"></i>
-            {renderTopNav()}
+    return (
+        <div>
+            {renderDropDown()}
+            {renderSideNav()}
         </div>
-    ) : (
-        renderSideNav()
     )
 }
