@@ -188,7 +188,7 @@ export default function UserAvailability() {
         <div className="mt-4 grid2">
             <div className="border-solid-1 border-smooth s10-offset-1 l6-offset-3 text-center">
                 {days.map(({ day, dayStart, dayEnd, setDayStart, setDayEnd }, i) => (
-                    <>
+                    <div key={i}>
                         <EditAvailability
                             day={day}
                             dayStart={dayStart}
@@ -198,7 +198,7 @@ export default function UserAvailability() {
                             times={times}
                             store={store}
                         />
-                    </>
+                    </div>
                 ))}
 
                 <div className="m-2">

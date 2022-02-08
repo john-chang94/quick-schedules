@@ -1,7 +1,7 @@
 import React, { useContext, useState, useEffect } from 'react';
 import { Link } from "react-router-dom";
-import * as ROUTES from "../../constants/routes";
-import { UserContext } from '../../contexts/userContext';
+import * as ROUTES from "../constants/routes";
+import { UserContext } from '../contexts/userContext';
 
 export default function Navbar() {
     const [dropDown, setDropDown] = useState(false);

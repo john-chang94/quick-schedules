@@ -2,7 +2,7 @@ import axios from 'axios';
 
 export const fetchStoreHours = async () => {
     try {
-        const res = await axios.get('http://localhost:5000/store');
+        const res = await axios.get('/store');
         return res.data;
     } catch (err) {
         return { error: err.response.data };
@@ -11,7 +11,7 @@ export const fetchStoreHours = async () => {
 
 export const setStoreHours = async (body, tokenConfig) => {
     try {
-        const res = await axios.post('http://localhost:5000/store', body, tokenConfig);
+        const res = await axios.post('/store', body, tokenConfig);
         return res.data;
     } catch (err) {
         return { error: err.response.data };
@@ -20,7 +20,7 @@ export const setStoreHours = async (body, tokenConfig) => {
 
 export const updateStoreHours = async (body, tokenConfig) => {
     try {
-        const res = await axios.put('http://localhost:5000/store', body, tokenConfig);
+        const res = await axios.put('/store', body, tokenConfig);
         return res.data;
     } catch (err) {
         return { error: err.response.data };

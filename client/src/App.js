@@ -7,7 +7,7 @@ import { UserContext } from './contexts/userContext';
 import "react-loader-spinner/dist/loader/css/react-spinner-loader.css";
 
 import Header from './components/header';
-import Navbar from './components/admin/navbar';
+import Navbar from './components/navbar';
 import SignIn from './components/signIn';
 import AdminSignIn from './components/adminSignIn';
 

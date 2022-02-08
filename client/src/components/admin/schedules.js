@@ -258,7 +258,7 @@ export default function AdminSchedules() {
     const renderShift = (u_id, a_i, shift_start, shift_end) => (
         <td
             key={a_i}
-            className="pointer schedules-text hovered bg-x-light-green"
+            className="pointer schedules-text bg-x-light-green"
             onClick={() => handleEditShift(u_id, a_i, getTimeValue(shift_start), getTimeValue(shift_end))}
         >
             {getTime(shift_start)} -&nbsp;
@@ -336,9 +336,8 @@ export default function AdminSchedules() {
                     <div className="relative mx-3">
                         <input
                             type="date"
-                            value={new Date(dateISO).toISOString().split('T')[0]}
-                            // Creating a new date obj with yyyy-mm-dd rolls back one day so create with year, month, and date
-                            onChange={({ target }) => getDatesOfTheWeek(new Date(target.value.split('-'[0], target.value.split('-')[1], target.value.split('-')[2])))}
+                            value={new Date(dateISO).toISOString().split('T')[0]} // Init date must be yyyy-mm-dd format
+                            onChange={({ target }) => getDatesOfTheWeek(target.value)}
                         />
                         <div className="absolute">&nbsp;</div>
                     </div>

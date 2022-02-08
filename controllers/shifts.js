@@ -149,7 +149,11 @@ exports.getShiftsByDate = async (req, res) => {
 
         // Get dates for the week from Monday to Sunday
         for (let i = 0; i < 7; i++) {
-            let day = new Date(firstDate.getFullYear(), firstDate.getMonth(), firstDate.getDate() + i, 0).toLocaleString('en-US', { timeZone: timezone });
+            let day = new Date(
+                firstDate.getFullYear(),
+                firstDate.getMonth(),
+                firstDate.getDate() + i, 0).toLocaleString('en-US', { timeZone: timezone }
+            );
             dateToAdd = new Date(day).toISOString();
             dates.push({ 'shift_start': dateToAdd, 'shift_end': null });
         }
@@ -272,7 +276,11 @@ exports.getAllUsersSchedulesByDate = async (req, res) => {
 
         // Get dates for the week from Monday to Sunday
         for (let i = 0; i < 7; i++) {
-            let day = new Date(firstDate.getFullYear(), firstDate.getMonth(), firstDate.getDate() + i, 0).toLocaleString('en-US', { timeZone: timezone });
+            let day = new Date(
+                firstDate.getFullYear(),
+                firstDate.getMonth(),
+                firstDate.getDate() + i, 0).toLocaleString('en-US', { timeZone: timezone }
+            );
             dateToAdd = new Date(day).toISOString();
             dates.push({ 'shift_start': dateToAdd, 'shift_end': null });
         }
