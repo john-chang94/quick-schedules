@@ -54,7 +54,7 @@ function App() {
         <div className={`relative ${(verifiedUser) && "container-grid"}`}>
           <Navbar />
           <div className="container">
-            <div className="p-2">
+            <div className="container-inner">
               <Switch>
                 <Route exact path={ROUTES.SIGN_IN} component={SignIn} />
                 <Route exact path={ROUTES.ADMIN_SIGN_IN} component={AdminSignIn} />

@@ -18,7 +18,7 @@ export default function Header() {
         <header>
             {
                 verifiedUser &&
-                <div className="flex" style={{ marginRight: "2%" }}>
+                <div className="flex" style={{ marginRight: "3%" }}>
                     <div className="mr-4">
                         <p className="off-white">Welcome, {verifiedUser && verifiedUser.first_name}</p>
                     </div>

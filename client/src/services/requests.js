@@ -2,7 +2,7 @@ import axios from 'axios';
 
 export const fetchAllRequests = async () => {
     try {
-        const res = await axios.get('http://localhost:5000/requests');
+        const res = await axios.get('/requests');
         return res.data;
     } catch (err) {
         return { error: err.response.data };
@@ -11,7 +11,7 @@ export const fetchAllRequests = async () => {
 
 export const fetchRequestsByUser = async (u_id) => {
     try {
-        const res = await axios.get(`http://localhost:5000/requests/${u_id}`);
+        const res = await axios.get(`/requests/${u_id}`);
         return res.data;
     } catch (err) {
         return { error: err.response.data };

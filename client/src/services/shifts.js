@@ -31,6 +31,7 @@ export const fetchShiftsByDate = async (start_date, end_date) => {
 export const fetchAllUsersSchedulesByDate = async (start_date, end_date) => {
     try {
         const res = await axios.get(`/shifts/all/${start_date}/${end_date}`);
+        console.log(res.data);
         return res.data;
     } catch (err) {
         return { error: err.response.data };

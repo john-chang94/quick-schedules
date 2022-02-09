@@ -1,6 +1,4 @@
 import { useState, useEffect } from 'react';
-import { Link } from 'react-router-dom';
-import * as ROUTES from '../../constants/routes';
 import { isAuthenticated } from '../../services/auth';
 import { createPreset, fetchPresets, fetchTimes } from '../../services/presets';
 import { createShift, fetchAllUsersSchedulesByDate, deleteShift, updateShift, createCopyOfWeeklySchedule } from '../../services/shifts';
@@ -42,7 +40,7 @@ export default function AdminSchedules() {
         let date;
         if (selectedDate) {
             date = startOfWeek(new Date(selectedDate), { weekStartsOn: 1 });
-            setDateISO(selectedDate);
+            setDateISO(selectedDate); // For datepicker value
         }
         else {
             date = startOfWeek(new Date(), { weekStartsOn: 1 });
@@ -276,16 +274,16 @@ export default function AdminSchedules() {
     )
 
     const renderAvailability = () => (
-        <>
+        <div className="availability">
             <h3 className="text-center">Availability</h3>
             <table id="availability-table" className="border-collapse w-100 text-center schedules-text">
                 <thead>
                     <tr>
-                        <th className="pt-2 pb-1">Name</th>
+                        <th>Name</th>
                         {
                             // Render the day only
                             days && days.map((day, i) => (
-                                <th key={i} className="pt-2 pb-1">
+                                <th key={i}>
                                     <p>{new Date(day).toString().split(' ')[0]}</p>
                                 </th>
                             ))
@@ -301,11 +299,11 @@ export default function AdminSchedules() {
                                     ? { backgroundColor: 'rgb(235, 235, 235)' }
                                     : { backgroundColor: 'rbg(255, 255, 255)' }}
                             >
-                                <td className="py-1">
+                                <td>
                                     <p>
                                         <strong>{user.first_name} {user.last_name}</strong>
                                     </p>
-                                    <em>{user.title}</em>
+                                    <em>{user.level === 2 ? "A. Manager" : user.title}</em>
                                 </td>
                                 {
                                     user.availability.map((time, i) => (
@@ -319,21 +317,20 @@ export default function AdminSchedules() {
                     }
                 </tbody>
             </table>
-        </>
+        </div>
     )
 
     const renderController = () => (
-        <>
-            <div className="flex flex-center mt-5 mb-3" id="select-week">
-                <div className="grid xl-3-6-3 xs-1-12f align-center">
-                    <div className="pointer text-center my-2" onClick={() => handlePreviousWeek()}>
-                        <em className="text-3">Previous&nbsp;week</em>
+        <div className="schedules-controller">
+            <div id="select-week">
+                {/* <div className=""> */}
+                    <div className="pointer" onClick={() => handlePreviousWeek()}>
+                        <em className="text-3">Prev&nbsp;week</em>
                         <p>
-                            <i className="fas fa-angle-double-left"></i>
                             <i className="fas fa-angle-double-left"></i>
                         </p>
                     </div>
-                    <div className="relative mx-3">
+                    <div id="controller-date" className="relative">
                         <input
                             type="date"
                             value={new Date(dateISO).toISOString().split('T')[0]} // Init date must be yyyy-mm-dd format
@@ -341,24 +338,25 @@ export default function AdminSchedules() {
                         />
                         <div className="absolute">&nbsp;</div>
                     </div>
-                    <div className="pointer text-center my-2" onClick={() => handleNextWeek()}>
+                    <div className="pointer" onClick={() => handleNextWeek()}>
                         <em className="text-3">Next&nbsp;week</em>
                         <p>
                             <i className="fas fa-angle-double-right"></i>
-                            <i className="fas fa-angle-double-right"></i>
                         </p>
                     </div>
-                </div>
+                {/* </div> */}
             </div>
 
-            <div className="flex align-center justify-evenly sm-flex-col">
-                <div className="my-2">
-                    <strong>Approved Requests</strong>
+            <div id="schedules-requests">
+                <div className="mr-5">
+                    <p className="text-3">
+                        <strong>Approved Requests</strong>
+                    </p>
                     {
                         requests.length
                             ? requests.map((request, i) => (
                                 <div key={i}>
-                                    <p>
+                                    <p className="text-3">
                                         {request.first_name} {request.last_name}:
                                         {request.requested_dates.map((date, r_i) => (
                                             <span key={r_i}>
@@ -373,24 +371,24 @@ export default function AdminSchedules() {
                                     </p>
                                 </div>
                             ))
-                            : <p className="text-center">N/A</p>
+                            : <p className="text-3">None</p>
                     }
                 </div>
-                <div className="my-2">
+                <div>
                     <button
-                        className={`btn-x-lg ${isCopying ? '' : 'btn-hovered'}`}
+                        className={`btn-med ${isCopying ? '' : 'btn-hovered'}`}
                         onClick={() => handleCopyWeeklySchedule()}
                         disabled={isCopying}
                     >
-                        Copy to Next Week
+                        <i className="fas fa-share" />&nbsp;Copy
                     </button>
                 </div>
             </div>
-        </>
+        </div>
     )
 
     const renderSchedule = () => (
-        <table className="schedules-table w-100 mt-1 border-collapse text-center table-fixed schedules-text">
+        <table className="schedules-table w-100 border-collapse text-center table-fixed schedules-text">
             {
                 isLoadingSchedule
                     ? <Loader
@@ -419,7 +417,7 @@ export default function AdminSchedules() {
                                         <p>
                                             <strong>{user.first_name} {user.last_name}</strong>
                                         </p>
-                                        <em>{user.title}</em>
+                                        <em>{user.level === 2 ? "A. Manager" : user.title}</em>
                                     </td>
                                     {
                                         user.availability.map((time, a_i) => (
@@ -541,6 +539,12 @@ export default function AdminSchedules() {
         </td>
     )
 
+    // const renderMobileSchedules = () => (
+    //     <div className="schedules-mobile">
+            
+    //     </div>
+    // )
+
     useEffect(() => {
         async function getDatesAndLoadData() {
             const times = await fetchTimes();
@@ -562,13 +566,7 @@ export default function AdminSchedules() {
     }, [])
 
     return (
-        <div>
-            <div>
-                <Link to={ROUTES.ADMIN_HOME} className="text-no-u black pointer">
-                    <i className="fas fa-arrow-left"></i> Home
-                </Link>
-            </div>
-
+        <>
             {
                 isLoading ?
                     <div className="text-center" style={{ marginTop: '70px' }}>
@@ -583,6 +581,6 @@ export default function AdminSchedules() {
                         {renderSchedule()}
                     </div>
             }
-        </div>
+        </>
     )
 }
