@@ -285,72 +285,25 @@ exports.getAllUsersSchedulesByDate = async (req, res) => {
             dates.push({ 'shift_start': dateToAdd, 'shift_end': null });
         }
 
-        // If an employee has no shifts for the week, add empty shifts
-        for (let i = 0; i < users.length; i++) {
+        // Returns any dates in the work week without a shift
+        const getMissingDates = (arr1, arr2) => {
+            let values = [];
+            values = arr1.filter(el => {
+                return !arr2.find(obj => {
+                    // Dates are stored in ISO format so we split on the "T" to just get the date
+                    return el.shift_start.split("T")[0] === obj.shift_start.split("T")[0];
+                })
+            })
+            return values;
+        }
 
-            ///////// TRYING TO REFACTOR...
-            
-            // for (let j = 0; j < dates.length; j++) {
-            //     for (let k = 0; k < users[i].shifts.length; k++) {
-            //         if (users[i].shifts[k].shift_start.split("T")[0] === dates[j].shift_start.split("T")[0]) {
-            //             continue;
-            //             users[i].shifts.push(dates[j]);
-            //             console.log(`users ${i} shifts ${k}`,users[i].shifts[j].shift_start.split("T")[0])
-            //             console.log(`dates ${j}`, dates[j].shift_start.split("T")[0])
-            //             console.log(' ')
-            //         } else {
-            //             if (users[i].shifts[k].shift_end !== null) {
-            //                 users[i].shifts.push(dates[j]);
-                            
-            //                 console.log(`users ${i} shifts ${k}`,users[i].shifts[j].shift_start.split("T")[0])
-            //                 console.log(`dates ${j}`, dates[j].shift_start.split("T")[0])
-            //                 console.log(' ')
-            //             }
-            //         }
-            //     }
-            // }
-            // users[i].shifts.sort((a, b) => new Date(a.shift_start) - new Date(b.shift_start));
-
-            if (!users[i].shifts.length) {
-                for (let j = 0; j < 7; j++) {
-                    users[i].shifts.push(dates[j]);
-                }
+        // Add a filler date for all users' shifts array (needed to map out schedules in FE)
+        for (let i = 0; i < users.length; i++) {         
+            let missingDates = getMissingDates(dates, users[i].shifts);
+            for (let k = 0; k < missingDates.length; k++) {
+                users[i].shifts.push(missingDates[k]);
             }
-            else {
-                // If an employee has at least one shift for the week,
-                // Combine shifts and empty shifts for the week and sort by start_date
-                let tempArr = [...users[i].shifts, ...dates];
-                let sortedArr = tempArr.sort((a, b) => new Date(a.shift_start) - new Date(b.shift_start));
-
-                // If there are matching dates, remove the one with start_end that is a NULL value
-                for (let j = 0; j < sortedArr.length - 1; j++) {
-                    for (let k = j + 1; k < sortedArr.length; k++) {
-                        if (j === 0
-                            && sortedArr[j].shift_start.split('T')[0] === sortedArr[k].shift_start.split('T')[0]
-                            && sortedArr[j].shift_end === null) {
-                            let one = sortedArr.slice(j + 1);
-                            sortedArr = one;
-                        }
-                        else if (sortedArr[j].shift_start.split('T')[0] === sortedArr[k].shift_start.split('T')[0]
-                            && sortedArr[j].shift_end === null) {
-                            let one = sortedArr.slice(0, j);
-                            let two = sortedArr.slice(j + 1);
-                            sortedArr = [...one, ...two];
-                        }
-                        else if (sortedArr[j].shift_start.split('T')[0] === sortedArr[k].shift_start.split('T')[0]
-                            && sortedArr[k].shift_end === null) {
-                            let one = sortedArr.slice(0, k);
-                            let two = sortedArr.slice(k + 1);
-                            sortedArr = [...one, ...two];
-                        }
-                        else {
-                            continue;
-                        }
-                    }
-                }
-
-                users[i].shifts = sortedArr;
-            }
+            users[i].shifts.sort((a, b) => new Date(a.shift_start) - new Date(b.shift_start));
         }
 
         res.status(200).json(data.rows);
