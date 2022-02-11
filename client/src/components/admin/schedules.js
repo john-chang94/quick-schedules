@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { isAuthenticated } from '../../services/auth';
 import { createPreset, fetchPresets, fetchTimes } from '../../services/presets';
-import { createShift, fetchAllUsersSchedulesByDate, deleteShift, updateShift, createCopyOfWeeklySchedule } from '../../services/shifts';
+import { createShift, fetchAllUsersSchedulesByDate, fetchAllUsersSchedulesByDateMobile, deleteShift, updateShift, createCopyOfWeeklySchedule } from '../../services/shifts';
 import { fetchAllUsersAvailabilities } from '../../services/users';
 import { startOfToday, startOfWeek, addWeeks, subWeeks, parseISO, format } from 'date-fns';
 import Loader from 'react-loader-spinner';
@@ -11,6 +11,7 @@ import { fetchStoreHours } from '../../services/store';
 export default function AdminSchedules() {
     const [availabilities, setAvailabilities] = useState(null);
     const [users, setUsers] = useState(null);
+    const [usersMobile, setUsersMobile] = useState(null);
     const [requests, setRequests] = useState(null);
     const [days, setDays] = useState(null);
     const [times, setTimes] = useState(null);
@@ -62,8 +63,17 @@ export default function AdminSchedules() {
 
         // Refresh schedules after date change
         const users = await fetchAllUsersSchedulesByDate(weekStart, weekEnd);
+        const usersMobile = await fetchAllUsersSchedulesByDateMobile(weekStart, weekEnd);
         const requests = await fetchAllRequestsByStatusAndDate('Approved', weekStart, weekEnd);
+
+        // Add date labels for mobile schedules display
+        for (let i = 0; i < daysArray.length; i++) {
+            usersMobile.push({ shift_start: daysArray[i], label: true });
+        }
+        usersMobile.sort((a, b) => new Date(a.shift_start) - new Date(b.shift_start))
+        
         setUsers(users);
+        setUsersMobile(usersMobile);
         setRequests(requests);
         setIsLoadingSchedule(false);
     }
@@ -107,7 +117,9 @@ export default function AdminSchedules() {
         }
 
         const users = await fetchAllUsersSchedulesByDate(weekStart, weekEnd);
+        const usersMobile = await fetchAllUsersSchedulesByDateMobile(weekStart, weekEnd);
         setUsers(users);
+        setUsersMobile(usersMobile);
 
         setUserData('');
         setAvailabilityIndex('');
@@ -142,8 +154,10 @@ export default function AdminSchedules() {
 
 
             await createCopyOfWeeklySchedule(body);
-            const updated = await fetchAllUsersSchedulesByDate(weekStart, weekEnd);
-            setUsers(updated);
+            const updatedUsers = await fetchAllUsersSchedulesByDate(weekStart, weekEnd);
+            const usersMobile = await fetchAllUsersSchedulesByDateMobile(weekStart, weekEnd);
+            setUsers(updatedUsers);
+            setUsersMobile(usersMobile);
             // Display following week after copying schedule
             handleNextWeek();
             setIsCopying(false);
@@ -234,7 +248,9 @@ export default function AdminSchedules() {
             await deleteShift(s_id, tokenConfig);
 
             const users = await fetchAllUsersSchedulesByDate(weekStart, weekEnd);
+            const usersMobile = await fetchAllUsersSchedulesByDateMobile(weekStart, weekEnd);
             setUsers(users);
+            setUsersMobile(usersMobile);
             setUserData('');
             setAvailabilityIndex('');
             setIsUpdating(false);
@@ -276,7 +292,7 @@ export default function AdminSchedules() {
     const renderAvailability = () => (
         <div className="availability">
             <h3 className="text-center">Availability</h3>
-            <table id="availability-table" className="border-collapse w-100 text-center schedules-text">
+            <table className="border-collapse w-100 text-center schedules-text">
                 <thead>
                     <tr>
                         <th>Name</th>
@@ -322,32 +338,30 @@ export default function AdminSchedules() {
 
     const renderController = () => (
         <div className="schedules-controller">
-            <div id="select-week">
-                {/* <div className=""> */}
-                    <div className="pointer" onClick={() => handlePreviousWeek()}>
-                        <em className="text-3">Prev&nbsp;week</em>
-                        <p>
-                            <i className="fas fa-angle-double-left"></i>
-                        </p>
-                    </div>
-                    <div id="controller-date" className="relative">
-                        <input
-                            type="date"
-                            value={new Date(dateISO).toISOString().split('T')[0]} // Init date must be yyyy-mm-dd format
-                            onChange={({ target }) => getDatesOfTheWeek(target.value)}
-                        />
-                        <div className="absolute">&nbsp;</div>
-                    </div>
-                    <div className="pointer" onClick={() => handleNextWeek()}>
-                        <em className="text-3">Next&nbsp;week</em>
-                        <p>
-                            <i className="fas fa-angle-double-right"></i>
-                        </p>
-                    </div>
-                {/* </div> */}
+            <div className="select-week">
+                <div className="pointer" onClick={() => handlePreviousWeek()}>
+                    <em className="text-3">Prev&nbsp;week</em>
+                    <p>
+                        <i className="fas fa-angle-double-left"></i>
+                    </p>
+                </div>
+                <div id="controller-date" className="relative">
+                    <input
+                        type="date"
+                        value={new Date(dateISO).toISOString().split('T')[0]} // Init date must be yyyy-mm-dd format
+                        onChange={({ target }) => getDatesOfTheWeek(target.value)}
+                    />
+                    <div className="absolute">&nbsp;</div>
+                </div>
+                <div className="pointer" onClick={() => handleNextWeek()}>
+                    <em className="text-3">Next&nbsp;week</em>
+                    <p>
+                        <i className="fas fa-angle-double-right"></i>
+                    </p>
+                </div>
             </div>
 
-            <div id="schedules-requests">
+            <div className="schedules-requests">
                 <div className="mr-5">
                     <p className="text-3">
                         <strong>Approved Requests</strong>
@@ -539,11 +553,36 @@ export default function AdminSchedules() {
         </td>
     )
 
-    // const renderMobileSchedules = () => (
-    //     <div className="schedules-mobile">
-            
-    //     </div>
-    // )
+    const renderMobileSchedules = () => (
+        <div className="schedules-mobile">
+            {
+                usersMobile.map((user, i) => (
+                    <div key={i} className="flex">
+                        {user.label ? (
+                            <div className="w-100 border-x bg-x-light-gray text-center">
+                                <p><strong>{format(new Date(user.shift_start), "PP")}</strong></p>
+                            </div>
+                        ) : (
+                        <>
+                            <div className="flex flex-col flex-center border-solid-1 p-1" style={{ width: "20%" }}>
+                                <p><strong>{new Date(user.shift_start).toDateString().split(" ")[0]}</strong></p>
+                                <p><strong>{new Date(user.shift_start).toDateString().split(" ")[2]}</strong></p>
+                            </div>
+                            <div className="w-80 border-solid-1 p-1">
+                                <p>
+                                    {new Date(user.shift_start).toLocaleTimeString().replace(":00 ", " ")} -
+                                    {new Date(user.shift_end).toLocaleTimeString().replace(":00 ", " ")}
+                                </p>
+                                <p><strong>{user.first_name} {user.last_name}</strong></p>
+                                <p><em>{user.title}</em></p>
+                            </div>
+                        </>
+                        )}
+                    </div>
+                ))
+            }
+        </div>
+    )
 
     useEffect(() => {
         async function getDatesAndLoadData() {
@@ -576,9 +615,10 @@ export default function AdminSchedules() {
                         />
                     </div>
                     : <div>
-                        {renderAvailability()}
                         {renderController()}
                         {renderSchedule()}
+                        {renderAvailability()}
+                        {renderMobileSchedules()}
                     </div>
             }
         </>

@@ -253,7 +253,7 @@ exports.getAllUsersSchedulesByDate = async (req, res) => {
                         FROM shifts
                         WHERE shift_start::date >= $1
                             AND shift_start::date <= $2
-                        ORDER BY shift_start
+                        ORDER BY shift_start DESC
                     ) AS s
                     ON u.u_id = s.u_id
                 GROUP BY u.u_id
@@ -268,7 +268,7 @@ exports.getAllUsersSchedulesByDate = async (req, res) => {
             [start_date, end_date]
         )
 
-        let shifts = data.rows;
+        let users = data.rows;
 
         let firstDate = new Date(start_date);
         let timezone = Intl.DateTimeFormat().resolvedOptions().timeZone
@@ -286,16 +286,40 @@ exports.getAllUsersSchedulesByDate = async (req, res) => {
         }
 
         // If an employee has no shifts for the week, add empty shifts
-        for (let i = 0; i < shifts.length; i++) {
-            if (!shifts[i].shifts.length) {
+        for (let i = 0; i < users.length; i++) {
+
+            ///////// TRYING TO REFACTOR...
+            
+            // for (let j = 0; j < dates.length; j++) {
+            //     for (let k = 0; k < users[i].shifts.length; k++) {
+            //         if (users[i].shifts[k].shift_start.split("T")[0] === dates[j].shift_start.split("T")[0]) {
+            //             continue;
+            //             users[i].shifts.push(dates[j]);
+            //             console.log(`users ${i} shifts ${k}`,users[i].shifts[j].shift_start.split("T")[0])
+            //             console.log(`dates ${j}`, dates[j].shift_start.split("T")[0])
+            //             console.log(' ')
+            //         } else {
+            //             if (users[i].shifts[k].shift_end !== null) {
+            //                 users[i].shifts.push(dates[j]);
+                            
+            //                 console.log(`users ${i} shifts ${k}`,users[i].shifts[j].shift_start.split("T")[0])
+            //                 console.log(`dates ${j}`, dates[j].shift_start.split("T")[0])
+            //                 console.log(' ')
+            //             }
+            //         }
+            //     }
+            // }
+            // users[i].shifts.sort((a, b) => new Date(a.shift_start) - new Date(b.shift_start));
+
+            if (!users[i].shifts.length) {
                 for (let j = 0; j < 7; j++) {
-                    shifts[i].shifts.push(dates[j]);
+                    users[i].shifts.push(dates[j]);
                 }
             }
             else {
                 // If an employee has at least one shift for the week,
                 // Combine shifts and empty shifts for the week and sort by start_date
-                let tempArr = [...shifts[i].shifts, ...dates];
+                let tempArr = [...users[i].shifts, ...dates];
                 let sortedArr = tempArr.sort((a, b) => new Date(a.shift_start) - new Date(b.shift_start));
 
                 // If there are matching dates, remove the one with start_end that is a NULL value
@@ -325,9 +349,40 @@ exports.getAllUsersSchedulesByDate = async (req, res) => {
                     }
                 }
 
-                shifts[i].shifts = sortedArr;
+                users[i].shifts = sortedArr;
             }
         }
+
+        res.status(200).json(data.rows);
+
+    } catch (err) {
+        res.status(500).send(err.message);
+    }
+}
+
+exports.getAllUsersSchedulesByDateMobile = async (req, res) => {
+    const { start_date, end_date } = req.params;
+
+    try {
+        const data = await client.query(
+            `WITH users AS (
+                SELECT u_id, first_name, last_name, title, acn, level
+                FROM roles JOIN users
+                    ON roles.role_id = users.role_id
+            ),
+            shifts AS (
+                SELECT s_id, u_id, shift_start, shift_end
+                FROM shifts
+                WHERE shift_start::date >= $1
+                    AND shift_start::date <= $2
+            )
+            SELECT u.u_id, u.first_name, u.last_name, u.title, u.acn, u.level, s.s_id, s.shift_start, s.shift_end
+            FROM users AS u
+            JOIN shifts AS s
+                ON u.u_id = s.u_id
+            ORDER BY s.shift_start`,
+            [start_date, end_date]
+        )
 
         res.status(200).json(data.rows);
 

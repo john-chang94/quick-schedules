@@ -65,13 +65,13 @@ header {
   margin-top: 15%;
 }
 
-#select-week {
+.select-week {
   display: flex;
   align-items: center;
   text-align: center;
 }
 
-#select-week .relative .absolute {
+.select-week .relative .absolute {
   top: 0;
   width: 85%;
   height: 100%;
@@ -87,9 +87,8 @@ header {
 }
 
 .schedules-controller {
-  margin-top: 15px;
-  margin-bottom: 15px;
-  border: solid 1px lightgray;
+  margin-bottom: 10px;
+  border: solid 1px rgb(177, 177, 177);
   display: flex;
   justify-content: space-around;
   padding: 5px;
@@ -100,7 +99,7 @@ header {
   margin-right: 15px;
 }
 
-#schedules-requests {
+.schedules-requests {
   display: flex;
   align-items: center;
 }
@@ -113,7 +112,15 @@ header {
   border: solid 1px rgb(177, 177, 177);
 }
 
-#availability-table th,td {
+.schedules-mobile {
+  display: none;
+}
+
+.availability {
+  margin-top: 10px;
+}
+
+.availability table th,td {
   border: solid 1px rgb(177, 177, 177);
 }
 
@@ -859,7 +866,6 @@ header {
 .btn-sm {
   width: 75px;
   border-radius: 5px;
-  box-shadow: 0 4px 8px rgb(220, 220, 220);
   padding: 4px 0;
   border: 1px solid lightgray;
   font-size: 14px;
@@ -868,7 +874,6 @@ header {
 .btn-med {
   width: 100px;
   border-radius: 5px;
-  box-shadow: 0 4px 8px rgb(220, 220, 220);
   padding: 4px 0;
   border: 1px solid lightgray;
   font-size: 14px;
@@ -877,7 +882,6 @@ header {
 .btn-lg {
   width: 125px;
   border-radius: 5px;
-  box-shadow: 0 4px 8px rgb(220, 220, 220);
   padding: 4px 0;
   border: 1px solid lightgray;
   font-size: 14px;
@@ -886,7 +890,6 @@ header {
 .btn-x-lg {
   width: 150px;
   border-radius: 5px;
-  box-shadow: 0 4px 8px rgb(220, 220, 220);
   padding: 5px 0;
   border: 1px solid lightgray;
   font-size: 14px;
@@ -894,7 +897,7 @@ header {
 
 .btn-hovered:hover {
   cursor: pointer;
-  box-shadow: 0 4px 8px rgb(170, 170, 170);
+  box-shadow: 0 4px 8px rgb(223, 223, 223);
 }
 
 /* FORM STYLES */
@@ -904,7 +907,7 @@ header {
   font-size: 15px;
   padding-left: 2px;
   border-radius: 5px;
-  box-shadow: 0 4px 8px rgb(220, 220, 220);
+  box-shadow: 0 4px 7px rgb(237, 237, 237);
   border: 1px solid lightgray;
 }
 
@@ -1269,14 +1272,16 @@ select {
     display: none;
   }
   .schedules-controller {
+    background-color: cornflowerblue;
     margin: 0;
     align-items: center;
     flex-direction: column;
+    border: none;
   }
-  #select-week {
+  .select-week {
     padding-bottom: 5px;
   }
-  #select-week em {
+  .select-week em {
     display: none;
   }
   #controller-date {
@@ -1284,9 +1289,24 @@ select {
     margin-right: 10px;
     width: 120px;
   }
-  #schedules-requests {
+  .schedules-requests {
     width: 100%;
     justify-content: space-around;
+    color: white;
+  }
+  .schedules-requests strong {
+    font-weight: 600;
+  }
+  .select-week i {
+    color: rgb(247, 247, 247);
+  }
+  .schedules-table {
+    display: none;
+  }
+  .schedules-mobile {
+    display: block;
+    width: 100%;
+    margin-bottom: 10px;
   }
 }
 
