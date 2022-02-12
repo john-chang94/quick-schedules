@@ -37,14 +37,14 @@ td {
 
 header {
   height: 60px;
-  background-color: rgb(54, 121, 208);
+  background-color: rgb(32, 87, 158);
   display: flex;
   justify-content: flex-end;
   align-items: center;
 }
 
 .navbar {
-  background-color: rgb(54, 121, 208);
+  background-color: rgb(32, 87, 158);
   height: 100vh;
 }
 
@@ -1255,7 +1255,7 @@ select {
   }
   .navbar-top {
     display: block;
-    background-color: rgb(54, 121, 208);
+    background-color: rgb(32, 87, 158);
     position: absolute;
     left: -20px;
     margin-top: 10px;
@@ -1272,7 +1272,7 @@ select {
     display: none;
   }
   .schedules-controller {
-    background-color: cornflowerblue;
+    background-color: rgb(68, 118, 209);
     margin: 0;
     align-items: center;
     flex-direction: column;

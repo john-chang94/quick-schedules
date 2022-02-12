@@ -406,8 +406,7 @@ export default function AdminSchedules() {
             {
                 isLoadingSchedule
                     ? <Loader
-                        type='ThreeDots'
-                        height={20}
+                        type='Oval'
                         color='rgb(50, 110, 150)'
                     />
                     : <tbody>

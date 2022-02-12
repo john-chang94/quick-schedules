@@ -109,6 +109,7 @@ exports.getShiftsByUser = async (req, res) => {
     }
 }
 
+// Unused for now
 exports.getShiftsByDate = async (req, res) => {
     try {
         const { start_date, end_date } = req.params;
@@ -219,7 +220,8 @@ exports.getAllUsersSchedulesByDate = async (req, res) => {
                     ON roles.role_id = users.role_id
             ),
             availability AS (
-                SELECT users.u_id, array_agg(a.av) AS availability FROM users
+                SELECT users.u_id, array_agg(a.av) AS availability
+                FROM users
                 JOIN
                     (
                         SELECT u_id, json_build_object(
@@ -274,7 +276,7 @@ exports.getAllUsersSchedulesByDate = async (req, res) => {
         let timezone = Intl.DateTimeFormat().resolvedOptions().timeZone
         let dates = [];
 
-        // Get dates for the week from Monday to Sunday
+        // Get dates for the work week from Monday to Sunday
         for (let i = 0; i < 7; i++) {
             let day = new Date(
                 firstDate.getFullYear(),
@@ -286,27 +288,40 @@ exports.getAllUsersSchedulesByDate = async (req, res) => {
         }
 
         // Returns any dates in the work week without a shift
+        // Full work week (7 objects) needed to map out schedules in FE
         const getMissingDates = (arr1, arr2) => {
             let values = [];
-            values = arr1.filter(el => {
-                return !arr2.find(obj => {
-                    // Dates are stored in ISO format so we split on the "T" to just get the date
-                    return el.shift_start.split("T")[0] === obj.shift_start.split("T")[0];
-                })
-            })
+    
+            // Use hashing instead of nested for loops to find missing dates
+            // Store user's shifts in a hash
+            const set = new Set();
+            for (let i = 0; i < arr1.length; i++) {
+                set.add(arr1[i].shift_start.split("T")[0]);
+            }
+    
+            // Add filler dates that are missing in user's work week
+            for (let i = 0; i < arr2.length; i++) {
+                if (!set.has(arr2[i].shift_start.split("T")[0])) {
+                    values.push(arr2[i])
+                }
+            }
+    
             return values;
         }
 
-        // Add a filler date for all users' shifts array (needed to map out schedules in FE)
-        for (let i = 0; i < users.length; i++) {         
-            let missingDates = getMissingDates(dates, users[i].shifts);
+        // Add filler dates for all users' shifts array
+        for (let i = 0; i < users.length; i++) {       
+            // Get missing dates in user's shifts  
+            let missingDates = getMissingDates(users[i].shifts, dates);
             for (let k = 0; k < missingDates.length; k++) {
+                // Add missing dates to user's shifts
                 users[i].shifts.push(missingDates[k]);
             }
+            // Sort shifts by date
             users[i].shifts.sort((a, b) => new Date(a.shift_start) - new Date(b.shift_start));
         }
 
-        res.status(200).json(data.rows);
+        res.status(200).json(users);
 
     } catch (err) {
         res.status(500).send(err.message);
