@@ -1242,6 +1242,7 @@ select {
   }
   .container-inner {
     padding: 0;
+    margin-bottom: 10px;
   }
   .container-grid {
     display: grid;
@@ -1306,7 +1307,6 @@ select {
   .schedules-mobile {
     display: block;
     width: 100%;
-    margin-bottom: 10px;
   }
 }
 

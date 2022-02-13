@@ -2,12 +2,13 @@ import { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import * as ROUTES from '../../constants/routes';
 import Loader from 'react-loader-spinner';
-import { fetchAllUsersSchedulesByDate } from '../../services/shifts';
-import { startOfWeek } from 'date-fns';
+import { fetchAllUsersSchedulesByDate, fetchAllUsersSchedulesByDateMobile } from '../../services/shifts';
+import { startOfWeek, format } from 'date-fns';
 
 export default function UserSchedules() {
     const [isLoading, setIsLoading] = useState(true);
     const [users, setUsers] = useState(null);
+    const [usersMobile, setUsersMobile] = useState(null);
     const [days, setDays] = useState(null);
 
     const getTime = (shift) => {
@@ -73,6 +74,45 @@ export default function UserSchedules() {
         </div>
     )
 
+    const renderMobileSchedules = () => (
+        <div className="schedules-mobile">
+            {
+                isLoading ? (
+                    <Loader
+                        type='Oval'
+                        color='rgb(50, 110, 150)'
+                        className="text-center mt-4"
+                    />
+                ) : (
+                    usersMobile.map((user, i) => (
+                        <div key={i} className="flex">
+                            {user.label ? (
+                                <div className="w-100 border-x bg-x-light-gray text-center">
+                                    <p><strong>{format(new Date(user.shift_start), "PP")}</strong></p>
+                                </div>
+                            ) : (
+                            <>
+                                <div className="flex flex-col flex-center border-solid-1 p-1" style={{ width: "20%" }}>
+                                    <p><strong>{new Date(user.shift_start).toDateString().split(" ")[0]}</strong></p>
+                                    <p><strong>{new Date(user.shift_start).toDateString().split(" ")[2]}</strong></p>
+                                </div>
+                                <div className="w-80 border-solid-1 p-1">
+                                    <p>
+                                        {new Date(user.shift_start).toLocaleTimeString().replace(":00 ", " ")} -
+                                        {new Date(user.shift_end).toLocaleTimeString().replace(":00 ", " ")}
+                                    </p>
+                                    <p><strong>{user.first_name} {user.last_name}</strong></p>
+                                    <p><em>{user.title}</em></p>
+                                </div>
+                            </>
+                            )}
+                        </div>
+                    ))
+                )
+            }
+        </div>
+    )
+
     useEffect(() => {
         async function getData() {
             let daysArray = [];
@@ -83,8 +123,17 @@ export default function UserSchedules() {
             }
 
             const users = await fetchAllUsersSchedulesByDate(daysArray[0], daysArray[6]);
+            const usersMobile = await fetchAllUsersSchedulesByDateMobile(daysArray[0], daysArray[6]);
+
+            // Add date labels for mobile schedules display
+            for (let i = 0; i < daysArray.length; i++) {
+                usersMobile.push({ shift_start: daysArray[i], label: true });
+            }
+            usersMobile.sort((a, b) => new Date(a.shift_start) - new Date(b.shift_start))
+
             setDays(daysArray);
             setUsers(users);
+            setUsersMobile(usersMobile);
             setIsLoading(false);
         }
 
@@ -108,7 +157,10 @@ export default function UserSchedules() {
                         </div>
                     )
                     : (
-                        renderSchedule()
+                        <div>
+                            {renderSchedule()}
+                            {renderMobileSchedules()}
+                        </div>
                     )
             }
         </div>

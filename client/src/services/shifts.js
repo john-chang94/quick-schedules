@@ -40,6 +40,7 @@ export const fetchAllUsersSchedulesByDate = async (start_date, end_date) => {
 export const fetchAllUsersSchedulesByDateMobile = async (start_date, end_date) => {
     try {
         const res = await axios.get(`/shifts/all/mobile/${start_date}/${end_date}`);
+        console.log(res.data)
         return res.data;
     } catch (err) {
         return { error: err.response.data };

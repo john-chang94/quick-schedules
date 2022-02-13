@@ -289,6 +289,104 @@ export default function AdminSchedules() {
         ></td>
     )
 
+    const renderEditShift = (u_id, dayIndex, shift) => (
+        <td key={dayIndex}>
+            <div className="flex justify-evenly mt-1">
+                <p>Preset</p>
+                <select
+                    className="w-60 schedules-text"
+                    defaultValue='0 0'
+                    disabled={isUpdating}
+                    onChange={({ target }) => handleSelectPreset(target.value)}
+                >
+                    <option value="">Select</option>
+                    {
+                        presets && presets.map((preset, i) => (
+                            <option key={i} value={`${preset.shift_start_value}-${preset.shift_end_value}`}>
+                                {preset.shift_start} - {preset.shift_end}
+                            </option>
+                        ))
+                    }
+                </select>
+            </div>
+            <hr className="my-1" />
+            <div className="flex justify-evenly mb-1">
+                <p>Start</p>
+                <select
+                    className="w-60 schedules-text"
+                    value={shift_start_value}
+                    disabled={isUpdating}
+                    onChange={({ target }) => setShiftStartValue(target.value)}>
+                    {
+                        times && times.map((time, i) => (
+                            <option
+                                key={i}
+                                value={time.value}
+                                disabled={time.level < parseFloat(store.store_open_level) || time.level > parseFloat(store.store_close_level)}
+                            >
+                                {time.time}
+                            </option>
+                        ))
+                    }
+                </select>
+            </div>
+            <div className="flex justify-evenly mb-1">
+                <p className="mr-1">End</p>
+                <select
+                    className="w-60 schedules-text"
+                    value={shift_end_value}
+                    disabled={isUpdating}
+                    onChange={({ target }) => setShiftEndValue(target.value)}>
+                    {
+                        times && times.map((time, i) => (
+                            <option
+                                key={i}
+                                value={time.value}
+                                disabled={time.level < parseFloat(store.store_open_level) || time.level > parseFloat(store.store_close_level)}
+                            >
+                                {time.time}
+                            </option>
+                        ))
+                    }
+                </select>
+            </div>
+            {
+                isUpdating ?
+                    <div className="my-1">
+                        <Loader
+                            type='ThreeDots'
+                            color='rgb(50, 110, 150)'
+                            height={12}
+                        />
+                    </div>
+                    : <div className="my-2 w-100 flex justify-evenly">
+                        <div
+                            className="p-1 w-100 pointer hovered border-solid-1"
+                            onClick={() => handleSaveShift(u_id, dayIndex, shift.s_id)}
+                        >
+                            <i className="fas fa-check schedules-text"></i>
+                        </div>
+                        <div
+                            className="p-1 w-100 pointer hovered border-solid-1"
+                            onClick={() => handleSavePreset()}
+                        >
+                            <i className="fas fa-star schedules-text"></i>
+                        </div>
+                        <div
+                            className="p-1 w-100 pointer hovered border-solid-1"
+                            onClick={() => shift.s_id ? handleRemoveShift(shift.s_id) : handleCancelShift()}
+                        >
+                            {
+                                shift.shift_end === null
+                                    ? <i className="fas fa-times schedules-text"></i>
+                                    : <i className="fas fa-trash-alt schedules-text"></i>
+                            }
+                        </div>
+                    </div>
+            }
+        </td>
+    )
+
     const renderAvailability = () => (
         <div className="availability">
             <h3 className="text-center">Availability</h3>
@@ -451,134 +549,41 @@ export default function AdminSchedules() {
         </table>
     )
 
-    const renderEditShift = (u_id, dayIndex, shift) => (
-        <td key={dayIndex}>
-            <div className="flex justify-evenly mt-1">
-                <p>Preset</p>
-                <select
-                    className="w-60 schedules-text"
-                    defaultValue='0 0'
-                    disabled={isUpdating}
-                    onChange={({ target }) => handleSelectPreset(target.value)}
-                >
-                    <option value="">Select</option>
-                    {
-                        presets && presets.map((preset, i) => (
-                            <option key={i} value={`${preset.shift_start_value}-${preset.shift_end_value}`}>
-                                {preset.shift_start} - {preset.shift_end}
-                            </option>
-                        ))
-                    }
-                </select>
-            </div>
-            <hr className="my-1" />
-            <div className="flex justify-evenly mb-1">
-                <p>Start</p>
-                <select
-                    className="w-60 schedules-text"
-                    value={shift_start_value}
-                    disabled={isUpdating}
-                    onChange={({ target }) => setShiftStartValue(target.value)}>
-                    {
-                        times && times.map((time, i) => (
-                            <option
-                                key={i}
-                                value={time.value}
-                                disabled={time.level < parseFloat(store.store_open_level) || time.level > parseFloat(store.store_close_level)}
-                            >
-                                {time.time}
-                            </option>
-                        ))
-                    }
-                </select>
-            </div>
-            <div className="flex justify-evenly mb-1">
-                <p className="mr-1">End</p>
-                <select
-                    className="w-60 schedules-text"
-                    value={shift_end_value}
-                    disabled={isUpdating}
-                    onChange={({ target }) => setShiftEndValue(target.value)}>
-                    {
-                        times && times.map((time, i) => (
-                            <option
-                                key={i}
-                                value={time.value}
-                                disabled={time.level < parseFloat(store.store_open_level) || time.level > parseFloat(store.store_close_level)}
-                            >
-                                {time.time}
-                            </option>
-                        ))
-                    }
-                </select>
-            </div>
-            {
-                isUpdating ?
-                    <div className="my-1">
-                        <Loader
-                            type='ThreeDots'
-                            color='rgb(50, 110, 150)'
-                            height={12}
-                        />
-                    </div>
-                    : <div className="my-2 w-100 flex justify-evenly">
-                        <button
-                            className="btn-x-sm btn-hovered"
-                            style={{ border: 'solid 1px gray' }}
-                            onClick={() => handleSaveShift(u_id, dayIndex, shift.s_id)}
-                        >
-                            <i className="fas fa-check schedules-text"></i>
-                        </button>
-                        <button
-                            className="btn-x-sm btn-hovered"
-                            style={{ border: 'solid 1px gray' }}
-                            onClick={() => handleSavePreset()}
-                        >
-                            <i className="fas fa-star schedules-text"></i>
-                        </button>
-                        <button
-                            className="btn-x-sm btn-hovered"
-                            style={{ border: 'solid 1px gray' }}
-                            onClick={() => shift.s_id ? handleRemoveShift(shift.s_id) : handleCancelShift()}
-                        >
-                            {
-                                shift.shift_end === null
-                                    ? <i className="fas fa-times schedules-text"></i>
-                                    : <i className="fas fa-trash-alt schedules-text"></i>
-                            }
-                        </button>
-                    </div>
-            }
-        </td>
-    )
-
     const renderMobileSchedules = () => (
         <div className="schedules-mobile">
             {
-                usersMobile.map((user, i) => (
-                    <div key={i} className="flex">
-                        {user.label ? (
-                            <div className="w-100 border-x bg-x-light-gray text-center">
-                                <p><strong>{format(new Date(user.shift_start), "PP")}</strong></p>
-                            </div>
-                        ) : (
-                        <>
-                            <div className="flex flex-col flex-center border-solid-1 p-1" style={{ width: "20%" }}>
-                                <p><strong>{new Date(user.shift_start).toDateString().split(" ")[0]}</strong></p>
-                                <p><strong>{new Date(user.shift_start).toDateString().split(" ")[2]}</strong></p>
-                            </div>
-                            <div className="w-80 border-solid-1 p-1">
-                                <p>
-                                    {new Date(user.shift_start).toLocaleTimeString().replace(":00 ", " ")} -
-                                    {new Date(user.shift_end).toLocaleTimeString().replace(":00 ", " ")}
-                                </p>
-                                <p><strong>{user.first_name} {user.last_name}</strong></p>
-                                <p><em>{user.title}</em></p>
-                            </div>
-                        </>
-                        )}
-                    </div>
-                ))
+                isLoadingSchedule ? (
+                    <Loader
+                        type='Oval'
+                        color='rgb(50, 110, 150)'
+                        className="text-center mt-4"
+                    />
+                ) : (
+                    usersMobile.map((user, i) => (
+                        <div key={i} className="flex">
+                            {user.label ? (
+                                <div className="w-100 border-x bg-x-light-gray text-center">
+                                    <p><strong>{format(new Date(user.shift_start), "PP")}</strong></p>
+                                </div>
+                            ) : (
+                            <>
+                                <div className="flex flex-col flex-center border-solid-1 p-1" style={{ width: "20%" }}>
+                                    <p><strong>{new Date(user.shift_start).toDateString().split(" ")[0]}</strong></p>
+                                    <p><strong>{new Date(user.shift_start).toDateString().split(" ")[2]}</strong></p>
+                                </div>
+                                <div className="w-80 border-solid-1 p-1">
+                                    <p>
+                                        {new Date(user.shift_start).toLocaleTimeString().replace(":00 ", " ")} -
+                                        {new Date(user.shift_end).toLocaleTimeString().replace(":00 ", " ")}
+                                    </p>
+                                    <p><strong>{user.first_name} {user.last_name}</strong></p>
+                                    <p><em>{user.title}</em></p>
+                                </div>
+                            </>
+                            )}
+                        </div>
+                    ))
+                )
             }
         </div>
     )
