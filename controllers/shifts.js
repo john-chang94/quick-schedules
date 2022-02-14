@@ -299,7 +299,7 @@ exports.getAllUsersSchedulesByDate = async (req, res) => {
                 set.add(arr1[i].shift_start.split("T")[0]);
             }
     
-            // Add filler dates that are missing in user's work week
+            // Identify filler dates that are missing in user's work week
             for (let i = 0; i < arr2.length; i++) {
                 if (!set.has(arr2[i].shift_start.split("T")[0])) {
                     values.push(arr2[i])
@@ -309,12 +309,12 @@ exports.getAllUsersSchedulesByDate = async (req, res) => {
             return values;
         }
 
-        // Add filler dates for all users' shifts array
+        // Loop through all users' shifts
         for (let i = 0; i < users.length; i++) {       
-            // Get missing dates in user's shifts  
+            // Get missing dates in each user's work week
             let missingDates = getMissingDates(users[i].shifts, dates);
             for (let k = 0; k < missingDates.length; k++) {
-                // Add missing dates to user's shifts
+                // Add missing dates to user's work week
                 users[i].shifts.push(missingDates[k]);
             }
             // Sort shifts by date

@@ -51,7 +51,7 @@ function App() {
     <Router>
       <IsLoaded isLoading={isLoading} children>
         <Header />
-        <div className={`relative ${(verifiedUser) && "container-grid"}`}>
+        <div className={`relative ${verifiedUser && "container-grid"}`}>
           <Navbar />
           <div className="container">
             <div className="container-inner">
