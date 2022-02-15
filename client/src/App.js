@@ -1,6 +1,6 @@
 import './App.css';
 import { useEffect, useContext, useState } from 'react';
-import { BrowserRouter as Router, Switch, Route } from 'react-router-dom';
+import { BrowserRouter as Router, Switch } from 'react-router-dom';
 import * as ROUTES from './constants/routes';
 import { isAuthenticated, verifyUser } from './services/auth';
 import { UserContext } from './contexts/userContext';
@@ -27,6 +27,7 @@ import UserSchedules from './components/user/schedules';
 
 import ProtectedRoute from './helpers/protectedRoute';
 import UserRoute from './helpers/userRoute';
+import AuthRoute from './helpers/authRoute';
 import IsLoaded from './isLoaded';
 
 function App() {
@@ -56,8 +57,8 @@ function App() {
           <div className="container">
             <div className="container-inner">
               <Switch>
-                <Route exact path={ROUTES.SIGN_IN} component={SignIn} />
-                <Route exact path={ROUTES.ADMIN_SIGN_IN} component={AdminSignIn} />
+                <AuthRoute user={verifiedUser} exact path={ROUTES.SIGN_IN} component={SignIn} />
+                <AuthRoute user={verifiedUser} exact path={ROUTES.ADMIN_SIGN_IN} component={AdminSignIn} />
 
                 <ProtectedRoute user={verifiedUser} path={ROUTES.ADMIN_HOME} component={AdminHome} />
                 <ProtectedRoute exact user={verifiedUser} path={ROUTES.ADMIN_EMPLOYEES} component={AdminEmployees} />
