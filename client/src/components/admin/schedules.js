@@ -7,6 +7,7 @@ import { startOfToday, startOfWeek, addWeeks, subWeeks, parseISO, format } from 
 import Loader from 'react-loader-spinner';
 import { fetchAllRequestsByStatusAndDate } from '../../services/requests';
 import { fetchStoreHours } from '../../services/store';
+import SchedulesMobile from './schedulesMobile';
 
 export default function AdminSchedules() {
     const [availabilities, setAvailabilities] = useState(null);
@@ -17,10 +18,9 @@ export default function AdminSchedules() {
     const [times, setTimes] = useState(null);
     const [presets, setPresets] = useState(null);
     const [store, setStore] = useState(null);
-    const [isLoading, setIsLoading] = useState(true);
     const [isUpdating, setIsUpdating] = useState(false);
     const [isCopying, setIsCopying] = useState(false);
-    const [isLoadingSchedule, setIsLoadingSchedule] = useState(false);
+    const [isLoadingSchedule, setIsLoadingSchedule] = useState(true);
 
     // Used for datepicker
     const [dateISO, setDateISO] = useState(startOfToday())
@@ -116,10 +116,7 @@ export default function AdminSchedules() {
             await createShift(body, tokenConfig);
         }
 
-        const users = await fetchAllUsersSchedulesByDate(weekStart, weekEnd);
-        const usersMobile = await fetchAllUsersSchedulesByDateMobile(weekStart, weekEnd);
-        setUsers(users);
-        setUsersMobile(usersMobile);
+        await handleFetchSchedule();
 
         setUserData('');
         setAvailabilityIndex('');
@@ -162,6 +159,14 @@ export default function AdminSchedules() {
             handleNextWeek();
             setIsCopying(false);
         }
+    }
+
+    // Refresh schedule after any changes are made
+    const handleFetchSchedule = async () => {
+        const users = await fetchAllUsersSchedulesByDate(weekStart, weekEnd);
+        const usersMobile = await fetchAllUsersSchedulesByDateMobile(weekStart, weekEnd);
+        setUsers(users);
+        setUsersMobile(usersMobile);
     }
 
     const handleCancelShift = () => {
@@ -247,10 +252,7 @@ export default function AdminSchedules() {
             setIsUpdating(true);
             await deleteShift(s_id, tokenConfig);
 
-            const users = await fetchAllUsersSchedulesByDate(weekStart, weekEnd);
-            const usersMobile = await fetchAllUsersSchedulesByDateMobile(weekStart, weekEnd);
-            setUsers(users);
-            setUsersMobile(usersMobile);
+            await handleFetchSchedule();
             setUserData('');
             setAvailabilityIndex('');
             setIsUpdating(false);
@@ -421,7 +423,7 @@ export default function AdminSchedules() {
                                 </td>
                                 {
                                     user.availability.map((time, i) => (
-                                        <td key={i} className={` ${time.start_time === 'N/A' && 'bg-black'}`}>
+                                        <td key={i} className={`${time.start_time === 'N/A' && 'bg-black'}`}>
                                             {(time.start_time === 'ANY' && time.end_time === 'ANY') ? 'ANY' : `${time.start_time} - ${time.end_time}`}
                                         </td>
                                     ))
@@ -501,91 +503,45 @@ export default function AdminSchedules() {
 
     const renderSchedule = () => (
         <table className="schedules-table w-100 border-collapse text-center table-fixed schedules-text">
-            {
-                isLoadingSchedule
-                    ? <Loader
-                        type='Oval'
-                        color='rgb(50, 110, 150)'
-                    />
-                    : <tbody>
-                        <tr>
-                            <td className="bg-x-light-gray">
-                                <strong>Name</strong>
-                            </td>
-                            {
-                                days && days.map((day, i) => (
-                                    <td key={i} className="bg-x-light-gray">
-                                        <strong>{new Date(day).toString().split(' ')[0]}</strong>
-                                        <p><em>{new Date(day).toLocaleDateString()}</em></p>
-                                    </td>
-                                ))
-                            }
-                        </tr>
+            <tbody>
+                    <tr>
+                        <td className="bg-x-light-gray">
+                            <strong>Name</strong>
+                        </td>
                         {
-                            users && users.map((user, u_i) => (
-                                <tr key={u_i}>
-                                    <td className="py-1">
-                                        <p>
-                                            <strong>{user.first_name} {user.last_name}</strong>
-                                        </p>
-                                        <em>{user.level === 2 ? "A. Manager" : user.title}</em>
-                                    </td>
-                                    {
-                                        user.availability.map((time, a_i) => (
-                                            // Only render edit mode for the selected date and employee
-                                            (userData === user.u_id && availabilityIndex === a_i)
-                                                ? renderEditShift(user.u_id, a_i, user.shifts[a_i])
-                                                // Render shifts if they exist during the selected week
-                                                : user.shifts[a_i].shift_end === null
-                                                    ? renderBlank(user.u_id, a_i, time)
-                                                    : renderShift(user.u_id, a_i, user.shifts[a_i].shift_start, user.shifts[a_i].shift_end)
-                                        ))
-                                    }
-                                </tr>
+                            days && days.map((day, i) => (
+                                <td key={i} className="bg-x-light-gray">
+                                    <strong>{new Date(day).toString().split(' ')[0]}</strong>
+                                    <p><em>{new Date(day).toLocaleDateString()}</em></p>
+                                </td>
                             ))
                         }
-                    </tbody>
-            }
-        </table>
-    )
-
-    const renderMobileSchedules = () => (
-        <div className="schedules-mobile">
-            {
-                isLoadingSchedule ? (
-                    <Loader
-                        type='Oval'
-                        color='rgb(50, 110, 150)'
-                        className="text-center mt-4"
-                    />
-                ) : (
-                    usersMobile.map((user, i) => (
-                        <div key={i} className="flex">
-                            {user.label ? (
-                                <div className="w-100 border-x bg-x-light-gray text-center">
-                                    <p><strong>{format(new Date(user.shift_start), "PP")}</strong></p>
-                                </div>
-                            ) : (
-                            <>
-                                <div className="flex flex-col flex-center border-solid-1 p-1" style={{ width: "20%" }}>
-                                    <p><strong>{new Date(user.shift_start).toDateString().split(" ")[0]}</strong></p>
-                                    <p><strong>{new Date(user.shift_start).toDateString().split(" ")[2]}</strong></p>
-                                </div>
-                                <div className="w-80 border-solid-1 p-1">
+                    </tr>
+                    {
+                        users && users.map((user, u_i) => (
+                            <tr key={u_i}>
+                                <td className="py-1">
                                     <p>
-                                        {new Date(user.shift_start).toLocaleTimeString().replace(":00 ", " ")} -
-                                        {new Date(user.shift_end).toLocaleTimeString().replace(":00 ", " ")}
+                                        <strong>{user.first_name} {user.last_name}</strong>
                                     </p>
-                                    <p><strong>{user.first_name} {user.last_name}</strong></p>
-                                    <p><em>{user.title}</em></p>
-                                </div>
-                            </>
-                            )}
-                        </div>
-                    ))
-                )
-            }
-        </div>
+                                    <em>{user.level === 2 ? "A. Manager" : user.title}</em>
+                                </td>
+                                {
+                                    user.availability.map((time, a_i) => (
+                                        // Only render edit mode for the selected date and employee
+                                        (userData === user.u_id && availabilityIndex === a_i)
+                                            ? renderEditShift(user.u_id, a_i, user.shifts[a_i])
+                                            // Render shifts if they exist during the selected week
+                                            : user.shifts[a_i].shift_end === null
+                                                ? renderBlank(user.u_id, a_i, time)
+                                                : renderShift(user.u_id, a_i, user.shifts[a_i].shift_start, user.shifts[a_i].shift_end)
+                                    ))
+                                }
+                            </tr>
+                        ))
+                    }
+                </tbody>
+        </table>
     )
 
     useEffect(() => {
@@ -602,7 +558,7 @@ export default function AdminSchedules() {
             setStore(store);
             setShiftStartValue(store.store_open_value);
             setShiftEndValue(store.store_close_value);
-            setIsLoading(false);
+            setIsLoadingSchedule(false);
         }
 
         getDatesAndLoadData();
@@ -611,7 +567,7 @@ export default function AdminSchedules() {
     return (
         <>
             {
-                isLoading ?
+                isLoadingSchedule ?
                     <div className="text-center" style={{ marginTop: '70px' }}>
                         <Loader
                             type='Oval'
@@ -622,7 +578,17 @@ export default function AdminSchedules() {
                         {renderController()}
                         {renderSchedule()}
                         {renderAvailability()}
-                        {renderMobileSchedules()}
+                        <SchedulesMobile
+                            usersMobile={usersMobile}
+                            days={days}
+                            times={times}
+                            store={store}
+                            shift_start_value={shift_start_value}
+                            shift_end_value={shift_end_value}
+                            setShiftStartValue={setShiftStartValue}
+                            setShiftEndValue={setShiftEndValue}
+                            handleFetchSchedule={handleFetchSchedule}
+                        />
                     </div>
             }
         </>
