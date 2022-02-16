@@ -1,16 +1,23 @@
 import React, { useState } from "react";
-import { format } from "date-fns";
+import { format, toDate } from "date-fns";
 import { isAuthenticated } from "../../services/auth";
 import { createShift, updateShift, deleteShift } from "../../services/shifts";
 import Loader from "react-loader-spinner";
 
-export default function SchedulesMobile({ usersMobile, days, times, store, shift_start_value, shift_end_value, setShiftStartValue, setShiftEndValue, handleFetchSchedule }) {
+export default function SchedulesMobile({ usersMobile, days, times, presets, store, getTimeValue, handleFetchSchedule }) {
     const [isUpdating, setIsUpdating] = useState(false);
     const [editShiftIndex, setEditShiftIndex] = useState(null);
-    const [dayIndex, setDayIndex] = useState(null);
+    const [dayIndex, setDayIndex] = useState(null); // For saving a shift
+    const [shiftStartValue, setShiftStartValue] = useState("");
+    const [shiftEndValue, setShiftEndValue] = useState("");
 
     const handleEditShift = (user, shiftIndex) => {
+        // Set specific shift time values to match with times array in the select inputs
+        setShiftStartValue(getTimeValue(user.shift_start));
+        setShiftEndValue(getTimeValue(user.shift_end));
+        // Enable edit shift component to render
         setEditShiftIndex(shiftIndex);
+        // Get date to be saved when submitting
         for (let i = 0; i < days.length; i++) {
             if (user.shift_start.split("T")[0] === days[i].split("T")[0]) {
                 setDayIndex(i);
@@ -18,35 +25,33 @@ export default function SchedulesMobile({ usersMobile, days, times, store, shift
         }
     }
 
-    const handleSaveShift = async (u_id, dayIndex, s_id) => {
+    const handleSaveShift = async (u_id, s_id) => {
         setIsUpdating(true);
         const tokenConfig = isAuthenticated();
         // Get shift date
         const date = new Date(days[dayIndex]);
         // Get hour and minute in INT data type for date object
-        const startTimeHour = parseInt(shift_start_value.split(' ')[0]);
-        const startTimeMinute = parseInt(shift_start_value.split(' ')[1]);
+        const startTimeHour = parseInt(shiftStartValue.split(' ')[0]);
+        const startTimeMinute = parseInt(shiftStartValue.split(' ')[1]);
         // Get hour and minute in INT data type for date object
-        const endTimeHour = parseInt(shift_end_value.split(' ')[0]);
-        const endTimeMinute = parseInt(shift_end_value.split(' ')[1]);
-        // Get local timezone
-        const timezone = Intl.DateTimeFormat().resolvedOptions().timeZone
+        const endTimeHour = parseInt(shiftEndValue.split(' ')[0]);
+        const endTimeMinute = parseInt(shiftEndValue.split(' ')[1]);
         // Create new date objects with year, month, day, hour, minute, and timezone
-        const shift_start = new Date(
+        const shift_start = toDate(new Date(
             date.getFullYear(),
             date.getMonth(),
             date.getDate(),
             startTimeHour,
-            startTimeMinute)
-            .toLocaleString('en-US', { timeZone: timezone });
+            startTimeMinute))
+            .toLocaleString('en-US', { timeZone: Intl.DateTimeFormat().resolvedOptions().timeZone }); // Local timezone
 
-        const shift_end = new Date(
+        const shift_end = toDate(new Date(
             date.getFullYear(),
             date.getMonth(),
             date.getDate(),
             endTimeHour,
-            endTimeMinute)
-            .toLocaleString('en-US', { timeZone: timezone });
+            endTimeMinute))
+            .toLocaleString('en-US', { timeZone: Intl.DateTimeFormat().resolvedOptions().timeZone });
 
         const body = { u_id, shift_start, shift_end };
         if (s_id) {
@@ -55,7 +60,7 @@ export default function SchedulesMobile({ usersMobile, days, times, store, shift
             await createShift(body, tokenConfig);
         }
 
-        handleFetchSchedule();
+        await handleFetchSchedule();
 
         setEditShiftIndex(null);
         setIsUpdating(false);
@@ -73,37 +78,51 @@ export default function SchedulesMobile({ usersMobile, days, times, store, shift
         }
     }
 
+    const handleSelectPreset = (shiftValue) => {
+        if (!shiftValue) return;
+        setShiftStartValue(shiftValue.split('-')[0]);
+        setShiftEndValue(shiftValue.split('-')[1]);
+    }
+
+    const renderShift = (user, shiftIndex) => (
+        <div onClick={() => handleEditShift(user, shiftIndex)}>
+            <p>
+                {new Date(user.shift_start).toLocaleTimeString().replace(":00 ", " ")} -&nbsp;
+                {new Date(user.shift_end).toLocaleTimeString().replace(":00 ", " ")}
+            </p>
+            <p><strong>{user.first_name} {user.last_name}</strong></p>
+            <p><em>{user.title}</em></p>
+        </div>
+    )
+
     const renderEditShift = (user) => (
         <>
-            <div className="flex justify-evenly mb-1">
-                <p>Start</p>
+            <div className="flex justify-evenly mt-1">
+                <p>Preset</p>
                 <select
-                    className="w-60 schedules-text"
-                    value={shift_start_value}
+                    className="w-60"
+                    defaultValue='0 0'
                     disabled={isUpdating}
-                    onChange={({ target }) => setShiftStartValue(target.value)}>
+                    onChange={({ target }) => handleSelectPreset(target.value)}
+                >
+                    <option value="">Select</option>
                     {
-                        times && times.map((time, i) => (
-                            <option
-                                key={i}
-                                value={time.value}
-                                disabled={time.level < parseFloat(store.store_open_level) || time.level > parseFloat(store.store_close_level)}
-                            >
-                                {time.time}
+                        presets && presets.map((preset, i) => (
+                            <option key={i} value={`${preset.shift_start_value}-${preset.shift_end_value}`}>
+                                {preset.shift_start} - {preset.shift_end}
                             </option>
                         ))
                     }
                 </select>
             </div>
             <div className="flex justify-evenly mb-1">
-                <p className="mr-1">End</p>
+                <p>Start</p>
                 <select
-                    className="w-60 schedules-text"
-                    value={shift_end_value}
+                    className="w-60"
+                    value={shiftStartValue}
                     disabled={isUpdating}
-                    onChange={({ target }) => setShiftEndValue(target.value)}>
-                    {
-                        times && times.map((time, i) => (
+                    onChange={({ target }) => setShiftStartValue(target.value)}>
+                    {times && times.map((time, i) => (
                             <option
                                 key={i}
                                 value={time.value}
@@ -111,8 +130,25 @@ export default function SchedulesMobile({ usersMobile, days, times, store, shift
                             >
                                 {time.time}
                             </option>
-                        ))
-                    }
+                        ))}
+                </select>
+            </div>
+            <div className="flex justify-evenly mb-1">
+                <p className="mr-1">End</p>
+                <select
+                    className="w-60"
+                    value={shiftEndValue}
+                    disabled={isUpdating}
+                    onChange={({ target }) => setShiftEndValue(target.value)}>
+                    {times && times.map((time, i) => (
+                            <option
+                                key={i}
+                                value={time.value}
+                                disabled={time.level < parseFloat(store.store_open_level) || time.level > parseFloat(store.store_close_level)}
+                            >
+                                {time.time}
+                            </option>
+                        ))}
                 </select>
             </div>
             {
@@ -124,60 +160,31 @@ export default function SchedulesMobile({ usersMobile, days, times, store, shift
                             height={12}
                         />
                     </div>
-                    : <div className="my-2 w-100 flex justify-evenly">
+                    : <div className="mt-2 w-100 flex justify-evenly">
                         <div
-                            className="p-1 w-100 pointer hovered border-solid-1"
-                            onClick={() => handleSaveShift(user.u_id, dayIndex, user.s_id)}
+                            className="p-1 w-100 text-center pointer hovered border-solid-1"
+                            onClick={() => handleSaveShift(user.u_id, user.s_id)}
                         >
-                            <i className="fas fa-check schedules-text"></i>
+                            <i className="fas fa-check"></i>
                         </div>
                         <div
-                            className="p-1 w-100 pointer hovered border-solid-1"
+                            className="p-1 w-100 text-center pointer hovered border-solid-1"
                             onClick={() => handleRemoveShift(user.s_id)}
                         >
-                            <i className="fas fa-trash-alt schedules-text"></i>
+                            <i className="fas fa-trash-alt"></i>
                         </div>
                         <div
-                            className="p-1 w-100 pointer hovered border-solid-1"
+                            className="p-1 w-100 text-center pointer hovered border-solid-1"
                             onClick={() => setEditShiftIndex(null)}
                         >
-                            <i className="fas fa-times schedules-text"></i>
+                            <i className="fas fa-times"></i>
                         </div>
                     </div>
             }
         </>
     )
-
-    const renderShift = (user, shiftIndex) => (
-        <div onClick={() => handleEditShift(user, shiftIndex)} className="flex">
-            <div className="flex flex-col flex-center border-solid-1 p-1" style={{ width: "20%" }}>
-                <p><strong>{new Date(user.shift_start).toDateString().split(" ")[0]}</strong></p>
-                <p><strong>{new Date(user.shift_start).toDateString().split(" ")[2]}</strong></p>
-            </div>
-            <div className="w-80 border-solid-1 p-2">
-                {editShiftIndex === shiftIndex ? (
-                    <div>
-                        {renderEditShift(user)}
-                        <p>
-                            {user.first_name} {user.last_name}
-                        </p>
-                    </div>
-                ) : (
-                    <>
-                        <p>
-                            {new Date(user.shift_start).toLocaleTimeString().replace(":00 ", " ")} - 
-                            {new Date(user.shift_end).toLocaleTimeString().replace(":00 ", " ")}
-                        </p>
-                        <p><strong>{user.first_name} {user.last_name}</strong></p>
-                        <p><em>{user.title}</em></p>
-                    </>
-                )}
-                
-            </div>
-        </div>
-    )
-
-    const renderSchedule = () => (
+    
+    return (
         <div className="schedules-mobile">
             {
                 usersMobile.map((user, i) => (
@@ -187,15 +194,23 @@ export default function SchedulesMobile({ usersMobile, days, times, store, shift
                                 <p><strong>{format(new Date(user.shift_start), "PP")}</strong></p>
                             </div>
                         ) : (
-                            renderShift(user, i)
+                            <div className="flex">
+                                <div className="flex flex-col flex-center border-solid-1 p-1" style={{ width: "20%" }}>
+                                    <p><strong>{new Date(user.shift_start).toDateString().split(" ")[0]}</strong></p>
+                                    <p><strong>{new Date(user.shift_start).toDateString().split(" ")[2]}</strong></p>
+                                </div>
+                                <div className="w-80 border-solid-1 p-2">
+                                    {editShiftIndex === i
+                                        ? renderEditShift(user)
+                                        : renderShift(user, i)
+                                    }
+                                    
+                                </div>
+                            </div>
                         )}
                     </div>
                 ))
             }
         </div>
-    )
-    
-    return (
-        renderSchedule()
     )
 }

@@ -90,8 +90,6 @@ export default function AdminSchedules() {
         // Get hour and minute in INT data type for date object
         const endTimeHour = parseInt(shift_end_value.split(' ')[0]);
         const endTimeMinute = parseInt(shift_end_value.split(' ')[1]);
-        // Get local timezone
-        const timezone = Intl.DateTimeFormat().resolvedOptions().timeZone
         // Create new date objects with year, month, day, hour, minute, and timezone
         const shift_start = new Date(
             date.getFullYear(),
@@ -99,7 +97,7 @@ export default function AdminSchedules() {
             date.getDate(),
             startTimeHour,
             startTimeMinute)
-            .toLocaleString('en-US', { timeZone: timezone });
+            .toLocaleString('en-US', { timeZone: Intl.DateTimeFormat().resolvedOptions().timeZone }); // Local timezone
 
         const shift_end = new Date(
             date.getFullYear(),
@@ -107,7 +105,7 @@ export default function AdminSchedules() {
             date.getDate(),
             endTimeHour,
             endTimeMinute)
-            .toLocaleString('en-US', { timeZone: timezone });
+            .toLocaleString('en-US', { timeZone: Intl.DateTimeFormat().resolvedOptions().timeZone });
 
         const body = { u_id, shift_start, shift_end };
         if (s_id) {
@@ -583,10 +581,8 @@ export default function AdminSchedules() {
                             days={days}
                             times={times}
                             store={store}
-                            shift_start_value={shift_start_value}
-                            shift_end_value={shift_end_value}
-                            setShiftStartValue={setShiftStartValue}
-                            setShiftEndValue={setShiftEndValue}
+                            presets={presets}
+                            getTimeValue={getTimeValue}
                             handleFetchSchedule={handleFetchSchedule}
                         />
                     </div>
