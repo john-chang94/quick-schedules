@@ -108,6 +108,10 @@ header {
   font-size: calc(5px + 0.8vmin);
 }
 
+.schedules-mobile-text {
+  font-size: 0.9rem;
+}
+
 .schedules-table th,td {
   border: solid 1px rgb(177, 177, 177);
 }
