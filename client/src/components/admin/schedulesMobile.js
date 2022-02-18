@@ -76,6 +76,7 @@ export default function SchedulesMobile({ usersMobile, days, times, presets, sto
             await deleteShift(s_id, tokenConfig);
 
             await handleFetchSchedule();
+            setEditShiftIndex(null);
             setIsUpdating(false);
         }
     }

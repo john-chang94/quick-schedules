@@ -18,6 +18,7 @@ export default function AdminSchedules() {
     const [times, setTimes] = useState(null);
     const [presets, setPresets] = useState(null);
     const [store, setStore] = useState(null);
+    const [isLoading, setIsLoading] = useState(true);
     const [isUpdating, setIsUpdating] = useState(false);
     const [isCopying, setIsCopying] = useState(false);
     const [isLoadingSchedule, setIsLoadingSchedule] = useState(true);
@@ -163,6 +164,11 @@ export default function AdminSchedules() {
     const handleFetchSchedule = async () => {
         const users = await fetchAllUsersSchedulesByDate(weekStart, weekEnd);
         const usersMobile = await fetchAllUsersSchedulesByDateMobile(weekStart, weekEnd);
+        // Add date labels for mobile schedules display
+        for (let i = 0; i < days.length; i++) {
+            usersMobile.push({ shift_start: days[i], label: true });
+        }
+        usersMobile.sort((a, b) => new Date(a.shift_start) - new Date(b.shift_start))
         setUsers(users);
         setUsersMobile(usersMobile);
     }
@@ -500,46 +506,55 @@ export default function AdminSchedules() {
     )
 
     const renderSchedule = () => (
-        <table className="schedules-table w-100 border-collapse text-center table-fixed schedules-text">
-            <tbody>
-                    <tr>
-                        <td className="bg-x-light-gray">
-                            <strong>Name</strong>
-                        </td>
+        isLoadingSchedule ? (
+            <div className="text-center" style={{ marginTop: '70px' }}>
+                <Loader
+                    type='Oval'
+                    color='rgb(50, 110, 150)'
+                />
+            </div>
+        ) : (
+            <table className="schedules-table w-100 border-collapse text-center table-fixed schedules-text">
+                <tbody>
+                        <tr>
+                            <td className="bg-x-light-gray">
+                                <strong>Name</strong>
+                            </td>
+                            {
+                                days && days.map((day, i) => (
+                                    <td key={i} className="bg-x-light-gray">
+                                        <strong>{new Date(day).toString().split(' ')[0]}</strong>
+                                        <p><em>{new Date(day).toLocaleDateString()}</em></p>
+                                    </td>
+                                ))
+                            }
+                        </tr>
                         {
-                            days && days.map((day, i) => (
-                                <td key={i} className="bg-x-light-gray">
-                                    <strong>{new Date(day).toString().split(' ')[0]}</strong>
-                                    <p><em>{new Date(day).toLocaleDateString()}</em></p>
-                                </td>
+                            users && users.map((user, u_i) => (
+                                <tr key={u_i}>
+                                    <td className="py-1">
+                                        <p>
+                                            <strong>{user.first_name} {user.last_name}</strong>
+                                        </p>
+                                        <em>{user.level === 2 ? "A. Manager" : user.title}</em>
+                                    </td>
+                                    {
+                                        user.availability.map((time, a_i) => (
+                                            // Only render edit mode for the selected date and employee
+                                            (userData === user.u_id && availabilityIndex === a_i)
+                                                ? renderEditShift(user.u_id, a_i, user.shifts[a_i])
+                                                // Render shifts if they exist during the selected week
+                                                : user.shifts[a_i].shift_end === null
+                                                    ? renderBlank(user.u_id, a_i, time)
+                                                    : renderShift(user.u_id, a_i, user.shifts[a_i].shift_start, user.shifts[a_i].shift_end)
+                                        ))
+                                    }
+                                </tr>
                             ))
                         }
-                    </tr>
-                    {
-                        users && users.map((user, u_i) => (
-                            <tr key={u_i}>
-                                <td className="py-1">
-                                    <p>
-                                        <strong>{user.first_name} {user.last_name}</strong>
-                                    </p>
-                                    <em>{user.level === 2 ? "A. Manager" : user.title}</em>
-                                </td>
-                                {
-                                    user.availability.map((time, a_i) => (
-                                        // Only render edit mode for the selected date and employee
-                                        (userData === user.u_id && availabilityIndex === a_i)
-                                            ? renderEditShift(user.u_id, a_i, user.shifts[a_i])
-                                            // Render shifts if they exist during the selected week
-                                            : user.shifts[a_i].shift_end === null
-                                                ? renderBlank(user.u_id, a_i, time)
-                                                : renderShift(user.u_id, a_i, user.shifts[a_i].shift_start, user.shifts[a_i].shift_end)
-                                    ))
-                                }
-                            </tr>
-                        ))
-                    }
-                </tbody>
-        </table>
+                    </tbody>
+            </table>
+        )
     )
 
     useEffect(() => {
@@ -556,7 +571,7 @@ export default function AdminSchedules() {
             setStore(store);
             setShiftStartValue(store.store_open_value);
             setShiftEndValue(store.store_close_value);
-            setIsLoadingSchedule(false);
+            setIsLoading(false);
         }
 
         getDatesAndLoadData();
@@ -565,7 +580,7 @@ export default function AdminSchedules() {
     return (
         <>
             {
-                isLoadingSchedule ?
+                isLoading ?
                     <div className="text-center" style={{ marginTop: '70px' }}>
                         <Loader
                             type='Oval'
