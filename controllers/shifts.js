@@ -270,10 +270,11 @@ exports.getAllUsersSchedulesByDate = async (req, res) => {
             [start_date, end_date]
         )
 
+        console.log(data.rows[0].shifts)
+
         let users = data.rows;
 
         let firstDate = new Date(start_date);
-        let timezone = Intl.DateTimeFormat().resolvedOptions().timeZone
         let dates = [];
 
         // Get dates for the work week from Monday to Sunday
@@ -281,8 +282,7 @@ exports.getAllUsersSchedulesByDate = async (req, res) => {
             let day = new Date(
                 firstDate.getFullYear(),
                 firstDate.getMonth(),
-                firstDate.getDate() + i, 0).toLocaleString('en-US', { timeZone: timezone }
-            );
+                firstDate.getDate() + i, 0).toLocaleString();
             dateToAdd = new Date(day).toISOString();
             dates.push({ 'shift_start': dateToAdd, 'shift_end': null });
         }
@@ -332,6 +332,10 @@ exports.getAllUsersSchedulesByDateMobile = async (req, res) => {
     const { start_date, end_date } = req.params;
 
     try {
+        // Use SPLIT_PART to remove '.000Z' in returned dates because they
+        // will be rendered incorrectly in FE when creating a new date object.
+        // The query above returns '2022-02-18T07:00:00' for some reason and
+        // the query below returns '2022-02-18T07:00:00.000Z', they are different!
         const data = await client.query(
             `WITH users AS (
                 SELECT u_id, first_name, last_name, title, acn, level
@@ -344,7 +348,9 @@ exports.getAllUsersSchedulesByDateMobile = async (req, res) => {
                 WHERE shift_start::date >= $1
                     AND shift_start::date <= $2
             )
-            SELECT u.u_id, u.first_name, u.last_name, u.title, u.acn, u.level, s.s_id, s.shift_start, s.shift_end
+            SELECT u.u_id, u.first_name, u.last_name, u.title, u.acn, u.level, s.s_id,
+            SPLIT_PART(s.shift_start::TEXT, '.', 1) AS shift_start,
+            SPLIT_PART(s.shift_end::TEXT, '.', 1) AS shift_end
             FROM users AS u
             JOIN shifts AS s
                 ON u.u_id = s.u_id
@@ -352,6 +358,7 @@ exports.getAllUsersSchedulesByDateMobile = async (req, res) => {
             [start_date, end_date]
         )
 
+        console.log(data.rows[0].shift_start)
         res.status(200).json(data.rows);
 
     } catch (err) {

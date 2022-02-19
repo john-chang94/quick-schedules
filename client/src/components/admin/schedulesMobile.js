@@ -4,7 +4,7 @@ import { isAuthenticated } from "../../services/auth";
 import { createShift, updateShift, deleteShift } from "../../services/shifts";
 import Loader from "react-loader-spinner";
 
-export default function SchedulesMobile({ usersMobile, days, times, presets, store, getTimeValue, handleFetchSchedule }) {
+export default function SchedulesMobile({ usersMobile, days, times, presets, store, getTime, getTimeValue, handleFetchSchedule }) {
     const [isUpdating, setIsUpdating] = useState(false);
     const [editShiftIndex, setEditShiftIndex] = useState(null);
     const [dayIndex, setDayIndex] = useState(null); // For saving a shift
@@ -105,27 +105,24 @@ export default function SchedulesMobile({ usersMobile, days, times, presets, sto
                     <p className="schedules-mobile-text"><strong>{user.first_name} {user.last_name}</strong></p>
                     <p className="schedules-mobile-text"><em>{user.title}</em></p>
                 </div>
-                <div className=""></div>
                 <div>
                     <div className="flex justify-evenly mb-1">
-                        <p>Preset</p>
+                        <p className="mr-1 schedules-mobile-text">Preset</p>
                         <select
                             defaultValue='0 0'
                             disabled={isUpdating}
                             onChange={({ target }) => handleSelectPreset(target.value)}
                         >
                             <option value="">Select</option>
-                            {
-                                presets && presets.map((preset, i) => (
+                            {presets && presets.map((preset, i) => (
                                     <option key={i} value={`${preset.shift_start_value}-${preset.shift_end_value}`}>
                                         {preset.shift_start} - {preset.shift_end}
                                     </option>
-                                ))
-                            }
+                                ))}
                         </select>
                     </div>
                     <div className="flex justify-evenly mb-1">
-                        <p>Start</p>
+                        <p className="mr-1 schedules-mobile-text">Start</p>
                         <select
                             value={shiftStartValue}
                             disabled={isUpdating}
@@ -142,7 +139,7 @@ export default function SchedulesMobile({ usersMobile, days, times, presets, sto
                         </select>
                     </div>
                     <div className="flex justify-evenly mb-1">
-                        <p className="mr-1">End</p>
+                        <p className="mr-1 schedules-mobile-text">End</p>
                         <select
                             value={shiftEndValue}
                             disabled={isUpdating}

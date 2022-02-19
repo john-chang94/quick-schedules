@@ -3,7 +3,7 @@ import { isAuthenticated } from '../../services/auth';
 import { createPreset, fetchPresets, fetchTimes } from '../../services/presets';
 import { createShift, fetchAllUsersSchedulesByDate, fetchAllUsersSchedulesByDateMobile, deleteShift, updateShift, createCopyOfWeeklySchedule } from '../../services/shifts';
 import { fetchAllUsersAvailabilities } from '../../services/users';
-import { startOfToday, startOfWeek, addWeeks, subWeeks, parseISO, format } from 'date-fns';
+import { startOfToday, startOfWeek, addWeeks, subWeeks, parseISO, format, toDate } from 'date-fns';
 import Loader from 'react-loader-spinner';
 import { fetchAllRequestsByStatusAndDate } from '../../services/requests';
 import { fetchStoreHours } from '../../services/store';
@@ -41,7 +41,9 @@ export default function AdminSchedules() {
         setIsLoadingSchedule(true);
         let date;
         if (selectedDate) {
-            date = startOfWeek(new Date(selectedDate), { weekStartsOn: 1 });
+            // Use date-fns to create date instead of Date obj,
+            // otherwise selectedDate will be one day later
+            date = startOfWeek(toDate(parseISO(selectedDate)), { weekStartsOn: 1 });
             setDateISO(selectedDate); // For datepicker value
         }
         else {
@@ -50,6 +52,7 @@ export default function AdminSchedules() {
 
         let daysArray = [];
         let dateToAdd = date;
+        // Get dates in current work week
         for (let i = 0; i < 7; i++) {
             daysArray.push(dateToAdd.toISOString());
             dateToAdd = new Date(dateToAdd.setDate(dateToAdd.getDate() + 1));
@@ -129,6 +132,7 @@ export default function AdminSchedules() {
             setIsLoadingSchedule(true);
 
             let shifts = [];
+            // Copy shifts in work week for all users
             for (let i = 0; i < users.length; i++) {
                 for (let j = 0; j < users[i].shifts.length; j++) {
                     if (users[i].shifts[j].shift_end !== null) {
@@ -148,12 +152,8 @@ export default function AdminSchedules() {
                 weekEnd: addWeeks(parseISO(weekEnd), 1)
             };
 
-
             await createCopyOfWeeklySchedule(body);
-            const updatedUsers = await fetchAllUsersSchedulesByDate(weekStart, weekEnd);
-            const usersMobile = await fetchAllUsersSchedulesByDateMobile(weekStart, weekEnd);
-            setUsers(updatedUsers);
-            setUsersMobile(usersMobile);
+            await handleFetchSchedule();
             // Display following week after copying schedule
             handleNextWeek();
             setIsCopying(false);
@@ -168,7 +168,8 @@ export default function AdminSchedules() {
         for (let i = 0; i < days.length; i++) {
             usersMobile.push({ shift_start: days[i], label: true });
         }
-        usersMobile.sort((a, b) => new Date(a.shift_start) - new Date(b.shift_start))
+        usersMobile.sort((a, b) => new Date(a.shift_start) - new Date(b.shift_start));
+
         setUsers(users);
         setUsersMobile(usersMobile);
     }
@@ -393,7 +394,7 @@ export default function AdminSchedules() {
         </td>
     )
 
-    const renderAvailability = () => (
+    const RenderAvailability = () => (
         <div className="availability">
             <h3 className="text-center">Availability</h3>
             <table className="border-collapse w-100 text-center schedules-text">
@@ -440,7 +441,7 @@ export default function AdminSchedules() {
         </div>
     )
 
-    const renderController = () => (
+    const RenderController = () => (
         <div className="schedules-controller">
             <div className="select-week">
                 <div className="pointer" onClick={() => handlePreviousWeek()}>
@@ -452,7 +453,7 @@ export default function AdminSchedules() {
                 <div id="controller-date" className="relative">
                     <input
                         type="date"
-                        value={new Date(dateISO).toISOString().split('T')[0]} // Init date must be yyyy-mm-dd format
+                        value={new Date(dateISO).toISOString().split('T')[0]} // Datepicker must be yyyy-mm-dd format
                         onChange={({ target }) => getDatesOfTheWeek(target.value)}
                     />
                     <div className="absolute">&nbsp;</div>
@@ -505,7 +506,7 @@ export default function AdminSchedules() {
         </div>
     )
 
-    const renderSchedule = () => (
+    const RenderSchedule = () => (
         isLoadingSchedule ? (
             <div className="text-center" style={{ marginTop: '70px' }}>
                 <Loader
@@ -588,15 +589,16 @@ export default function AdminSchedules() {
                         />
                     </div>
                     : <div>
-                        {renderController()}
-                        {renderSchedule()}
-                        {renderAvailability()}
+                        <RenderController />
+                        <RenderSchedule />
+                        <RenderAvailability />
                         <SchedulesMobile
                             usersMobile={usersMobile}
                             days={days}
                             times={times}
                             store={store}
                             presets={presets}
+                            getTime={getTime}
                             getTimeValue={getTimeValue}
                             handleFetchSchedule={handleFetchSchedule}
                         />
