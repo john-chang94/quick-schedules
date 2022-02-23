@@ -123,26 +123,25 @@ exports.getAllRequestsByStatusAndDate = async (req, res) => {
         const { status, weekStart, weekEnd } = req.params;
 
         const requests = await client.query(
-            `SELECT *
-                FROM
-                    (
-                        SELECT u.u_id, u.first_name, u.last_name, r.status,
-                            array_agg(rd.requested_date) AS requested_dates
-                        FROM users AS u
-                        JOIN requests AS r
-                            ON u.u_id = r.u_id
-                        JOIN request_days AS rd
-                            ON r.r_id = rd.r_id
-                        GROUP BY u.u_id, r.status
-                    ) AS nested
-                WHERE nested.status = $1
-                    AND EXISTS
-                        (
-                            SELECT * FROM
-                            unnest(nested.requested_dates) AS req_day
-                            WHERE req_day::date >= $2
-                                AND req_day::date <= $3
-                        )`,
+            `WITH users AS (
+                SELECT u.u_id, u.first_name, u.last_name, r.r_id, r.status
+                FROM users AS u
+                JOIN requests AS r
+                   ON u.u_id = r.u_id
+                WHERE r.status = $1
+            ),
+            requested_dates AS (
+                SELECT r_id, requested_date
+                FROM request_days
+                WHERE requested_date::date >= $2
+                AND requested_date::date <= $3
+            )
+            SELECT u.u_id, u.first_name, u.last_name,
+                array_agg(rd.requested_date) AS requested_days
+            FROM users AS u
+            JOIN requested_dates AS rd
+                ON u.r_id = rd.r_id
+            GROUP BY u.u_id, u.first_name, u.last_name`,
             [status, weekStart, weekEnd]
         )
 

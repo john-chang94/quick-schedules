@@ -84,7 +84,7 @@ export default function UserSchedules() {
                         className="text-center mt-4"
                     />
                 ) : (
-                    usersMobile.map((user, i) => (
+                    usersMobile.length && usersMobile.map((user, i) => (
                         <div key={i} className="flex">
                             {user.label ? (
                                 <div className="w-100 border-x bg-x-light-gray text-center">
@@ -125,11 +125,13 @@ export default function UserSchedules() {
             const users = await fetchAllUsersSchedulesByDate(daysArray[0], daysArray[6]);
             const usersMobile = await fetchAllUsersSchedulesByDateMobile(daysArray[0], daysArray[6]);
 
-            // Add date labels for mobile schedules display
-            for (let i = 0; i < daysArray.length; i++) {
-                usersMobile.push({ shift_start: daysArray[i], label: true });
+            if (usersMobile.length) {
+                // Add date labels for mobile schedules display
+                for (let i = 0; i < daysArray.length; i++) {
+                    usersMobile.push({ shift_start: daysArray[i], label: true });
+                }
+                usersMobile.sort((a, b) => new Date(a.shift_start) - new Date(b.shift_start))
             }
-            usersMobile.sort((a, b) => new Date(a.shift_start) - new Date(b.shift_start))
 
             setDays(daysArray);
             setUsers(users);

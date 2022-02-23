@@ -193,7 +193,7 @@ export default function SchedulesMobile({ usersMobile, days, times, presets, sto
     return (
         <div className="schedules-mobile">
             {
-                usersMobile.map((user, i) => (
+                usersMobile.length && usersMobile.map((user, i) => (
                     <div key={i}>
                         {user.label ? (
                             <div className="w-100 border-x bg-x-light-gray text-center">

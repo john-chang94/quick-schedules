@@ -270,8 +270,6 @@ exports.getAllUsersSchedulesByDate = async (req, res) => {
             [start_date, end_date]
         )
 
-        console.log(data.rows[0].shifts)
-
         let users = data.rows;
 
         let firstDate = new Date(start_date);
@@ -358,7 +356,8 @@ exports.getAllUsersSchedulesByDateMobile = async (req, res) => {
             [start_date, end_date]
         )
 
-        console.log(data.rows[0].shift_start)
+        if (!data.rows.length) return res.status(404).send("No records found");
+
         res.status(200).json(data.rows);
 
     } catch (err) {

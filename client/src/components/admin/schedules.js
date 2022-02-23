@@ -3,7 +3,7 @@ import { isAuthenticated } from '../../services/auth';
 import { createPreset, fetchPresets, fetchTimes } from '../../services/presets';
 import { createShift, fetchAllUsersSchedulesByDate, fetchAllUsersSchedulesByDateMobile, deleteShift, updateShift, createCopyOfWeeklySchedule } from '../../services/shifts';
 import { fetchAllUsersAvailabilities } from '../../services/users';
-import { startOfToday, startOfWeek, addWeeks, subWeeks, parseISO, format, toDate } from 'date-fns';
+import { startOfToday, startOfWeek, addWeeks, subWeeks, parseISO, format } from 'date-fns';
 import Loader from 'react-loader-spinner';
 import { fetchAllRequestsByStatusAndDate } from '../../services/requests';
 import { fetchStoreHours } from '../../services/store';
@@ -43,7 +43,7 @@ export default function AdminSchedules() {
         if (selectedDate) {
             // Use date-fns to create date instead of Date obj,
             // otherwise selectedDate will be one day later
-            date = startOfWeek(toDate(parseISO(selectedDate)), { weekStartsOn: 1 });
+            date = startOfWeek(new Date(selectedDate), { weekStartsOn: 1 });
             setDateISO(selectedDate); // For datepicker value
         }
         else {
@@ -70,11 +70,13 @@ export default function AdminSchedules() {
         const usersMobile = await fetchAllUsersSchedulesByDateMobile(weekStart, weekEnd);
         const requests = await fetchAllRequestsByStatusAndDate('Approved', weekStart, weekEnd);
 
-        // Add date labels for mobile schedules display
-        for (let i = 0; i < daysArray.length; i++) {
-            usersMobile.push({ shift_start: daysArray[i], label: true });
+        if (usersMobile.length) {
+            // Add date labels for mobile schedules display
+            for (let i = 0; i < daysArray.length; i++) {
+                usersMobile.push({ shift_start: daysArray[i], label: true });
+            }
+            usersMobile.sort((a, b) => new Date(a.shift_start) - new Date(b.shift_start))
         }
-        usersMobile.sort((a, b) => new Date(a.shift_start) - new Date(b.shift_start))
         
         setUsers(users);
         setUsersMobile(usersMobile);
@@ -164,11 +166,14 @@ export default function AdminSchedules() {
     const handleFetchSchedule = async () => {
         const users = await fetchAllUsersSchedulesByDate(weekStart, weekEnd);
         const usersMobile = await fetchAllUsersSchedulesByDateMobile(weekStart, weekEnd);
-        // Add date labels for mobile schedules display
-        for (let i = 0; i < days.length; i++) {
-            usersMobile.push({ shift_start: days[i], label: true });
+
+        if (usersMobile.length) {
+            // Add date labels for mobile schedules display
+            for (let i = 0; i < days.length; i++) {
+                usersMobile.push({ shift_start: days[i], label: true });
+            }
+            usersMobile.sort((a, b) => new Date(a.shift_start) - new Date(b.shift_start));
         }
-        usersMobile.sort((a, b) => new Date(a.shift_start) - new Date(b.shift_start));
 
         setUsers(users);
         setUsersMobile(usersMobile);
@@ -467,7 +472,7 @@ export default function AdminSchedules() {
             </div>
 
             <div className="schedules-requests">
-                <div className="mr-5">
+                <div className="mx-3">
                     <p className="text-3">
                         <strong>Approved Requests</strong>
                     </p>
@@ -475,7 +480,7 @@ export default function AdminSchedules() {
                         requests.length
                             ? requests.map((request, i) => (
                                 <div key={i}>
-                                    <p className="text-3">
+                                    <p className="schedules-text">
                                         {request.first_name} {request.last_name}:
                                         {request.requested_dates.map((date, r_i) => (
                                             <span key={r_i}>
