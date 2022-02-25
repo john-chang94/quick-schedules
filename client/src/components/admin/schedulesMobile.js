@@ -10,6 +10,7 @@ export default function SchedulesMobile({ usersMobile, days, times, presets, sto
     const [dayIndex, setDayIndex] = useState(null); // For saving a shift
     const [shiftStartValue, setShiftStartValue] = useState("");
     const [shiftEndValue, setShiftEndValue] = useState("");
+    const [showAddShift, setShowAddShift] = useState(false);
 
     const handleEditShift = (user, shiftIndex) => {
         // Set specific shift time values to match with times array in the select inputs
@@ -189,9 +190,77 @@ export default function SchedulesMobile({ usersMobile, days, times, presets, sto
             }
         </>
     )
+
+    const renderAddShift = () => (
+        showAddShift ? (
+            <div className="add-shift-mobile bg-x-light-gray">
+                <div>
+                    <input type="date" />
+                </div>
+                <div className="flex justify-evenly mb-1">
+                    <p className="mr-1 schedules-mobile-text">Preset</p>
+                    <select
+                        defaultValue='0 0'
+                        disabled={isUpdating}
+                        onChange={({ target }) => handleSelectPreset(target.value)}
+                    >
+                        <option value="">Select</option>
+                        {presets && presets.map((preset, i) => (
+                                <option key={i} value={`${preset.shift_start_value}-${preset.shift_end_value}`}>
+                                    {preset.shift_start} - {preset.shift_end}
+                                </option>
+                            ))}
+                    </select>
+                </div>
+                <div className="flex justify-evenly mb-1">
+                    <p className="mr-1 schedules-mobile-text">Start</p>
+                    <select
+                        value={shiftStartValue}
+                        disabled={isUpdating}
+                        onChange={({ target }) => setShiftStartValue(target.value)}>
+                        {times && times.map((time, i) => (
+                                <option
+                                    key={i}
+                                    value={time.value}
+                                    disabled={time.level < parseFloat(store.store_open_level) || time.level > parseFloat(store.store_close_level)}
+                                >
+                                    {time.time}
+                                </option>
+                            ))}
+                    </select>
+                </div>
+                <div className="flex justify-evenly mb-1">
+                    <p className="mr-1 schedules-mobile-text">End</p>
+                    <select
+                        value={shiftEndValue}
+                        disabled={isUpdating}
+                        onChange={({ target }) => setShiftEndValue(target.value)}>
+                        {times && times.map((time, i) => (
+                                <option
+                                    key={i}
+                                    value={time.value}
+                                    disabled={time.level < parseFloat(store.store_open_level) || time.level > parseFloat(store.store_close_level)}
+                                >
+                                    {time.time}
+                                </option>
+                            ))}
+                    </select>
+                </div>
+                <div>
+                    <button>Save</button>
+                    <button onClick={() => setShowAddShift(false)}>Cancel</button>
+                </div>
+            </div>
+        ) : (
+            <div className="add-shift-btn flex flex-center" onClick={() => setShowAddShift(true)}>
+                <p className="white text-7"><i className="fas fa-plus" /></p>
+            </div>
+        )
+    )
     
     return (
         <div className="schedules-mobile">
+            {renderAddShift()}
             {
                 usersMobile.length && usersMobile.map((user, i) => (
                     <div key={i}>

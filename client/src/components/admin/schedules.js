@@ -3,7 +3,7 @@ import { isAuthenticated } from '../../services/auth';
 import { createPreset, fetchPresets, fetchTimes } from '../../services/presets';
 import { createShift, fetchAllUsersSchedulesByDate, fetchAllUsersSchedulesByDateMobile, deleteShift, updateShift, createCopyOfWeeklySchedule } from '../../services/shifts';
 import { fetchAllUsersAvailabilities } from '../../services/users';
-import { startOfToday, startOfWeek, addWeeks, subWeeks, parseISO, format } from 'date-fns';
+import { startOfToday, startOfWeek, addWeeks, subWeeks, subMonths, parseISO, format } from 'date-fns';
 import Loader from 'react-loader-spinner';
 import { fetchAllRequestsByStatusAndDate } from '../../services/requests';
 import { fetchStoreHours } from '../../services/store';
@@ -41,9 +41,13 @@ export default function AdminSchedules() {
         setIsLoadingSchedule(true);
         let date;
         if (selectedDate) {
-            // Use date-fns to create date instead of Date obj,
-            // otherwise selectedDate will be one day later
-            date = startOfWeek(new Date(selectedDate), { weekStartsOn: 1 });
+            // Create new date with separate identifiers because it is inaccurate for Mondays
+            let year = selectedDate.split("-")[0];
+            let month = selectedDate.split("-")[1];
+            let day = selectedDate.split("-")[2];
+            // Subtract one month because they are counted from zero
+            // i.e. "2022-02-18" is considered March
+            date = startOfWeek(subMonths(new Date(year, month, day), 1), { weekStartsOn: 1 });
             setDateISO(selectedDate); // For datepicker value
         }
         else {
@@ -204,7 +208,7 @@ export default function AdminSchedules() {
     const handlePreviousWeek = () => {
         let date = subWeeks(new Date(dateISO), 1);
         setDateISO(date);
-        getDatesOfTheWeek(date);
+        getDatesOfTheWeek(format(date, "yyyy-MM-dd"));
         setUserData('');
         setAvailabilityIndex('');
     }
@@ -212,7 +216,7 @@ export default function AdminSchedules() {
     const handleNextWeek = () => {
         let date = addWeeks(new Date(dateISO), 1);
         setDateISO(date);
-        getDatesOfTheWeek(date);
+        getDatesOfTheWeek(format(date, "yyyy-MM-dd"));
         setUserData('');
         setAvailabilityIndex('');
     }
@@ -476,8 +480,8 @@ export default function AdminSchedules() {
                     <p className="text-3">
                         <strong>Approved Requests</strong>
                     </p>
-                    {
-                        requests.length
+                    {/* {
+                        requests.length 
                             ? requests.map((request, i) => (
                                 <div key={i}>
                                     <p className="schedules-text">
@@ -496,7 +500,7 @@ export default function AdminSchedules() {
                                 </div>
                             ))
                             : <p className="text-3">None</p>
-                    }
+                    } */}
                 </div>
                 <div>
                     <button

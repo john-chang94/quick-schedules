@@ -1312,6 +1312,20 @@ select {
     display: block;
     width: 100%;
   }
+  .add-shift-btn {
+    position: fixed;
+    background-color: rgba(43, 123, 197, 0.836);
+    height: 65px;
+    width: 65px;
+    right: 5%;
+    top: 85vh;
+    border-radius: 50%;
+  }
+  .add-shift-mobile {
+    position: fixed;
+    height: 400px;
+    width: 100%;
+  }
 }
 
 @media screen and (max-width: 440px) {
