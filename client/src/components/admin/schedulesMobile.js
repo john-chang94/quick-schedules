@@ -1,13 +1,15 @@
 import React, { useState } from "react";
-import { format, toDate } from "date-fns";
+import { format, toDate, parseISO } from "date-fns";
 import { isAuthenticated } from "../../services/auth";
 import { createShift, updateShift, deleteShift } from "../../services/shifts";
 import Loader from "react-loader-spinner";
 
-export default function SchedulesMobile({ usersMobile, days, times, presets, store, getTimeValue, handleFetchSchedule }) {
+export default function SchedulesMobile({ usersMobile, users, days, times, presets, store, getTimeValue, handleFetchSchedule }) {
     const [isUpdating, setIsUpdating] = useState(false);
     const [editShiftIndex, setEditShiftIndex] = useState(null);
     const [dayIndex, setDayIndex] = useState(null); // For saving a shift
+    const [u_id, setUId] = useState(null);
+    const [date, setDate] = useState("");
     const [shiftStartValue, setShiftStartValue] = useState("");
     const [shiftEndValue, setShiftEndValue] = useState("");
     const [showAddShift, setShowAddShift] = useState(false);
@@ -25,6 +27,44 @@ export default function SchedulesMobile({ usersMobile, days, times, presets, sto
                 setDayIndex(i);
             }
         }
+    }
+
+    const handleCreateShift = async (u_id) => {
+        setIsUpdating(true);
+        const tokenConfig = isAuthenticated();
+        const newDate = toDate(parseISO(date));
+
+        // Get hour and minute in INT data type for date object
+        const startTimeHour = parseInt(shiftStartValue.split(' ')[0]);
+        const startTimeMinute = parseInt(shiftStartValue.split(' ')[1]);
+        // Get hour and minute in INT data type for date object
+        const endTimeHour = parseInt(shiftEndValue.split(' ')[0]);
+        const endTimeMinute = parseInt(shiftEndValue.split(' ')[1]);
+        // Create new date objects with year, month, day, hour, minute, and timezone
+        const shift_start = toDate(new Date(
+            newDate.getFullYear(),
+            newDate.getMonth(),
+            newDate.getDate(),
+            startTimeHour,
+            startTimeMinute))
+            .toLocaleString('en-US', { timeZone: Intl.DateTimeFormat().resolvedOptions().timeZone }); // Local timezone
+
+        const shift_end = toDate(new Date(
+            newDate.getFullYear(),
+            newDate.getMonth(),
+            newDate.getDate(),
+            endTimeHour,
+            endTimeMinute))
+            .toLocaleString('en-US', { timeZone: Intl.DateTimeFormat().resolvedOptions().timeZone });
+
+        const body = { u_id, shift_start, shift_end };
+        await createShift(body, tokenConfig);
+
+        await handleFetchSchedule();
+
+        setEditShiftIndex(null);
+        setIsUpdating(false);
+        setShowAddShift(false);
     }
 
     const handleSaveShift = async (u_id, s_id) => {
@@ -57,11 +97,7 @@ export default function SchedulesMobile({ usersMobile, days, times, presets, sto
             .toLocaleString('en-US', { timeZone: Intl.DateTimeFormat().resolvedOptions().timeZone });
 
         const body = { u_id, shift_start, shift_end };
-        if (s_id) {
-            await updateShift(s_id, body, tokenConfig);
-        } else {
-            await createShift(body, tokenConfig);
-        }
+        await updateShift(s_id, body, tokenConfig);
 
         await handleFetchSchedule();
 
@@ -86,6 +122,13 @@ export default function SchedulesMobile({ usersMobile, days, times, presets, sto
         if (!shiftValue) return;
         setShiftStartValue(shiftValue.split('-')[0]);
         setShiftEndValue(shiftValue.split('-')[1]);
+    }
+
+    const handleCancelAddShift = () => {
+        setShiftStartValue("");
+        setShiftEndValue("");
+        setUId("");
+        setShowAddShift(false);
     }
 
     const renderShift = (user, shiftIndex) => (
@@ -193,11 +236,23 @@ export default function SchedulesMobile({ usersMobile, days, times, presets, sto
 
     const renderAddShift = () => (
         showAddShift ? (
-            <div className="add-shift-mobile bg-x-light-gray">
-                <div>
-                    <input type="date" />
+            <div className="add-shift-mobile bg-x-light-gray p-1">
+                <div className="flex my-1 w-70">
+                    <p className="mr-1 schedules-mobile-text">Date</p>
+                    <input type="date" onChange={({ target }) => setDate(target.value)} />
                 </div>
-                <div className="flex justify-evenly mb-1">
+                <div className="flex my-1 w-70">
+                    <p className="mr-1 schedules-mobile-text">Employee</p>
+                    <select onChange={({ target }) => setUId(target.value)}>
+                        <option value="">Select...</option>
+                        {users.map((user, i) => (
+                            <option key={i} value={user.u_id}>
+                                {user.first_name} {user.last_name}
+                            </option>
+                        ))}
+                    </select>
+                </div>
+                <div className="flex my-1 w-70">
                     <p className="mr-1 schedules-mobile-text">Preset</p>
                     <select
                         defaultValue='0 0'
@@ -212,7 +267,7 @@ export default function SchedulesMobile({ usersMobile, days, times, presets, sto
                             ))}
                     </select>
                 </div>
-                <div className="flex justify-evenly mb-1">
+                <div className="flex my-1 w-70">
                     <p className="mr-1 schedules-mobile-text">Start</p>
                     <select
                         value={shiftStartValue}
@@ -229,7 +284,7 @@ export default function SchedulesMobile({ usersMobile, days, times, presets, sto
                             ))}
                     </select>
                 </div>
-                <div className="flex justify-evenly mb-1">
+                <div className="flex my-1 w-70">
                     <p className="mr-1 schedules-mobile-text">End</p>
                     <select
                         value={shiftEndValue}
@@ -247,8 +302,8 @@ export default function SchedulesMobile({ usersMobile, days, times, presets, sto
                     </select>
                 </div>
                 <div>
-                    <button>Save</button>
-                    <button onClick={() => setShowAddShift(false)}>Cancel</button>
+                    <button className="btn-med m-1" onClick={() => handleCreateShift(u_id)}>Save</button>
+                    <button className="btn-med m-1" onClick={handleCancelAddShift}>Cancel</button>
                 </div>
             </div>
         ) : (
@@ -262,7 +317,7 @@ export default function SchedulesMobile({ usersMobile, days, times, presets, sto
         <div className="schedules-mobile">
             {renderAddShift()}
             {
-                usersMobile.length && usersMobile.map((user, i) => (
+                usersMobile.map((user, i) => (
                     <div key={i}>
                         {user.label ? (
                             <div className="w-100 border-x bg-x-light-gray text-center">

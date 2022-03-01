@@ -1322,8 +1322,6 @@ select {
     border-radius: 50%;
   }
   .add-shift-mobile {
-    position: fixed;
-    height: 400px;
     width: 100%;
   }
 }

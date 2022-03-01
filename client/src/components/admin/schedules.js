@@ -74,13 +74,11 @@ export default function AdminSchedules() {
         const usersMobile = await fetchAllUsersSchedulesByDateMobile(weekStart, weekEnd);
         const requests = await fetchAllRequestsByStatusAndDate('Approved', weekStart, weekEnd);
 
-        if (usersMobile.length) {
-            // Add date labels for mobile schedules display
-            for (let i = 0; i < daysArray.length; i++) {
-                usersMobile.push({ shift_start: daysArray[i], label: true });
-            }
-            usersMobile.sort((a, b) => new Date(a.shift_start) - new Date(b.shift_start))
+        // Add date labels for mobile schedules display
+        for (let i = 0; i < daysArray.length; i++) {
+            usersMobile.push({ shift_start: daysArray[i], label: true });
         }
+        usersMobile.sort((a, b) => new Date(a.shift_start) - new Date(b.shift_start))
         
         setUsers(users);
         setUsersMobile(usersMobile);
@@ -607,6 +605,7 @@ export default function AdminSchedules() {
                         <RenderAvailability />
                         <SchedulesMobile
                             usersMobile={usersMobile}
+                            users={users}
                             days={days}
                             times={times}
                             store={store}
