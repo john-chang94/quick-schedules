@@ -30,7 +30,6 @@ export const fetchAllRequestsByStatus = async (status) => {
 export const fetchAllRequestsByStatusAndDate = async (status, weekStart, weekEnd) => {
     try {
         const res = await axios.get(`/requests/status/${status}/${weekStart}/${weekEnd}`);
-        console.log(res.data)
         return res.data;
     } catch (err) {
         return { error: err.response.data };

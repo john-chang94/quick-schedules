@@ -3,7 +3,7 @@ import { isAuthenticated } from '../../services/auth';
 import { createPreset, fetchPresets, fetchTimes } from '../../services/presets';
 import { createShift, fetchAllUsersSchedulesByDate, fetchAllUsersSchedulesByDateMobile, deleteShift, updateShift, createCopyOfWeeklySchedule } from '../../services/shifts';
 import { fetchAllUsersAvailabilities } from '../../services/users';
-import { startOfToday, startOfWeek, addWeeks, subWeeks, subMonths, parseISO, format } from 'date-fns';
+import { startOfToday, startOfWeek, addWeeks, subWeeks, subMonths, parseISO, format, toDate } from 'date-fns';
 import Loader from 'react-loader-spinner';
 import { fetchAllRequestsByStatusAndDate } from '../../services/requests';
 import { fetchStoreHours } from '../../services/store';
@@ -24,7 +24,7 @@ export default function AdminSchedules() {
     const [isLoadingSchedule, setIsLoadingSchedule] = useState(true);
 
     // Used for datepicker
-    const [dateISO, setDateISO] = useState(startOfToday())
+    const [dateISO, setDateISO] = useState(format(startOfToday(), "yyyy-MM-dd"))
     // Used for fetching data within dates in ISO string
     const [weekStart, setWeekStart] = useState('');
     const [weekEnd, setWeekEnd] = useState('');
@@ -206,17 +206,21 @@ export default function AdminSchedules() {
     }
 
     const handlePreviousWeek = () => {
-        let date = subWeeks(new Date(dateISO), 1);
-        setDateISO(date);
-        getDatesOfTheWeek(format(date, "yyyy-MM-dd"));
+        // New Date object will adjust hours based on timezone so use toDate
+        let date = subWeeks(toDate(parseISO((dateISO))), 1);
+        // Format date so date selector can read it
+        let formattedDate = format(date, "yyyy-MM-dd");
+        setDateISO(formattedDate);
+        getDatesOfTheWeek(formattedDate);
         setUserData('');
         setAvailabilityIndex('');
     }
 
     const handleNextWeek = () => {
-        let date = addWeeks(new Date(dateISO), 1);
-        setDateISO(date);
-        getDatesOfTheWeek(format(date, "yyyy-MM-dd"));
+        let date = addWeeks(toDate(parseISO((dateISO))), 1);
+        let formattedDate = format(date, "yyyy-MM-dd");
+        setDateISO(formattedDate);
+        getDatesOfTheWeek(formattedDate);
         setUserData('');
         setAvailabilityIndex('');
     }
@@ -462,7 +466,7 @@ export default function AdminSchedules() {
                 <div id="controller-date" className="relative">
                     <input
                         type="date"
-                        value={new Date(dateISO).toISOString().split('T')[0]} // Datepicker must be yyyy-mm-dd format
+                        value={dateISO} // Datepicker must be yyyy-mm-dd format
                         onChange={({ target }) => getDatesOfTheWeek(target.value)}
                     />
                     <div className="absolute">&nbsp;</div>
@@ -480,7 +484,7 @@ export default function AdminSchedules() {
                     <p className="text-3">
                         <strong>Approved Requests</strong>
                     </p>
-                    {/* {
+                    {
                         requests.length 
                             ? requests.map((request, i) => (
                                 <div key={i}>
@@ -500,7 +504,7 @@ export default function AdminSchedules() {
                                 </div>
                             ))
                             : <p className="text-3">None</p>
-                    } */}
+                    }
                 </div>
                 <div>
                     <button

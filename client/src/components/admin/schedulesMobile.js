@@ -4,7 +4,7 @@ import { isAuthenticated } from "../../services/auth";
 import { createShift, updateShift, deleteShift } from "../../services/shifts";
 import Loader from "react-loader-spinner";
 
-export default function SchedulesMobile({ usersMobile, days, times, presets, store, getTime, getTimeValue, handleFetchSchedule }) {
+export default function SchedulesMobile({ usersMobile, days, times, presets, store, getTimeValue, handleFetchSchedule }) {
     const [isUpdating, setIsUpdating] = useState(false);
     const [editShiftIndex, setEditShiftIndex] = useState(null);
     const [dayIndex, setDayIndex] = useState(null); // For saving a shift

@@ -137,7 +137,7 @@ exports.getAllRequestsByStatusAndDate = async (req, res) => {
                 AND requested_date::date <= $3
             )
             SELECT u.u_id, u.first_name, u.last_name,
-                array_agg(rd.requested_date) AS requested_days
+                array_agg(rd.requested_date) AS requested_dates
             FROM users AS u
             JOIN requested_dates AS rd
                 ON u.r_id = rd.r_id
