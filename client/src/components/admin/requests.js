@@ -4,6 +4,7 @@ import * as ROUTES from '../../constants/routes';
 import { fetchAllRequestsByStatus, fetchAllRequests, updateRequestStatus } from '../../services/requests';
 import Loader from 'react-loader-spinner';
 import { isAuthenticated } from '../../services/auth';
+import { format } from 'date-fns';
 
 export default function AdminRequests() {
     const [requests, setRequests] = useState(null);
@@ -75,6 +76,74 @@ export default function AdminRequests() {
                 </button>
             </div>
         </div>
+    )
+
+    const renderRequests2 = () => (
+        <table className="border-collapse w-100 requests-table">
+            <thead>
+                <tr>
+                    <th className="p-2">Name</th>
+                    <th className="p-2">Requested Dates</th>
+                    <th className="p-2">Notes</th>
+                    <th className="p-2">Submission Date</th>
+                    <th className="p-2">Status</th>
+                    <th className="p-2">Edit</th>
+                </tr>
+            </thead>
+            <tbody>
+                {requests.map((request, i) => (
+                    <tr
+                        key={i}
+                        style={i % 2 === 0
+                        ? { backgroundColor: 'rgb(240, 240, 240)' }
+                        : { backgroundColor: 'rbg(255, 255, 255)' }}
+                    >
+                        <td className="p-2">
+                            {request.first_name} {request.last_name} <br />
+                            <em className="text-3">{request.title}</em>
+                        </td>
+                        <td className="p-2">{request.requested_dates.map((rd, rd_i) => (
+                            <span key={rd_i}>
+                                {
+                                // Add commas if more than one date
+                                rd_i === request.requested_dates.length - 1
+                                    ? format(new Date(rd), "MM-dd-yyyy")
+                                    : `${format(new Date(rd), "MM-dd-yyyy")}, `
+                                }
+                            </span>
+                        ))}</td>
+                        <td className="p-2">{request.notes}</td>
+                        <td className="p-2 text-center">{format(new Date(request.requested_at), "MM-dd-yyyy")}</td>
+                        <td className={
+                                    request.status === 'Pending'
+                                        ? 'blue p-2 text-center'
+                                        : request.status === 'Approved'
+                                            ? 'green p-2 text-center'
+                                            : request.status === 'Denied'
+                                                ? 'red p-2 text-center'
+                                                : ''}>
+                            {request.status}
+                            </td>
+                        <td className="p-2 text-center">
+                            <button
+                                className={`btn-sm my-1 mx-2 ${isUpdating ? '' : 'btn-hovered pointer-no-u'}`}
+                                onClick={() => handleUpdateRequestStatus(request.r_id, 'Approved')}
+                                disabled={isUpdating}
+                            >
+                                Approve
+                            </button>
+                            <button
+                                className={`btn-sm my-1 ${isUpdating ? '' : 'btn-hovered pointer-no-u'}`}
+                                onClick={() => handleUpdateRequestStatus(request.r_id, 'Denied')}
+                                disabled={isUpdating}
+                            >
+                                Deny
+                            </button>
+                        </td>
+                    </tr>
+                ))}
+            </tbody>
+        </table>
     )
 
     const renderRequests = () => (
@@ -163,12 +232,6 @@ export default function AdminRequests() {
 
     return (
         <div>
-            <div>
-                <Link to={ROUTES.ADMIN_HOME} className="text-no-u black pointer">
-                    <i className="fas fa-arrow-left"></i> Home
-                </Link>
-            </div>
-
             <div className="mt-4">
                 {renderFilters()}
                 {isLoading ? (
@@ -179,7 +242,12 @@ export default function AdminRequests() {
                             />
                         </div>
                     ) : (
-                        renderRequests()
+                        <div>
+                            {renderRequests2()}
+                            <div className="requests-cards">
+                                {renderRequests()}
+                            </div>
+                        </div>
                     )
                 }
             </div>

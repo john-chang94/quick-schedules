@@ -219,47 +219,39 @@ export default function AdminStore() {
     }, [])
 
     return (
-        <div>
-            <div>
-                <Link to={ROUTES.ADMIN_HOME} className="text-no-u black pointer">
-                    <i className="fas fa-arrow-left"></i> Home
-                </Link>
-            </div>
+        <div className="mt-4">
+            {
+                isLoading
+                    ? <div className="text-center" style={{ marginTop: '70px' }}>
+                        <Loader
+                            type='Oval'
+                            color='rgb(50, 110, 150)'
+                        />
+                    </div>
+                    : <div className="grid2">
+                        <div className="text-center border-solid-1 border-smooth box-shadow xs10-offset-1 m8-offset-2 l7-offset-3">
+                            <h3 className="my-2">Store Hours</h3>
+                            {
+                                showEditHours
+                                    ? renderStoreHours()
+                                    : <div>
+                                        {
+                                            store_open && store_close
+                                                ? <p className="my-2">{store_open.toString()} - {store_close.toString()}</p>
+                                                : <p className="my-2">N/A</p>
+                                        }
+                                        <button className="btn-med btn-hovered mt-1 mb-2" onClick={() => setShowEditHours(true)}>Edit</button>
+                                    </div>
+                            }
 
-            <div className="mt-4">
-                {
-                    isLoading
-                        ? <div className="text-center" style={{ marginTop: '70px' }}>
-                            <Loader
-                                type='Oval'
-                                color='rgb(50, 110, 150)'
-                            />
+                            <hr className="my-3" />
+
+                            {
+                                renderPresets()
+                            }
                         </div>
-                        : <div className="grid2">
-                            <div className="text-center border-solid-1 border-smooth box-shadow xs10-offset-1 m8-offset-2 l7-offset-3">
-                                <h3 className="my-2">Store Hours</h3>
-                                {
-                                    showEditHours
-                                        ? renderStoreHours()
-                                        : <div>
-                                            {
-                                                store_open && store_close
-                                                    ? <p className="my-2">{store_open.toString()} - {store_close.toString()}</p>
-                                                    : <p className="my-2">N/A</p>
-                                            }
-                                            <button className="btn-med btn-hovered mt-1 mb-2" onClick={() => setShowEditHours(true)}>Edit</button>
-                                        </div>
-                                }
-
-                                <hr className="my-3" />
-
-                                {
-                                    renderPresets()
-                                }
-                            </div>
-                        </div>
-                }
-            </div>
+                    </div>
+            }
         </div>
     )
 }

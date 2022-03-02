@@ -132,6 +132,10 @@ header {
   table-layout: fixed;
 }
 
+.requests-cards {
+  display: none;
+}
+
 /* SPACING STYLES */
 
 .m-1 {
@@ -1323,6 +1327,12 @@ select {
   }
   .add-shift-mobile {
     width: 100%;
+  }
+  .requests-table {
+    display: none;
+  }
+  .requests-cards {
+    display: block;
   }
 }
 
