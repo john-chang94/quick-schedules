@@ -71,3 +71,12 @@ export const editUserAvailability = async (a_id, body, tokenConfig) => {
         return { error: err.response.data };
     }
 }
+
+export const deleteUser = async (u_id, tokenConfig) => {
+    try {
+        const res = await axios.delete(`/users/${u_id}`, tokenConfig);
+        return res.data;
+    } catch (err) {
+        return { error: err.response.data };
+    }
+}

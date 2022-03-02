@@ -3,6 +3,9 @@ import { format, toDate, parseISO } from "date-fns";
 import { isAuthenticated } from "../../services/auth";
 import { createShift, updateShift, deleteShift } from "../../services/shifts";
 import Loader from "react-loader-spinner";
+import Modal from "react-modal";
+
+Modal.setAppElement('#root');
 
 export default function SchedulesMobile({ usersMobile, users, days, times, presets, store, getTimeValue, handleFetchSchedule }) {
     const [isUpdating, setIsUpdating] = useState(false);
@@ -13,6 +16,7 @@ export default function SchedulesMobile({ usersMobile, users, days, times, prese
     const [shiftStartValue, setShiftStartValue] = useState("");
     const [shiftEndValue, setShiftEndValue] = useState("");
     const [showAddShift, setShowAddShift] = useState(false);
+    const [error, setError] = useState("");
 
     const handleEditShift = (user, shiftIndex) => {
         // Set specific shift time values to match with times array in the select inputs
@@ -29,7 +33,12 @@ export default function SchedulesMobile({ usersMobile, users, days, times, prese
         }
     }
 
-    const handleCreateShift = async (u_id) => {
+    const handleCreateShift = async () => {
+        // Return error if form is not filled out
+        if (!u_id || !date || !shiftStartValue || !shiftEndValue) {
+            return setError("Employee and shift required");
+        }
+
         setIsUpdating(true);
         const tokenConfig = isAuthenticated();
         const newDate = toDate(parseISO(date));
@@ -128,6 +137,7 @@ export default function SchedulesMobile({ usersMobile, users, days, times, prese
         setShiftStartValue("");
         setShiftEndValue("");
         setUId("");
+        setError("");
         setShowAddShift(false);
     }
 
@@ -234,78 +244,97 @@ export default function SchedulesMobile({ usersMobile, users, days, times, prese
         </>
     )
 
+    const customStyles = {
+        content: {
+          top: '50%',
+          left: '50%',
+          right: 'auto',
+          bottom: 'auto',
+          marginRight: '-50%',
+          transform: 'translate(-50%, -50%)',
+        },
+      };
+
     const renderAddShift = () => (
         showAddShift ? (
-            <div className="add-shift-mobile bg-x-light-gray p-1">
-                <div className="flex my-1 w-70">
-                    <p className="mr-1 schedules-mobile-text">Date</p>
-                    <input type="date" onChange={({ target }) => setDate(target.value)} />
-                </div>
-                <div className="flex my-1 w-70">
-                    <p className="mr-1 schedules-mobile-text">Employee</p>
-                    <select onChange={({ target }) => setUId(target.value)}>
-                        <option value="">Select...</option>
-                        {users.map((user, i) => (
-                            <option key={i} value={user.u_id}>
-                                {user.first_name} {user.last_name}
-                            </option>
-                        ))}
-                    </select>
-                </div>
-                <div className="flex my-1 w-70">
-                    <p className="mr-1 schedules-mobile-text">Preset</p>
-                    <select
-                        defaultValue='0 0'
-                        disabled={isUpdating}
-                        onChange={({ target }) => handleSelectPreset(target.value)}
-                    >
-                        <option value="">Select</option>
-                        {presets && presets.map((preset, i) => (
-                                <option key={i} value={`${preset.shift_start_value}-${preset.shift_end_value}`}>
-                                    {preset.shift_start} - {preset.shift_end}
+            <Modal
+                isOpen={showAddShift}
+                style={customStyles}
+                onRequestClose={() => setShowAddShift(false)}
+                shouldCloseOnOverlayClick={true}
+            >
+                <div className="add-shift-mobile text-center">
+                    <div className="flex my-2">
+                        <p className="mr-1 schedules-mobile-text">Date</p>
+                        <input type="date" onChange={({ target }) => setDate(target.value)} />
+                    </div>
+                    <div className="flex my-2">
+                        <p className="mr-1 schedules-mobile-text">Employee</p>
+                        <select onChange={({ target }) => setUId(target.value)}>
+                            <option value="">Select...</option>
+                            {users.map((user, i) => (
+                                <option key={i} value={user.u_id}>
+                                    {user.first_name} {user.last_name}
                                 </option>
                             ))}
-                    </select>
+                        </select>
+                    </div>
+                    <div className="flex my-2">
+                        <p className="mr-1 schedules-mobile-text">Preset</p>
+                        <select
+                            defaultValue='0 0'
+                            disabled={isUpdating}
+                            onChange={({ target }) => handleSelectPreset(target.value)}
+                        >
+                            <option value="">Select</option>
+                            {presets && presets.map((preset, i) => (
+                                    <option key={i} value={`${preset.shift_start_value}-${preset.shift_end_value}`}>
+                                        {preset.shift_start} - {preset.shift_end}
+                                    </option>
+                                ))}
+                        </select>
+                    </div>
+                    <div className="flex my-2">
+                        <p className="mr-1 schedules-mobile-text">Start</p>
+                        <select
+                            value={shiftStartValue}
+                            disabled={isUpdating}
+                            onChange={({ target }) => setShiftStartValue(target.value)}>
+                            {times && times.map((time, i) => (
+                                    <option
+                                        key={i}
+                                        value={time.value}
+                                        disabled={time.level < parseFloat(store.store_open_level) || time.level > parseFloat(store.store_close_level)}
+                                    >
+                                        {time.time}
+                                    </option>
+                                ))}
+                        </select>
+                    </div>
+                    <div className="flex my-2">
+                        <p className="mr-1 schedules-mobile-text">End</p>
+                        <select
+                            value={shiftEndValue}
+                            disabled={isUpdating}
+                            onChange={({ target }) => setShiftEndValue(target.value)}>
+                            {times && times.map((time, i) => (
+                                    <option
+                                        key={i}
+                                        value={time.value}
+                                        disabled={time.level < parseFloat(store.store_open_level) || time.level > parseFloat(store.store_close_level)}
+                                    >
+                                        {time.time}
+                                    </option>
+                                ))}
+                        </select>
+                    </div>
+                    {error && <p className="red schedules-mobile-text">{error}</p>}
+                    <div className="my-2">
+                        <button className="btn-med hovered m-1" onClick={() => handleCreateShift(u_id)}>Save</button>
+                        <button className="btn-med hovered m-1" onClick={handleCancelAddShift}>Cancel</button>
+                    </div>
                 </div>
-                <div className="flex my-1 w-70">
-                    <p className="mr-1 schedules-mobile-text">Start</p>
-                    <select
-                        value={shiftStartValue}
-                        disabled={isUpdating}
-                        onChange={({ target }) => setShiftStartValue(target.value)}>
-                        {times && times.map((time, i) => (
-                                <option
-                                    key={i}
-                                    value={time.value}
-                                    disabled={time.level < parseFloat(store.store_open_level) || time.level > parseFloat(store.store_close_level)}
-                                >
-                                    {time.time}
-                                </option>
-                            ))}
-                    </select>
-                </div>
-                <div className="flex my-1 w-70">
-                    <p className="mr-1 schedules-mobile-text">End</p>
-                    <select
-                        value={shiftEndValue}
-                        disabled={isUpdating}
-                        onChange={({ target }) => setShiftEndValue(target.value)}>
-                        {times && times.map((time, i) => (
-                                <option
-                                    key={i}
-                                    value={time.value}
-                                    disabled={time.level < parseFloat(store.store_open_level) || time.level > parseFloat(store.store_close_level)}
-                                >
-                                    {time.time}
-                                </option>
-                            ))}
-                    </select>
-                </div>
-                <div>
-                    <button className="btn-med m-1" onClick={() => handleCreateShift(u_id)}>Save</button>
-                    <button className="btn-med m-1" onClick={handleCancelAddShift}>Cancel</button>
-                </div>
-            </div>
+            </Modal>
         ) : (
             <div className="add-shift-btn flex flex-center" onClick={() => setShowAddShift(true)}>
                 <p className="white text-7"><i className="fas fa-plus" /></p>

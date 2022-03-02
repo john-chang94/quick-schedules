@@ -1,15 +1,16 @@
 import { useState, useEffect, useContext } from 'react';
-import { useParams } from 'react-router';
+import { useParams, useHistory } from 'react-router';
 import { Link } from 'react-router-dom';
 import * as ROUTES from '../../constants/routes';
 import { isAuthenticated } from '../../services/auth';
-import { editPassword, editUserGeneral, editUserInfo, fetchUser } from '../../services/users';
+import { editPassword, editUserGeneral, editUserInfo, fetchUser, deleteUser } from '../../services/users';
 import { UserContext } from '../../contexts/userContext';
 import { fetchRoles } from '../../services/roles';
 import Loader from 'react-loader-spinner';
 
 export default function AdminEmployee() {
     const { u_id } = useParams();
+    const history = useHistory();
     const { verifiedUser } = useContext(UserContext);
 
     const [user, setUser] = useState(null);
@@ -90,6 +91,18 @@ export default function AdminEmployee() {
             setUser(user);
             setShowEditInfo(false);
             setIsUpdating(false);
+        }
+    }
+
+    const handleRemoveUser = async () => {
+        const doRemove = window.confirm("Are you sure you want to remove this user?");
+        if (doRemove) {
+            const tokenConfig = isAuthenticated();
+    
+            const res = await deleteUser(u_id, tokenConfig);
+            if (res.success) {
+                history.push("/admin/employees");
+            }
         }
     }
 
@@ -333,6 +346,14 @@ export default function AdminEmployee() {
                                 {success ? <p className="green">{success}</p> : null}
                             </div>
                         }
+                        <div className="mt-8 text-center">
+                            <button
+                                className="btn-med red btn-hovered pointer-no-u"
+                                onClick={handleRemoveUser}
+                            >
+                                Remove
+                            </button>
+                        </div>
                     </div>
             }
         </div>
