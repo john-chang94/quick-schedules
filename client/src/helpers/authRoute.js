@@ -7,7 +7,7 @@ export default function AuthRoute({ user, component: Component, ...rest }) {
             if (user && !user.is_admin) {
                 return (
                     <Redirect to={{
-                        pathname: ROUTES.USER_HOME,
+                        pathname: ROUTES.USER_SCHEDULES,
                         state: { from: location }
                     }}
                     />
@@ -16,7 +16,7 @@ export default function AuthRoute({ user, component: Component, ...rest }) {
             else if (user && user.is_admin) {
                 return (
                     <Redirect to={{
-                        pathname: ROUTES.ADMIN_HOME,
+                        pathname: ROUTES.ADMIN_EMPLOYEES,
                         state: { from: location }
                     }}
                     />

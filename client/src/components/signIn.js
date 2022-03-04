@@ -30,7 +30,7 @@ export default function SignIn() {
             else if (!res.user.is_admin) {
                 setVerifiedUser(res.user); // Set verified user in context for header
                 sessionStorage.setItem('token', res.token);
-                history.push(ROUTES.USER_HOME);
+                history.push(ROUTES.USER_SCHEDULES);
             }
         }
     }
