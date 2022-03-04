@@ -1,6 +1,4 @@
 import { useEffect, useState } from 'react';
-import { Link } from 'react-router-dom';
-import * as ROUTES from '../../constants/routes';
 import Loader from 'react-loader-spinner';
 import { fetchAllUsersSchedulesByDate, fetchAllUsersSchedulesByDateMobile } from '../../services/shifts';
 import { startOfWeek, format } from 'date-fns';
@@ -144,11 +142,6 @@ export default function UserSchedules() {
 
     return (
         <div>
-            <div>
-                <Link to={ROUTES.USER_HOME} className="text-no-u black pointer">
-                    <i className="fas fa-arrow-left"></i> Home
-                </Link>
-            </div>
             {
                 isLoading ? (
                         <div className="text-center" style={{ marginTop: '70px' }}>

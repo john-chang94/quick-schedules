@@ -1,6 +1,4 @@
 import { useEffect, useState } from 'react';
-import { Link } from 'react-router-dom';
-import * as ROUTES from '../../constants/routes';
 import Loader from 'react-loader-spinner';
 import { fetchStoreHours, setStoreHours, updateStoreHours } from '../../services/store';
 import { deletePreset, fetchPresets, fetchTimes } from '../../services/presets';

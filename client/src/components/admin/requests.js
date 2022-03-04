@@ -1,6 +1,4 @@
 import { useEffect, useState } from 'react';
-import { Link } from 'react-router-dom';
-import * as ROUTES from '../../constants/routes';
 import { fetchAllRequestsByStatus, fetchAllRequests, updateRequestStatus } from '../../services/requests';
 import Loader from 'react-loader-spinner';
 import { isAuthenticated } from '../../services/auth';
@@ -78,16 +76,16 @@ export default function AdminRequests() {
         </div>
     )
 
-    const renderRequests2 = () => (
+    const renderRequests = () => (
         <table className="border-collapse w-100 requests-table">
             <thead>
                 <tr>
-                    <th className="p-2">Name</th>
-                    <th className="p-2">Requested Dates</th>
-                    <th className="p-2">Notes</th>
-                    <th className="p-2">Submission Date</th>
-                    <th className="p-2">Status</th>
-                    <th className="p-2">Edit</th>
+                    <th className="p-2 border-solid-1">Name</th>
+                    <th className="p-2 border-solid-1">Requested Dates</th>
+                    <th className="p-2 border-solid-1">Notes</th>
+                    <th className="p-2 border-solid-1">Submission Date</th>
+                    <th className="p-2 border-solid-1">Status</th>
+                    <th className="p-2 border-solid-1">Edit</th>
                 </tr>
             </thead>
             <tbody>
@@ -98,11 +96,11 @@ export default function AdminRequests() {
                         ? { backgroundColor: 'rgb(240, 240, 240)' }
                         : { backgroundColor: 'rbg(255, 255, 255)' }}
                     >
-                        <td className="p-2">
+                        <td className="py-1 px-2">
                             {request.first_name} {request.last_name} <br />
                             <em className="text-3">{request.title}</em>
                         </td>
-                        <td className="p-2">{request.requested_dates.map((rd, rd_i) => (
+                        <td className="py-1 px-2">{request.requested_dates.map((rd, rd_i) => (
                             <span key={rd_i}>
                                 {
                                 // Add commas if more than one date
@@ -112,19 +110,19 @@ export default function AdminRequests() {
                                 }
                             </span>
                         ))}</td>
-                        <td className="p-2">{request.notes}</td>
-                        <td className="p-2 text-center">{format(new Date(request.requested_at), "MM-dd-yyyy")}</td>
+                        <td className="py-1 px-2">{request.notes}</td>
+                        <td className="py-1 px-2 text-center">{format(new Date(request.requested_at), "MM-dd-yyyy")}</td>
                         <td className={
                                     request.status === 'Pending'
-                                        ? 'blue p-2 text-center'
+                                        ? 'blue py-1 px-2 text-center'
                                         : request.status === 'Approved'
-                                            ? 'green p-2 text-center'
+                                            ? 'green py-1 px-2 text-center'
                                             : request.status === 'Denied'
-                                                ? 'red p-2 text-center'
+                                                ? 'red py-1 px-2 text-center'
                                                 : ''}>
                             {request.status}
                             </td>
-                        <td className="p-2 text-center">
+                        <td className="py-1 px-2 text-center">
                             <button
                                 className={`btn-sm my-1 mx-2 ${isUpdating ? '' : 'btn-hovered pointer-no-u'}`}
                                 onClick={() => handleUpdateRequestStatus(request.r_id, 'Approved')}
@@ -146,8 +144,8 @@ export default function AdminRequests() {
         </table>
     )
 
-    const renderRequests = () => (
-        <div className="mt-2 grid2">
+    const renderRequestsCards = () => (
+        <div className="grid2">
             {requests.length ? requests.map((request, r_i) => (
                     <div key={r_i} className="my-2 p-1 border-solid-1 border-smooth box-shadow flex flex-col align-center text-center xs12 s10-offset-1 m8-offset-2 l6-offset-3">
                         <div className="my-2">
@@ -170,10 +168,6 @@ export default function AdminRequests() {
                                 <p>{request.title}</p>
                             </div>
                             <div className="my-1 s12 l6">
-                                <strong>Submission date</strong>
-                                <p>{new Date(request.requested_at).toDateString()}</p>
-                            </div>
-                            <div className="my-1 s12 l6">
                                 <strong>Requested dates</strong>
                                 {
                                     request.requested_dates.map((rd, rd_i) => (
@@ -187,6 +181,10 @@ export default function AdminRequests() {
                                         </p>
                                     ))
                                 }
+                            </div>
+                            <div className="my-1 s12 l6">
+                                <strong>Submission date</strong>
+                                <p>{new Date(request.requested_at).toDateString()}</p>
                             </div>
                             <div className="my-1 s12 l6">
                                 <strong>Notes</strong>
@@ -242,10 +240,10 @@ export default function AdminRequests() {
                             />
                         </div>
                     ) : (
-                        <div>
-                            {renderRequests2()}
+                        <div className="mt-5">
+                            {renderRequests()}
                             <div className="requests-cards">
-                                {renderRequests()}
+                                {renderRequestsCards()}
                             </div>
                         </div>
                     )

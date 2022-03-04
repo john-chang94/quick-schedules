@@ -724,6 +724,10 @@ header {
   background-color: blue;
 }
 
+.bg-light-blue {
+  background-color: lightblue;
+}
+
 .bg-purple {
   background-color: purple;
 }

@@ -1,6 +1,4 @@
 import { useEffect, useState, useContext } from 'react';
-import { Link } from 'react-router-dom';
-import * as ROUTES from '../../constants/routes';
 import { UserContext } from '../../contexts/userContext';
 import { isAuthenticated } from '../../services/auth';
 import Loader from 'react-loader-spinner';
@@ -251,11 +249,6 @@ export default function UserAvailability() {
 
     return (
         <div>
-            <div>
-                <Link to={ROUTES.USER_HOME} className="text-no-u black pointer">
-                    <i className="fas fa-arrow-left"></i> Home
-                </Link>
-            </div>
             {
                 isLoading
                     ? <div className="text-center" style={{ marginTop: '70px' }}>

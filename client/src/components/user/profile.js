@@ -1,6 +1,4 @@
 import { useState, useEffect, useContext } from 'react';
-import { Link } from 'react-router-dom';
-import * as ROUTES from '../../constants/routes';
 import { UserContext } from '../../contexts/userContext';
 import { isAuthenticated } from '../../services/auth';
 import { fetchUser, editPassword, editUserGeneral } from '../../services/users';
@@ -195,11 +193,6 @@ export default function UserProfile() {
 
     return (
         <div>
-            <div>
-                <Link to={ROUTES.USER_HOME} className="text-no-u black pointer">
-                    <i className="fas fa-arrow-left"></i> Home
-                </Link>
-            </div>
             {
                 isLoading
                     ? <div className="text-center" style={{ marginTop: '70px' }}>

@@ -1,6 +1,5 @@
 import { useState, useEffect } from 'react';
 import { useHistory } from 'react-router';
-import { Link } from 'react-router-dom';
 import { fetchAllUsers } from '../../services/users';
 import * as ROUTES from '../../constants/routes';
 import Loader from 'react-loader-spinner';
