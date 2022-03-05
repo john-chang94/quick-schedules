@@ -200,8 +200,8 @@ export default function UserRequests() {
                                     <p key={rd_i}>
                                         {
                                             rd_i === request.requested_dates.length - 1
-                                                ? new Date(rd).toDateString()
-                                                : `${new Date(rd).toDateString()},`
+                                                ? new Date(rd).toLocaleDateString()
+                                                : `${new Date(rd).toLocaleDateString()},`
                                         }
                                     </p>
                                 ))
@@ -215,7 +215,7 @@ export default function UserRequests() {
                 </div>
                 <div className="my-2">
                     <button
-                        className="btn-sm btn-hovered"
+                        className={`btn-sm ${!(isDeleting || request.status !== "Pending") && "btn-hovered"}`}
                         onClick={() => handleDeleteRequest(request.r_id)}
                         disabled={isDeleting || request.status !== "Pending"}
                     >

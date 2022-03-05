@@ -1029,6 +1029,10 @@ select {
   border: 1px solid rgb(177, 177, 177);
 }
 
+.border-none {
+  border: none;
+}
+
 .border-collapse {
   border-collapse: collapse;
 }

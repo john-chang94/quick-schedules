@@ -124,14 +124,14 @@ export default function AdminRequests() {
                             </td>
                         <td className="py-1 px-2 text-center">
                             <button
-                                className={`btn-sm my-1 mx-2 ${isUpdating ? '' : 'btn-hovered pointer-no-u'}`}
+                                className={`btn-sm my-1 mx-2 ${!isUpdating && 'btn-hovered pointer-no-u'}`}
                                 onClick={() => handleUpdateRequestStatus(request.r_id, 'Approved')}
                                 disabled={isUpdating}
                             >
                                 Approve
                             </button>
                             <button
-                                className={`btn-sm my-1 ${isUpdating ? '' : 'btn-hovered pointer-no-u'}`}
+                                className={`btn-sm my-1 ${!isUpdating && 'btn-hovered pointer-no-u'}`}
                                 onClick={() => handleUpdateRequestStatus(request.r_id, 'Denied')}
                                 disabled={isUpdating}
                             >

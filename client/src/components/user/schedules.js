@@ -32,7 +32,7 @@ export default function UserSchedules() {
     )
 
     const renderSchedule = () => (
-        <div className="mt-5">
+        <>
             <table className="schedules-table w-100 mt-1 border-collapse text-center table-fixed schedules-text">
                 <tbody>
                     <tr>
@@ -69,7 +69,7 @@ export default function UserSchedules() {
                     }
                 </tbody>
             </table>
-        </div>
+        </>
     )
 
     const renderMobileSchedules = () => (

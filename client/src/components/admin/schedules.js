@@ -464,6 +464,7 @@ export default function AdminSchedules() {
                 <div id="controller-date" className="relative">
                     <input
                         type="date"
+                        className="border-solid-1 border-smooth"
                         value={dateISO} // Datepicker must be yyyy-mm-dd format
                         onChange={({ target }) => getDatesOfTheWeek(target.value)}
                     />
@@ -506,7 +507,7 @@ export default function AdminSchedules() {
                 </div>
                 <div>
                     <button
-                        className={`btn-med ${isCopying ? '' : 'btn-hovered'}`}
+                        className={`btn-med ${!isCopying && 'btn-hovered'}`}
                         onClick={() => handleCopyWeeklySchedule()}
                         disabled={isCopying}
                     >
