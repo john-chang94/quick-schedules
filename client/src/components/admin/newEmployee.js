@@ -9,6 +9,7 @@ export default function AdminNewEmployee() {
     const [roles, setRoles] = useState(null);
     const [error, setError] = useState('');
     const [success, setSuccess] = useState(false);
+    const [isSubmitting, setIsSubmitting] = useState(false);
 
     const [role_id, setRoleId] = useState(6);
     const [first_name, setFirstName] = useState('');
@@ -21,12 +22,14 @@ export default function AdminNewEmployee() {
 
     const handleSubmit = async (e) => {
         e.preventDefault();
+        setIsSubmitting(true);
         const tokenConfig = isAuthenticated();
         const body = { role_id, first_name, last_name, email, phone, password, hourly_pay, started_at };
 
         const res = await createUser(body, tokenConfig);
         if (res.error) {
             setError(res.error);
+            setIsSubmitting(false);
         } else {
             setError('');
             setRoleId('');
@@ -37,6 +40,7 @@ export default function AdminNewEmployee() {
             setPassword('');
             setHourlyPay('');
             setSuccess(true);
+            setIsSubmitting(false);
         }
     }
 
@@ -87,7 +91,12 @@ export default function AdminNewEmployee() {
                     </select>
                 </div>
                 <div className="text-center mt-5">
-                    <button className="btn-med btn-hovered">Submit</button>
+                    <button
+                        className={`btn-med ${!isSubmitting && "btn-hovered"}`}
+                        disabled={isSubmitting}
+                    >
+                        Submit
+                    </button>
                 </div>
                 {error ? <p className="red mt-3">{error}</p> : null}
                 {success ? <p className="green mt-3">Profile successfully added!</p> : null}
