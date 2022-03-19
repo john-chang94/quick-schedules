@@ -90,8 +90,8 @@ header {
   margin-bottom: 10px;
   border: solid 1px rgb(177, 177, 177);
   display: flex;
-  justify-content: space-around;
-  padding: 5px;
+  justify-content: space-between;
+  padding: 5px 20px;
 }
 
 #controller-date {
@@ -126,6 +126,12 @@ header {
 
 .availability table th,td {
   border: solid 1px rgb(177, 177, 177);
+}
+
+.controller-btn {
+  padding: 10px;
+  margin: 0 7px;
+  border: solid 1px lightgray;
 }
 
 .table-fixed {
@@ -1289,7 +1295,6 @@ select {
     display: none;
   }
   .schedules-controller {
-    background-color: rgb(68, 118, 209);
     margin: 0;
     align-items: center;
     flex-direction: column;
@@ -1306,16 +1311,17 @@ select {
     margin-right: 10px;
     width: 120px;
   }
+  .controller-btn {
+    margin: 0;
+    background-color: white;
+  }
   .schedules-requests {
     width: 100%;
-    justify-content: space-around;
-    color: white;
+    justify-content: space-between;
+    margin-top: 5px;
   }
   .schedules-requests strong {
     font-weight: 600;
-  }
-  .select-week i {
-    color: rgb(247, 247, 247);
   }
   .schedules-table {
     display: none;
@@ -1329,7 +1335,7 @@ select {
     background-color: rgba(43, 123, 197, 0.836);
     height: 65px;
     width: 65px;
-    right: 5%;
+    right: 10%;
     top: 85vh;
     border-radius: 50%;
   }

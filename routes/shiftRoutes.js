@@ -10,7 +10,8 @@ const {
     getAllShifts,
     getAllUsersSchedulesByDate,
     getAllUsersSchedulesByDateMobile,
-    copyWeeklySchedule
+    copyWeeklySchedule,
+    clearWeeklySchedule
 } = require('../controllers/shifts');
 
 router.get('/shifts', getAllShifts);
@@ -20,6 +21,7 @@ router.get('/shifts/all/mobile/:start_date/:end_date', getAllUsersSchedulesByDat
 router.get('/shifts/:u_id/:shift_start/:shift_end', getShiftsByUser);
 router.post('/shifts', authorizeToken, createShift);
 router.post('/shifts/copy', copyWeeklySchedule);
+router.delete('/shifts/clear/:weekStart/:weekEnd', clearWeeklySchedule);
 router.put('/shifts/:s_id', authorizeToken, editShift);
 router.delete('/shifts/:s_id', authorizeToken, deleteShift);
 

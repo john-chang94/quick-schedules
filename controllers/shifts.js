@@ -20,23 +20,39 @@ exports.copyWeeklySchedule = async (req, res) => {
     try {
         const { shifts, weekStart, weekEnd } = req.body;
 
-            const deleteShifts = await client.query(
-                `DELETE FROM shifts
-                WHERE shift_start::date >= $1 AND
-                    shift_start::date <= $2`,
-                [weekStart, weekEnd]
+        const deleteShifts = await client.query(
+            `DELETE FROM shifts
+            WHERE shift_start::date >= $1 AND
+                shift_start::date <= $2`,
+            [weekStart, weekEnd]
+        )
+
+        for (let i = 0; i < shifts.length; i++) {
+            const shift = await client.query(
+                `INSERT INTO shifts (u_id, shift_start, shift_end)
+                VALUES ($1, $2, $3)`,
+                [shifts[i].u_id, shifts[i].shift_start, shifts[i].shift_end]
             )
+        }
 
-            for (let i = 0; i < shifts.length; i++) {
-                const shift = await client.query(
-                    `INSERT INTO shifts (u_id, shift_start, shift_end)
-                    VALUES ($1, $2, $3)`,
-                    [shifts[i].u_id, shifts[i].shift_start, shifts[i].shift_end]
-                )
-            }
+        res.status(201).json({ success: true });
+    } catch (err) {
+        res.status(500).send(err.message);
+    }
+}
 
-            return res.status(201).json({ success: true });
+exports.clearWeeklySchedule = async (req, res) => {
+    try {
+        const { weekStart, weekEnd } = req.params;
 
+        const deleteShifts = await client.query(
+            `DELETE FROM shifts
+            WHERE shift_start::date >= $1 AND
+                shift_start::date <= $2`,
+            [weekStart, weekEnd]
+        )
+
+        res.status(200).json({ success: true });
     } catch (err) {
         res.status(500).send(err.message);
     }

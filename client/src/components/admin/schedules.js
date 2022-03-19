@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { isAuthenticated } from '../../services/auth';
 import { createPreset, fetchPresets, fetchTimes } from '../../services/presets';
-import { createShift, fetchAllUsersSchedulesByDate, fetchAllUsersSchedulesByDateMobile, deleteShift, updateShift, createCopyOfWeeklySchedule } from '../../services/shifts';
+import { createShift, fetchAllUsersSchedulesByDate, fetchAllUsersSchedulesByDateMobile, deleteShift, updateShift, createCopyOfWeeklySchedule, clearWeeklySchedule } from '../../services/shifts';
 import { fetchAllUsersAvailabilities } from '../../services/users';
 import { startOfToday, startOfWeek, addWeeks, subWeeks, subMonths, parseISO, format, toDate } from 'date-fns';
 import Loader from 'react-loader-spinner';
@@ -20,7 +20,7 @@ export default function AdminSchedules() {
     const [store, setStore] = useState(null);
     const [isLoading, setIsLoading] = useState(true);
     const [isUpdating, setIsUpdating] = useState(false);
-    const [isCopying, setIsCopying] = useState(false);
+    const [isModifying, setIsModifying] = useState(false);
     const [isLoadingSchedule, setIsLoadingSchedule] = useState(true);
 
     // Used for datepicker
@@ -132,7 +132,7 @@ export default function AdminSchedules() {
     const handleCopyWeeklySchedule = async () => {
         const doCopy = window.confirm('Copy schedule to next week? Any shifts already saved will be overwritten.');
         if (doCopy) {
-            setIsCopying(true);
+            setIsModifying(true);
             setIsLoadingSchedule(true);
 
             let shifts = [];
@@ -160,7 +160,21 @@ export default function AdminSchedules() {
             await handleFetchSchedule();
             // Display following week after copying schedule
             handleNextWeek();
-            setIsCopying(false);
+            setIsModifying(false);
+        }
+    }
+
+    const handleClearWeeklySchedule = async () => {
+        const doClear = window.confirm("Clear all shifts for this week?");
+        if (doClear) {
+            setIsModifying(true);
+            setIsLoadingSchedule(true);
+            
+            await clearWeeklySchedule(weekStart, weekEnd);
+            await handleFetchSchedule();
+
+            setIsModifying(false);
+            setIsLoadingSchedule(false);
         }
     }
 
@@ -507,11 +521,18 @@ export default function AdminSchedules() {
                 </div>
                 <div>
                     <button
-                        className={`btn-med ${!isCopying && 'btn-hovered'}`}
-                        onClick={() => handleCopyWeeklySchedule()}
-                        disabled={isCopying}
+                        className={`controller-btn ${!isModifying && 'btn-hovered'}`}
+                        onClick={handleCopyWeeklySchedule}
+                        disabled={isModifying}
                     >
-                        <i className="fas fa-share" />&nbsp;Copy
+                        Copy
+                    </button>
+                    <button
+                        className={`controller-btn ${!isModifying && 'btn-hovered'}`}
+                        onClick={handleClearWeeklySchedule}
+                        disabled={isModifying}
+                    >
+                        Clear
                     </button>
                 </div>
             </div>

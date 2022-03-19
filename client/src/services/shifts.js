@@ -18,6 +18,15 @@ export const createCopyOfWeeklySchedule = async (body) => {
     }
 }
 
+export const clearWeeklySchedule = async (weekStart, weekEnd) => {
+    try {
+        const res = await axios.delete(`/shifts/clear/${weekStart}/${weekEnd}`);
+        return res.data;
+    } catch (err) {
+        return { error: err.response.data };
+    }
+}
+
 // Unused for now
 export const fetchShiftsByDate = async (start_date, end_date) => {
     try {
