@@ -15,7 +15,7 @@ export default function Header() {
     }
 
     return (
-        <header>
+        <header className="bg-light-blue-darken-4">
             {
                 verifiedUser &&
                 <div className="flex" style={{ marginRight: "3%" }}>

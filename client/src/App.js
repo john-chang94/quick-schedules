@@ -1,3 +1,4 @@
+import "./Colors.css";
 import './App.css';
 import { useEffect, useContext, useState } from 'react';
 import { BrowserRouter as Router, Switch } from 'react-router-dom';

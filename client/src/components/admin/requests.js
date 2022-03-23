@@ -229,26 +229,24 @@ export default function AdminRequests() {
     }, [])
 
     return (
-        <div>
-            <div className="mt-4">
-                {renderFilters()}
-                {isLoading ? (
-                        <div className="text-center" style={{ marginTop: '70px' }}>
-                            <Loader
-                                type='Oval'
-                                color='rgb(50, 110, 150)'
-                            />
+        <div className="mt-4 mx-1">
+            {renderFilters()}
+            {isLoading ? (
+                    <div className="text-center" style={{ marginTop: '70px' }}>
+                        <Loader
+                            type='Oval'
+                            color='rgb(50, 110, 150)'
+                        />
+                    </div>
+                ) : (
+                    <div className="mt-5">
+                        {renderRequests()}
+                        <div className="requests-cards">
+                            {renderRequestsCards()}
                         </div>
-                    ) : (
-                        <div className="mt-5">
-                            {renderRequests()}
-                            <div className="requests-cards">
-                                {renderRequestsCards()}
-                            </div>
-                        </div>
-                    )
-                }
-            </div>
+                    </div>
+                )
+            }
         </div>
     )
 }

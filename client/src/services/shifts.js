@@ -18,9 +18,9 @@ export const createCopyOfWeeklySchedule = async (body) => {
     }
 }
 
-export const clearWeeklySchedule = async (weekStart, weekEnd) => {
+export const clearWeeklySchedule = async (weekStart, weekEnd, tokenConfig) => {
     try {
-        const res = await axios.delete(`/shifts/clear/${weekStart}/${weekEnd}`);
+        const res = await axios.delete(`/shifts/clear/${weekStart}/${weekEnd}`, tokenConfig);
         return res.data;
     } catch (err) {
         return { error: err.response.data };

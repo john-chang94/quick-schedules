@@ -239,7 +239,7 @@ export default function UserRequests() {
     }, [verifiedUser])
 
     return (
-        <div>
+        <div className="m-2">
             {
                 isLoading
                     ? <div className="text-center" style={{ marginTop: '70px' }}>

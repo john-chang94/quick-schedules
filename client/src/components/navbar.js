@@ -9,7 +9,7 @@ export default function Navbar() {
 
     // Navbar for large screens
     const renderSideNav = () => (
-        <div className="navbar text-center">
+        <div className="navbar text-center bg-light-blue-darken-4">
             <Link to={verifiedUser.is_admin ? ROUTES.ADMIN_EMPLOYEES : ROUTES.USER_SCHEDULES} className="s12 m6 l3 text-no-u">
                 <div className="hovered py-2 off-white">
                     <p className="text-5">{verifiedUser.is_admin ? "Employees" : "Schedules"}</p>

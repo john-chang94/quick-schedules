@@ -167,10 +167,11 @@ export default function AdminSchedules() {
     const handleClearWeeklySchedule = async () => {
         const doClear = window.confirm("Clear all shifts for this week?");
         if (doClear) {
+            const tokenConfig = isAuthenticated();
             setIsModifying(true);
             setIsLoadingSchedule(true);
             
-            await clearWeeklySchedule(weekStart, weekEnd);
+            await clearWeeklySchedule(weekStart, weekEnd, tokenConfig);
             await handleFetchSchedule();
 
             setIsModifying(false);
@@ -304,7 +305,7 @@ export default function AdminSchedules() {
     const renderShift = (u_id, a_i, shift_start, shift_end) => (
         <td
             key={a_i}
-            className="pointer schedules-text bg-x-light-green"
+            className="pointer schedules-text bg-blue-lighten-4"
             onClick={() => handleEditShift(u_id, a_i, getTimeValue(shift_start), getTimeValue(shift_end))}
         >
             {getTime(shift_start)} -&nbsp;
@@ -322,7 +323,7 @@ export default function AdminSchedules() {
     )
 
     const renderEditShift = (u_id, dayIndex, shift) => (
-        <td key={dayIndex}>
+        <td key={dayIndex} className="bg-blue-grey-lighten-5">
             <div className="flex justify-evenly mt-1">
                 <p>Preset</p>
                 <select
@@ -393,19 +394,19 @@ export default function AdminSchedules() {
                     </div>
                     : <div className="my-2 w-100 flex justify-evenly">
                         <div
-                            className="p-1 w-100 pointer hovered border-solid-1"
+                            className="p-1 w-100 pointer hovered border-solid-1 bg-white"
                             onClick={() => handleSaveShift(u_id, dayIndex, shift.s_id)}
                         >
                             <i className="fas fa-check schedules-text"></i>
                         </div>
                         <div
-                            className="p-1 w-100 pointer hovered border-solid-1"
+                            className="p-1 w-100 pointer hovered border-solid-1 bg-white"
                             onClick={() => handleSavePreset()}
                         >
                             <i className="fas fa-star schedules-text"></i>
                         </div>
                         <div
-                            className="p-1 w-100 pointer hovered border-solid-1"
+                            className="p-1 w-100 pointer hovered border-solid-1 bg-white"
                             onClick={() => shift.s_id ? handleRemoveShift(shift.s_id) : handleCancelShift()}
                         >
                             {

@@ -142,7 +142,7 @@ export default function SchedulesMobile({ usersMobile, users, days, times, prese
     }
 
     const renderShift = (user, shiftIndex) => (
-        <div onClick={() => handleEditShift(user, shiftIndex)}>
+        <div className="p-1" onClick={() => handleEditShift(user, shiftIndex)}>
             <p>
                 {new Date(user.shift_start).toLocaleTimeString().replace(":00 ", " ")} -&nbsp;
                 {new Date(user.shift_end).toLocaleTimeString().replace(":00 ", " ")}
@@ -153,7 +153,7 @@ export default function SchedulesMobile({ usersMobile, users, days, times, prese
     )
 
     const renderEditShift = (user) => (
-        <>
+        <div className="bg-blue-grey-lighten-5 p-1">
             <div className="flex justify-evenly">
                 <div className="flex flex-col flex-center text-center">
                     <p className="schedules-mobile-text"><strong>{user.first_name} {user.last_name}</strong></p>
@@ -222,26 +222,26 @@ export default function SchedulesMobile({ usersMobile, users, days, times, prese
                     </div>
                     : <div className="w-100 flex justify-evenly">
                         <div
-                            className="py-1 w-100 text-center pointer hovered border-solid-1"
+                            className="py-1 w-100 text-center pointer hovered border-solid-1 bg-white"
                             onClick={() => handleSaveShift(user.u_id, user.s_id)}
                         >
                             <i className="fas fa-check"></i>
                         </div>
                         <div
-                            className="py-1 w-100 text-center pointer hovered border-solid-1"
+                            className="py-1 w-100 text-center pointer hovered border-solid-1 bg-white"
                             onClick={() => handleRemoveShift(user.s_id)}
                         >
                             <i className="fas fa-trash-alt"></i>
                         </div>
                         <div
-                            className="py-1 w-100 text-center pointer hovered border-solid-1"
+                            className="py-1 w-100 text-center pointer hovered border-solid-1 bg-white"
                             onClick={() => setEditShiftIndex(null)}
                         >
                             <i className="fas fa-times"></i>
                         </div>
                     </div>
             }
-        </>
+        </div>
     )
 
     const customStyles = {
@@ -252,6 +252,7 @@ export default function SchedulesMobile({ usersMobile, users, days, times, prese
           bottom: 'auto',
           marginRight: '-50%',
           transform: 'translate(-50%, -50%)',
+          backgroundColor: '#eceff1'
         },
       };
 
@@ -330,8 +331,8 @@ export default function SchedulesMobile({ usersMobile, users, days, times, prese
                     </div>
                     {error && <p className="red schedules-mobile-text">{error}</p>}
                     <div className="my-2">
-                        <button className="btn-med hovered m-1" onClick={() => handleCreateShift(u_id)}>Save</button>
-                        <button className="btn-med hovered m-1" onClick={handleCancelAddShift}>Cancel</button>
+                        <button className="btn-med hovered m-1 bg-white" onClick={() => handleCreateShift(u_id)}>Save</button>
+                        <button className="btn-med hovered m-1 bg-white" onClick={handleCancelAddShift}>Cancel</button>
                     </div>
                 </div>
             </Modal>
@@ -358,7 +359,7 @@ export default function SchedulesMobile({ usersMobile, users, days, times, prese
                                     <p><strong>{new Date(user.shift_start).toDateString().split(" ")[0]}</strong></p>
                                     <p><strong>{new Date(user.shift_start).toDateString().split(" ")[2]}</strong></p>
                                 </div>
-                                <div className="w-80 border-solid-1 p-1">
+                                <div className="w-80 border-solid-1">
                                     {editShiftIndex === i
                                         ? renderEditShift(user)
                                         : renderShift(user, i)

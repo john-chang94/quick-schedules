@@ -114,7 +114,7 @@ export default function AdminNewEmployee() {
     }, [])
 
     return (
-        <div>
+        <div className="m-1">
             <div>
                 <Link to={ROUTES.ADMIN_EMPLOYEES} className="text-no-u black pointer">
                     <i className="fas fa-arrow-left"></i> Back

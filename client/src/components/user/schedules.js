@@ -24,7 +24,7 @@ export default function UserSchedules() {
     const renderShift = (a_i, shift_start, shift_end) => (
         <td
             key={a_i}
-            className="bg-x-light-green"
+            className="bg-blue-lighten-4"
         >
             {getTime(shift_start)} -&nbsp;
             {getTime(shift_end)}
@@ -36,12 +36,12 @@ export default function UserSchedules() {
             <table className="schedules-table w-100 mt-1 border-collapse text-center table-fixed schedules-text">
                 <tbody>
                     <tr>
-                        <td className="bg-x-light-gray">
+                        <td className="bg-grey-lighten-3">
                             <strong>Name</strong>
                         </td>
                         {
                             days && days.map((day, i) => (
-                                <td key={i} className="bg-x-light-gray">
+                                <td key={i} className="bg-grey-lighten-3">
                                     <strong>{new Date(day).toString().split(' ')[0]}</strong>
                                     <p><em>{new Date(day).toLocaleDateString()}</em></p>
                                 </td>
@@ -85,7 +85,7 @@ export default function UserSchedules() {
                     usersMobile.length && usersMobile.map((user, i) => (
                         <div key={i} className="flex">
                             {user.label ? (
-                                <div className="w-100 border-x bg-x-light-gray text-center">
+                                <div className="w-100 border-x bg-grey-lighten-3 text-center">
                                     <p><strong>{format(new Date(user.shift_start), "PP")}</strong></p>
                                 </div>
                             ) : (

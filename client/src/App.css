@@ -37,14 +37,14 @@ td {
 
 header {
   height: 60px;
-  background-color: rgb(32, 87, 158);
+  /* background-color: rgb(32, 87, 158); */
   display: flex;
   justify-content: flex-end;
   align-items: center;
 }
 
 .navbar {
-  background-color: rgb(32, 87, 158);
+  /* background-color: rgb(32, 87, 158); */
   height: 100vh;
 }
 
@@ -626,60 +626,8 @@ header {
 
 /* COLOR STYLES */
 
-.white {
-  color: white;
-}
-
 .off-white {
   color: rgb(247, 247, 247);
-}
-
-.black {
-  color: black;
-}
-
-.gray {
-  color: gray;
-}
-
-.light-gray {
-  color: rgb(210, 210, 210);
-}
-
-.dark-gray {
-  color: rgb(79, 79, 79);
-}
-
-.red {
-  color: red;
-}
-
-.orange {
-  color: orange;
-}
-
-.yellow {
-  color: yellow;
-}
-
-.green {
-  color: green;
-}
-
-.blue {
-  color: blue;
-}
-
-.purple {
-  color: purple;
-}
-
-.bg-white {
-  background-color: white;
-}
-
-.bg-black {
-  background-color: black;
 }
 
 .bg-gray {
@@ -704,38 +652,6 @@ header {
 
 .bg-x-light-gray-hovered:hover {
   background-color: rgb(230, 230, 230);
-}
-
-.bg-red {
-  background-color: red;
-}
-
-.bg-orange {
-  background-color: orange;
-}
-
-.bg-yellow {
-  background-color: yellow;
-}
-
-.bg-green {
-  background-color: green;
-}
-
-.bg-x-light-green {
-  background-color: rgba(181, 238, 141, 0.822);
-}
-
-.bg-blue {
-  background-color: blue;
-}
-
-.bg-light-blue {
-  background-color: lightblue;
-}
-
-.bg-purple {
-  background-color: purple;
 }
 
 /* TEXT STYLES */
@@ -1213,6 +1129,9 @@ select {
   }
   .m2-offset-2 {
     grid-column: 3 / span 2;
+  }
+  .m7-offset-3 {
+    grid-column: 4 / span 7;
   }
   .m8-offset-2 {
     grid-column: 3 / span 8;

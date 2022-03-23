@@ -109,8 +109,8 @@ export default function AdminStore() {
     }
 
     const renderStoreHours = () => (
-        <div className="flex flex-col align-center">
-            <div className="my-1 w-50 lg-w-60 med-w-80 xs-w-90">
+        <div className="flex flex-col">
+            <div className="my-1 w-50 sm-w-80">
                 <p>Open</p>
                 <select
                     value={store_open}
@@ -123,7 +123,7 @@ export default function AdminStore() {
                     }
                 </select>
             </div>
-            <div className="my-1 w-50 lg-w-60 med-w-80 xs-w-90">
+            <div className="my-1 w-50 sm-w-80">
                 <p>Close</p>
                 <select
                     value={store_close}
@@ -177,10 +177,10 @@ export default function AdminStore() {
                             />
                         </div>
                         : <div key={i} className="relative" id="manage-presets" onClick={() => handleDeletePreset(preset.p_id)}>
-                            <p className="border-solid-1 py-1">
+                            <p className="border-solid-1 w-50 sm-w-80 p-1">
                                 {preset.shift_start} - {preset.shift_end}
                             </p>
-                            <div className="absolute w-100 h-100 bg-dark-gray flex flex-center white pointer-no-u">
+                            <div className="absolute w-50 sm-w-80 h-100 px-1 bg-dark-gray flex flex-center white pointer-no-u">
                                 <p><i className="fas fa-trash-alt"></i> Delete?</p>
                             </div>
                         </div>
@@ -217,7 +217,7 @@ export default function AdminStore() {
     }, [])
 
     return (
-        <div className="mt-4">
+        <div className="m-1">
             {
                 isLoading
                     ? <div className="text-center" style={{ marginTop: '70px' }}>
@@ -226,28 +226,26 @@ export default function AdminStore() {
                             color='rgb(50, 110, 150)'
                         />
                     </div>
-                    : <div className="grid2">
-                        <div className="text-center border-solid-1 border-smooth box-shadow xs10-offset-1 m8-offset-2 l6-offset-3">
-                            <h3 className="my-2">Store Hours</h3>
-                            {
-                                showEditHours
-                                    ? renderStoreHours()
-                                    : <div>
-                                        {
-                                            store_open && store_close
-                                                ? <p className="my-2">{store_open.toString()} - {store_close.toString()}</p>
-                                                : <p className="my-2">N/A</p>
-                                        }
-                                        <button className="btn-med btn-hovered mt-1 mb-2" onClick={() => setShowEditHours(true)}>Edit</button>
-                                    </div>
-                            }
+                    : <div className="">
+                        <h3 className="my-2">Store Hours</h3>
+                        {
+                            showEditHours
+                                ? renderStoreHours()
+                                : <div>
+                                    {
+                                        store_open && store_close
+                                            ? <p className="my-2">{store_open.toString()} - {store_close.toString()}</p>
+                                            : <p className="my-2">N/A</p>
+                                    }
+                                    <button className="btn-med btn-hovered mt-1 mb-2" onClick={() => setShowEditHours(true)}>Edit</button>
+                                </div>
+                        }
 
-                            <hr className="my-3" />
+                        <hr className="my-3" />
 
-                            {
-                                renderPresets()
-                            }
-                        </div>
+                        {
+                            renderPresets()
+                        }
                     </div>
             }
         </div>

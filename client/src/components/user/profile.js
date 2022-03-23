@@ -192,7 +192,7 @@ export default function UserProfile() {
     }, [verifiedUser])
 
     return (
-        <div>
+        <div className="m-1">
             {
                 isLoading
                     ? <div className="text-center" style={{ marginTop: '70px' }}>

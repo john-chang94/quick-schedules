@@ -37,7 +37,7 @@ export default function SignIn() {
 
     return (
         <div className="sign-in grid2">
-            <div className="xs10-offset-1 l8-offset-2">
+            <div className="xs10-offset-1 m7-offset-3 l6-offset-4">
                 <h2 className="mb-2">Sign In</h2>
                 <form onSubmit={handleSignIn} className="flex flex-col">
                     <div className="mb-1">
