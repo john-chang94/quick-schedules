@@ -82,7 +82,7 @@ header {
   opacity: 0;
 }
 
-#manage-presets .absolute:hover {
+#manage-presets div:hover {
   opacity: 100%;
 }
 
@@ -140,6 +140,42 @@ header {
 
 .requests-cards {
   display: none;
+}
+
+.modal-container {
+  position: fixed;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  background-color: rgba(0,0,0,0.4);
+}
+
+.modal {
+  position: absolute;
+  margin-top: 1rem;
+  left: 0;
+  right: 0;
+  margin-right: auto;
+  margin-left: auto;
+  text-align: center;
+  width: 50%;
+  background-color: rgb(240, 240, 240);
+}
+
+.modal-fade-enter {
+  opacity: 0;
+}
+.modal-fade-enter-active {
+  opacity: 1;
+  transition: opacity 300ms;
+}
+.modal-fade-exit {
+  opacity: 1;
+}
+.modal-fade-exit-active {
+  opacity: 0;
+  transition: opacity 300ms;
 }
 
 /* SPACING STYLES */
@@ -1197,7 +1233,6 @@ select {
   }
   .navbar-top {
     display: block;
-    background-color: rgb(32, 87, 158);
     position: absolute;
     left: -20px;
     margin-top: 10px;
@@ -1258,14 +1293,14 @@ select {
     top: 85vh;
     border-radius: 50%;
   }
-  .add-shift-mobile {
-    width: 100%;
-  }
   .requests-table {
     display: none;
   }
   .requests-cards {
     display: block;
+  }
+  .modal {
+    width: 80%;
   }
 }
 

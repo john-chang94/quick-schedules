@@ -51,7 +51,7 @@ export default function Navbar() {
             <div className="dropdown off-white text-7 pointer" onClick={() => setDropDown(!dropDown)}>
                 <i className="fas fa-bars"></i>
                 {dropDown ? (
-                    <div className="navbar-top text-center">
+                    <div className="navbar-top text-center bg-light-blue-darken-4">
                         <Link to={verifiedUser.is_admin ? ROUTES.ADMIN_EMPLOYEES : ROUTES.USER_SCHEDULES} className="s12 m6 l3 text-no-u">
                             <div className="py-4 hovered off-white">
                                 <p className="text-4">{verifiedUser.is_admin ? "Employees" : "Schedules"}</p>
