@@ -175,17 +175,14 @@ export default function UserProfile() {
 
     useEffect(() => {
         async function getData() {
-            // verifiedUser is null on init load so add as dependency and check it again to fetch data
-            if (verifiedUser) {
-                const user = await fetchUser(verifiedUser.u_id);
-                setUid(user.u_id);
-                setUser(user);
-                setFirstName(user.first_name);
-                setLastName(user.last_name);
-                setEmail(user.email);
-                setPhone(user.phone);
-                setIsLoading(false);
-            }
+            const user = await fetchUser(verifiedUser.u_id);
+            setUid(user.u_id);
+            setUser(user);
+            setFirstName(user.first_name);
+            setLastName(user.last_name);
+            setEmail(user.email);
+            setPhone(user.phone);
+            setIsLoading(false);
         }
 
         getData();

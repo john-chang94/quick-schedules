@@ -77,15 +77,6 @@ header {
   height: 100%;
 }
 
-#manage-presets .absolute {
-  top: 0;
-  opacity: 0;
-}
-
-#manage-presets div:hover {
-  opacity: 100%;
-}
-
 .schedules-controller {
   margin-bottom: 10px;
   border: solid 1px rgb(177, 177, 177);
@@ -176,6 +167,10 @@ header {
 .modal-fade-exit-active {
   opacity: 0;
   transition: opacity 300ms;
+}
+
+.store {
+  width: 30%;
 }
 
 /* SPACING STYLES */
@@ -1301,6 +1296,14 @@ select {
   }
   .modal {
     width: 80%;
+  }
+  .store {
+    width: 70%;
+    text-align: center;
+    left: 0;
+    right: 0;
+    margin-left: auto;
+    margin-right: auto;
   }
 }
 

@@ -610,8 +610,6 @@ export default function AdminSchedules() {
         }
 
         getDatesAndLoadData();
-
-        return () => getDatesAndLoadData();
     }, [])
 
     return (
