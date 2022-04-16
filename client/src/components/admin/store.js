@@ -1,11 +1,11 @@
 import { useEffect, useState } from "react";
 import Loader from "react-loader-spinner";
 import {
-  fetchStoreHours,
+  getStoreHours,
   setStoreHours,
   updateStoreHours,
 } from "../../services/store";
-import { deletePreset, fetchPresets, fetchTimes } from "../../services/presets";
+import { deletePreset, getPresets, getTimes } from "../../services/presets";
 import { isAuthenticated } from "../../services/auth";
 
 export default function AdminStore() {
@@ -41,7 +41,7 @@ export default function AdminStore() {
     };
 
     await setStoreHours(body, tokenConfig);
-    await fetchStoreHours();
+    await getStoreHours();
     setIsSettingStoreHours(false);
     setShowEditHours(false);
   };
@@ -61,7 +61,7 @@ export default function AdminStore() {
     };
 
     await updateStoreHours(body, tokenConfig);
-    await fetchStoreHours();
+    await getStoreHours();
     setIsSettingStoreHours(false);
     setShowEditHours(false);
   };
@@ -95,7 +95,7 @@ export default function AdminStore() {
 
       const tokenConfig = isAuthenticated();
       await deletePreset(p_id, tokenConfig);
-      const presets = await fetchPresets();
+      const presets = await getPresets();
 
       setPresets(presets);
       setIsUpdating(false);
@@ -218,10 +218,10 @@ export default function AdminStore() {
   useEffect(() => {
     let isMounted = true;
 
-    async function getData() {
-      const times = await fetchTimes();
-      const presets = await fetchPresets();
-      const store = await fetchStoreHours();
+    async function fetchData() {
+      const times = await getTimes();
+      const presets = await getPresets();
+      const store = await getStoreHours();
 
       // Set fetched data
       if (times && presets && isMounted) {
@@ -246,7 +246,7 @@ export default function AdminStore() {
       }
     }
 
-    getData();
+    fetchData();
 
     return () => (isMounted = false);
   }, []);

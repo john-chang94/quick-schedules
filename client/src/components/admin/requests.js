@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import {
-  fetchAllRequestsByStatus,
-  fetchAllRequests,
+  getRequestsByStatus,
+  getRequests,
   updateRequestStatus,
 } from "../../services/requests";
 import Loader from "react-loader-spinner";
@@ -22,7 +22,7 @@ export default function AdminRequests() {
       const body = { status };
 
       await updateRequestStatus(r_id, body, tokenConfig);
-      const requests = await fetchAllRequests();
+      const requests = await getRequests();
 
       setRequests(requests);
       setIsUpdating(false);
@@ -32,12 +32,12 @@ export default function AdminRequests() {
   const handleSortRequests = async (status) => {
     setIsLoading(true);
     if (status === "All") {
-      const requests = await fetchAllRequests();
+      const requests = await getRequests();
       setRequests(requests);
       setStatus(status);
       setIsLoading(false);
     } else {
-      const requests = await fetchAllRequestsByStatus(status);
+      const requests = await getRequestsByStatus(status);
       setRequests(requests);
       setStatus(status);
       setIsLoading(false);
@@ -256,15 +256,15 @@ export default function AdminRequests() {
 
   useEffect(() => {
     let isMounted = true;
-    async function getRequests() {
-      const requests = await fetchAllRequests();
+    async function fetchData() {
+      const requests = await getRequests();
       if (requests && isMounted) {
         setRequests(requests);
         setIsLoading(false);
       }
     }
 
-    getRequests();
+    fetchData();
 
     return () => isMounted = false;
   }, []);

@@ -2,7 +2,7 @@ import { useEffect, useState, useContext } from 'react';
 import { UserContext } from '../../contexts/userContext';
 import { isAuthenticated } from '../../services/auth';
 import Loader from 'react-loader-spinner';
-import { createRequest, deleteRequest, fetchRequestsByUser } from '../../services/requests';
+import { createRequest, deleteRequest, getRequestsByUserUser } from '../../services/requests';
 import { format } from 'date-fns';
 
 export default function UserRequests() {
@@ -27,7 +27,7 @@ export default function UserRequests() {
             const tokenConfig = isAuthenticated();
             await deleteRequest(r_id, tokenConfig);
 
-            const requests = await fetchRequestsByUser(verifiedUser.u_id);
+            const requests = await getRequestsByUserUser(verifiedUser.u_id);
             setRequests(requests);
             setIsDeleting(false);
         }
@@ -52,7 +52,7 @@ export default function UserRequests() {
             }
 
             await createRequest(body, tokenConfig);
-            const requests = await fetchRequestsByUser(verifiedUser.u_id);
+            const requests = await getRequestsByUserUser(verifiedUser.u_id);
 
             setRequests(requests);
             setCreateNewRequest(false);
@@ -227,15 +227,15 @@ export default function UserRequests() {
     )
 
     useEffect(() => {
-        async function getData() {
+        async function fetchData() {
             if (verifiedUser) {
-                const requests = await fetchRequestsByUser(verifiedUser.u_id);
+                const requests = await getRequestsByUserUser(verifiedUser.u_id);
                 setRequests(requests);
                 setIsLoading(false);
             }
         }
 
-        getData();
+        fetchData();
     }, [verifiedUser])
 
     return (

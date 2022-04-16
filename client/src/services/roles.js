@@ -1,6 +1,6 @@
 import axios from 'axios';
 
-export const fetchRoles = async () => {
+export const getRoles = async () => {
     try {
         const res = await axios.get('/roles');
         return res.data;

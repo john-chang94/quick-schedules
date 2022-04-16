@@ -1,7 +1,7 @@
 import { useState, useEffect, useContext } from 'react';
 import { UserContext } from '../../contexts/userContext';
 import { isAuthenticated } from '../../services/auth';
-import { fetchUser, editPassword, editUserGeneral } from '../../services/users';
+import { getUser, editPassword, editUserGeneral } from '../../services/users';
 import Loader from 'react-loader-spinner';
 
 export default function UserProfile() {
@@ -57,7 +57,7 @@ export default function UserProfile() {
             setError(res.error);
             setIsUpdating(false);
         } else {
-            const user = await fetchUser(u_id, tokenConfig);
+            const user = await getUser(u_id, tokenConfig);
             setError('');
             setUser(user);
             setShowEditGeneral(false);
@@ -174,8 +174,8 @@ export default function UserProfile() {
     )
 
     useEffect(() => {
-        async function getData() {
-            const user = await fetchUser(verifiedUser.u_id);
+        async function fetchData() {
+            const user = await getUser(verifiedUser.u_id);
             setUid(user.u_id);
             setUser(user);
             setFirstName(user.first_name);
@@ -185,7 +185,7 @@ export default function UserProfile() {
             setIsLoading(false);
         }
 
-        getData();
+        fetchData();
     }, [verifiedUser])
 
     return (

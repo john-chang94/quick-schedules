@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import Loader from 'react-loader-spinner';
-import { fetchAllUsersSchedulesByDate, fetchAllUsersSchedulesByDateMobile } from '../../services/shifts';
+import { getUsersSchedulesByDate, getUsersSchedulesByDateMobile } from '../../services/shifts';
 import { startOfWeek, format } from 'date-fns';
 
 export default function UserSchedules() {
@@ -112,7 +112,7 @@ export default function UserSchedules() {
     )
 
     useEffect(() => {
-        async function getData() {
+        async function fetchData() {
             let daysArray = [];
             let dateToAdd = startOfWeek(new Date(), { weekStartsOn: 1 });
             for (let i = 0; i < 7; i++) {
@@ -120,8 +120,8 @@ export default function UserSchedules() {
                 dateToAdd = new Date(dateToAdd.setDate(dateToAdd.getDate() + 1));
             }
 
-            const users = await fetchAllUsersSchedulesByDate(daysArray[0], daysArray[6]);
-            const usersMobile = await fetchAllUsersSchedulesByDateMobile(daysArray[0], daysArray[6]);
+            const users = await getUsersSchedulesByDate(daysArray[0], daysArray[6]);
+            const usersMobile = await getUsersSchedulesByDateMobile(daysArray[0], daysArray[6]);
 
             if (usersMobile.length) {
                 // Add date labels for mobile schedules display
@@ -137,7 +137,7 @@ export default function UserSchedules() {
             setIsLoading(false);
         }
 
-        getData();
+        fetchData();
     }, [])
 
     return (

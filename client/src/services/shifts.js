@@ -37,7 +37,7 @@ export const fetchShiftsByDate = async (start_date, end_date) => {
     }
 }
 
-export const fetchAllUsersSchedulesByDate = async (start_date, end_date) => {
+export const getUsersSchedulesByDate = async (start_date, end_date) => {
     try {
         const res = await axios.get(`/shifts/all/${start_date}/${end_date}`);
         return res.data;
@@ -46,7 +46,7 @@ export const fetchAllUsersSchedulesByDate = async (start_date, end_date) => {
     }
 }
 
-export const fetchAllUsersSchedulesByDateMobile = async (start_date, end_date) => {
+export const getUsersSchedulesByDateMobile = async (start_date, end_date) => {
     try {
         const res = await axios.get(`/shifts/all/mobile/${start_date}/${end_date}`);
         return res.data;

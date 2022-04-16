@@ -3,9 +3,9 @@ import { UserContext } from '../../contexts/userContext';
 import { isAuthenticated } from '../../services/auth';
 import Loader from 'react-loader-spinner';
 import EditAvailability from './editAvailability';
-import { editUserAvailability, fetchUserAvailability } from '../../services/users';
-import { fetchTimes } from '../../services/presets';
-import { fetchStoreHours } from '../../services/store';
+import { editUserAvailability, getUserAvailability } from '../../services/users';
+import { getTimes } from '../../services/presets';
+import { getStoreHours } from '../../services/store';
 
 export default function UserAvailability() {
     const { verifiedUser } = useContext(UserContext);
@@ -156,7 +156,7 @@ export default function UserAvailability() {
             await editUserAvailability(availability[i].a_id, data[i], tokenConfig);
         }
 
-        const newAvail = await fetchUserAvailability(verifiedUser.u_id);
+        const newAvail = await getUserAvailability(verifiedUser.u_id);
         setAvailability(newAvail);
         setIsUpdating(false);
         setShowEditAvailability(false);
@@ -231,11 +231,11 @@ export default function UserAvailability() {
     )
 
     useEffect(() => {
-        async function getData() {
+        async function fetchData() {
             if (verifiedUser) {
-                const availability = await fetchUserAvailability(verifiedUser.u_id);
-                const times = await fetchTimes();
-                const store = await fetchStoreHours();
+                const availability = await getUserAvailability(verifiedUser.u_id);
+                const times = await getTimes();
+                const store = await getStoreHours();
 
                 setAvailability(availability);
                 setTimes(times);
@@ -244,7 +244,7 @@ export default function UserAvailability() {
             }
         }
 
-        getData();
+        fetchData();
     }, [verifiedUser])
 
     return (

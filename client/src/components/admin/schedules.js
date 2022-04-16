@@ -1,12 +1,12 @@
 import { useState, useEffect } from 'react';
 import { isAuthenticated } from '../../services/auth';
-import { createPreset, fetchPresets, fetchTimes } from '../../services/presets';
-import { createShift, fetchAllUsersSchedulesByDate, fetchAllUsersSchedulesByDateMobile, deleteShift, updateShift, createCopyOfWeeklySchedule, clearWeeklySchedule } from '../../services/shifts';
-import { fetchAllUsersAvailabilities } from '../../services/users';
+import { createPreset, getPresets, getTimes } from '../../services/presets';
+import { createShift, getUsersSchedulesByDate, getUsersSchedulesByDateMobile, deleteShift, updateShift, createCopyOfWeeklySchedule, clearWeeklySchedule } from '../../services/shifts';
+import { getUsersAvailabilities } from '../../services/users';
 import { startOfToday, startOfWeek, addWeeks, subWeeks, subMonths, parseISO, format, toDate } from 'date-fns';
 import Loader from 'react-loader-spinner';
-import { fetchAllRequestsByStatusAndDate } from '../../services/requests';
-import { fetchStoreHours } from '../../services/store';
+import { getRequestsByStatusAndDate } from '../../services/requests';
+import { getStoreHours } from '../../services/store';
 import SchedulesMobile from './schedulesMobile';
 
 export default function AdminSchedules() {
@@ -35,6 +35,23 @@ export default function AdminSchedules() {
     // Used to render edit shift mode for selected date and employee only
     const [userData, setUserData] = useState(null);
     const [availabilityIndex, setAvailabilityIndex] = useState(null);
+
+    // Refresh schedule after any changes are made
+    const handleFetchSchedule = async () => {
+        const users = await getUsersSchedulesByDate(weekStart, weekEnd);
+        const usersMobile = await getUsersSchedulesByDateMobile(weekStart, weekEnd);
+
+        if (usersMobile.length) {
+            // Add date labels for mobile schedules display
+            for (let i = 0; i < days.length; i++) {
+                usersMobile.push({ shift_start: days[i], label: true });
+            }
+            usersMobile.sort((a, b) => new Date(a.shift_start) - new Date(b.shift_start));
+        }
+
+        setUsers(users);
+        setUsersMobile(usersMobile);
+    }
 
     // For init load and datepicker
     const getDatesOfTheWeek = async (selectedDate) => {
@@ -70,9 +87,9 @@ export default function AdminSchedules() {
         setWeekEnd(weekEnd);
 
         // Refresh schedules after date change
-        const users = await fetchAllUsersSchedulesByDate(weekStart, weekEnd);
-        const usersMobile = await fetchAllUsersSchedulesByDateMobile(weekStart, weekEnd);
-        const requests = await fetchAllRequestsByStatusAndDate('Approved', weekStart, weekEnd);
+        const users = await getUsersSchedulesByDate(weekStart, weekEnd);
+        const usersMobile = await getUsersSchedulesByDateMobile(weekStart, weekEnd);
+        const requests = await getRequestsByStatusAndDate('Approved', weekStart, weekEnd);
 
         // Add date labels for mobile schedules display
         for (let i = 0; i < daysArray.length; i++) {
@@ -179,23 +196,6 @@ export default function AdminSchedules() {
         }
     }
 
-    // Refresh schedule after any changes are made
-    const handleFetchSchedule = async () => {
-        const users = await fetchAllUsersSchedulesByDate(weekStart, weekEnd);
-        const usersMobile = await fetchAllUsersSchedulesByDateMobile(weekStart, weekEnd);
-
-        if (usersMobile.length) {
-            // Add date labels for mobile schedules display
-            for (let i = 0; i < days.length; i++) {
-                usersMobile.push({ shift_start: days[i], label: true });
-            }
-            usersMobile.sort((a, b) => new Date(a.shift_start) - new Date(b.shift_start));
-        }
-
-        setUsers(users);
-        setUsersMobile(usersMobile);
-    }
-
     const handleCancelShift = () => {
         setUserData('');
         setAvailabilityIndex('');
@@ -270,7 +270,7 @@ export default function AdminSchedules() {
         const body = { shift_start, shift_end, shift_start_value, shift_end_value, level };
         await createPreset(body, tokenConfig);
 
-        const newPresets = await fetchPresets();
+        const newPresets = await getPresets();
         setPresets(newPresets);
 
         alert('Preset saved')
@@ -593,11 +593,11 @@ export default function AdminSchedules() {
     )
 
     useEffect(() => {
-        async function getDatesAndLoadData() {
-            const times = await fetchTimes();
-            const availabilities = await fetchAllUsersAvailabilities();
-            const presets = await fetchPresets();
-            const store = await fetchStoreHours();
+        async function fetchData() {
+            const times = await getTimes();
+            const availabilities = await getUsersAvailabilities();
+            const presets = await getPresets();
+            const store = await getStoreHours();
             await getDatesOfTheWeek();
 
             setTimes(times);
@@ -609,7 +609,7 @@ export default function AdminSchedules() {
             setIsLoading(false);
         }
 
-        getDatesAndLoadData();
+        fetchData();
     }, [])
 
     return (

@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { useHistory } from "react-router";
-import { fetchAllUsers } from "../../services/users";
+import { getUsers } from "../../services/users";
 import * as ROUTES from "../../constants/routes";
 import Loader from "react-loader-spinner";
 
@@ -30,7 +30,7 @@ export default function AdminEmployees() {
         </button>
       </div>
       <div>
-        <table id="users-list" className="border-collapse w-100 text-center">
+        <table className="users-list border-collapse w-100 text-center">
           <thead>
             <tr>
               <th className="p-3">Role</th>
@@ -68,23 +68,26 @@ export default function AdminEmployees() {
 
   useEffect(() => {
     let isMounted = true;
-    async function getUsers() {
-      const users = await fetchAllUsers();
+
+    // Set default width on page load
+    setWidth(window.innerWidth);
+    // Listen for window width change
+    window.addEventListener("resize", setWindowWidth);
+
+    // Fetch employees
+    async function fetchData() {
+      const users = await getUsers();
       if (users && isMounted) setUsers(users);
 
       setIsLoading(false);
     }
 
-    getUsers();
+    fetchData();
 
-    return () => (isMounted = false);
-  }, []);
-
-  useEffect(() => {
-    setWidth(window.innerWidth); // Set default width on page load
-    window.addEventListener("resize", setWindowWidth);
-
-    return () => window.removeEventListener("resize", setWindowWidth);
+    return () => {
+      isMounted = false;
+      window.removeEventListener("resize", setWindowWidth);
+    }
   }, []);
 
   return (

@@ -1,6 +1,6 @@
 import axios from 'axios';
 
-export const fetchTimes = async () => {
+export const getTimes = async () => {
     try {
         const res = await axios.get('/presets/times');
         return res.data;
@@ -18,7 +18,7 @@ export const createPreset = async (body, tokenConfig) => {
     }
 }
 
-export const fetchPresets = async () => {
+export const getPresets = async () => {
     try {
         const res = await axios.get('/presets');
         return res.data;

@@ -1,6 +1,6 @@
 import axios from 'axios';
 
-export const fetchAllUsers = async () => {
+export const getUsers = async () => {
     try {
         const res = await axios.get('/users');
         return res.data;
@@ -9,7 +9,7 @@ export const fetchAllUsers = async () => {
     }
 }
 
-export const fetchUser = async (u_id) => {
+export const getUser = async (u_id) => {
     try {
         const res = await axios.get(`/users/${u_id}`);
         return res.data;
@@ -45,7 +45,7 @@ export const editUserInfo = async (u_id, body, tokenConfig) => {
     }
 }
 
-export const fetchUserAvailability = async (u_id) => {
+export const getUserAvailability = async (u_id) => {
     try {
         const res = await axios.get(`/users/availability/${u_id}`);
         return res.data;
@@ -54,7 +54,7 @@ export const fetchUserAvailability = async (u_id) => {
     }
 }
 
-export const fetchAllUsersAvailabilities = async () => {
+export const getUsersAvailabilities = async () => {
     try {
         const res = await axios.get('/users/availability/all');
         return res.data;

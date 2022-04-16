@@ -7,11 +7,11 @@ import {
   editPassword,
   editUserGeneral,
   editUserInfo,
-  fetchUser,
+  getUser,
   deleteUser,
 } from "../../services/users";
 import { UserContext } from "../../contexts/userContext";
-import { fetchRoles } from "../../services/roles";
+import { getRoles } from "../../services/roles";
 import Loader from "react-loader-spinner";
 
 export default function AdminEmployee() {
@@ -72,7 +72,7 @@ export default function AdminEmployee() {
     if (res.error) {
       setError(res.error);
     } else {
-      const user = await fetchUser(u_id);
+      const user = await getUser(u_id);
       setError("");
       setUser(user);
       setShowEditGeneral(false);
@@ -96,7 +96,7 @@ export default function AdminEmployee() {
       setError(res.error);
       setIsUpdating(false);
     } else {
-      const user = await fetchUser(u_id);
+      const user = await getUser(u_id);
       setError("");
       setUser(user);
       setShowEditInfo(false);
@@ -336,9 +336,9 @@ export default function AdminEmployee() {
 
   useEffect(() => {
     let isMounted = true;
-    async function getData() {
-      const user = await fetchUser(u_id);
-      const roles = await fetchRoles();
+    async function fetchData() {
+      const user = await getUser(u_id);
+      const roles = await getRoles();
       if (user && roles && isMounted) {
         setUser(user);
         setRoles(roles);
@@ -353,7 +353,7 @@ export default function AdminEmployee() {
       }
     }
 
-    getData();
+    fetchData();
 
     return () => (isMounted = false);
   }, [u_id]);

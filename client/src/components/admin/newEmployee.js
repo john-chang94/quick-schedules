@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import * as ROUTES from "../../constants/routes";
 import { isAuthenticated } from "../../services/auth";
-import { fetchRoles } from "../../services/roles";
+import { getRoles } from "../../services/roles";
 import { createUser } from "../../services/auth";
 
 export default function AdminNewEmployee() {
@@ -153,12 +153,12 @@ export default function AdminNewEmployee() {
 
   useEffect(() => {
     let isMounted = true;
-    async function getRoles() {
-      const roles = await fetchRoles();
+    async function fetchData() {
+      const roles = await getRoles();
       if (roles && isMounted) setRoles(roles);
     }
 
-    getRoles();
+    fetchData();
 
     return () => (isMounted = false);
   }, []);

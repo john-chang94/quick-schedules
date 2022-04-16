@@ -1,6 +1,6 @@
 import axios from 'axios';
 
-export const fetchStoreHours = async () => {
+export const getStoreHours = async () => {
     try {
         const res = await axios.get('/store');
         return res.data;

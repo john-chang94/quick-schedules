@@ -1,6 +1,6 @@
 import axios from 'axios';
 
-export const fetchAllRequests = async () => {
+export const getRequests = async () => {
     try {
         const res = await axios.get('/requests');
         return res.data;
@@ -9,7 +9,7 @@ export const fetchAllRequests = async () => {
     }
 }
 
-export const fetchRequestsByUser = async (u_id) => {
+export const getRequestsByUserUser = async (u_id) => {
     try {
         const res = await axios.get(`/requests/${u_id}`);
         return res.data;
@@ -18,7 +18,7 @@ export const fetchRequestsByUser = async (u_id) => {
     }
 }
 
-export const fetchAllRequestsByStatus = async (status) => {
+export const getRequestsByStatus = async (status) => {
     try {
         const res = await axios.get(`/requests/status/${status}`);
         return res.data;
@@ -27,7 +27,7 @@ export const fetchAllRequestsByStatus = async (status) => {
     }
 }
 
-export const fetchAllRequestsByStatusAndDate = async (status, weekStart, weekEnd) => {
+export const getRequestsByStatusAndDate = async (status, weekStart, weekEnd) => {
     try {
         const res = await axios.get(`/requests/status/${status}/${weekStart}/${weekEnd}`);
         return res.data;
