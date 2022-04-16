@@ -12,6 +12,7 @@ export default function AdminStore() {
   const [isLoading, setIsLoading] = useState(true);
   const [times, setTimes] = useState(null);
   const [presets, setPresets] = useState(null);
+  const [store, setStore] = useState(null);
   const [isUpdating, setIsUpdating] = useState(false);
   const [isSettingStoreHours, setIsSettingStoreHours] = useState(false);
   const [updatingId, setUpdatingId] = useState("");
@@ -25,57 +26,48 @@ export default function AdminStore() {
   const [showEditHours, setShowEditHours] = useState(false);
   const [storeFirstTime, setStoreFirstTime] = useState(null);
 
+  // Set store hours for the first time
   const handleSetStoreHours = async () => {
     const tokenConfig = isAuthenticated();
     setIsSettingStoreHours(true);
 
-    setTimeout(() => {
-      async function saveData() {
-        const body = {
-          store_open,
-          store_close,
-          store_open_value,
-          store_close_value,
-          store_open_level,
-          store_close_level,
-        };
+    const body = {
+      store_open,
+      store_close,
+      store_open_value,
+      store_close_value,
+      store_open_level,
+      store_close_level,
+    };
 
-        await setStoreHours(body, tokenConfig);
-        await fetchStoreHours();
-        setIsSettingStoreHours(false);
-        setShowEditHours(false);
-      }
-
-      saveData();
-    }, 700);
+    await setStoreHours(body, tokenConfig);
+    await fetchStoreHours();
+    setIsSettingStoreHours(false);
+    setShowEditHours(false);
   };
 
+  // Update store hours
   const handleUpdateStoreHours = async () => {
     const tokenConfig = isAuthenticated();
     setIsSettingStoreHours(true);
 
-    setTimeout(() => {
-      async function saveData() {
-        const body = {
-          store_open,
-          store_close,
-          store_open_value,
-          store_close_value,
-          store_open_level,
-          store_close_level,
-        };
+    const body = {
+      store_open,
+      store_close,
+      store_open_value,
+      store_close_value,
+      store_open_level,
+      store_close_level,
+    };
 
-        await updateStoreHours(body, tokenConfig);
-        await fetchStoreHours();
-        setIsSettingStoreHours(false);
-        setShowEditHours(false);
-      }
-
-      saveData();
-    }, 700);
+    await updateStoreHours(body, tokenConfig);
+    await fetchStoreHours();
+    setIsSettingStoreHours(false);
+    setShowEditHours(false);
   };
 
   const handleSelectStoreOpen = (store_open) => {
+    console.log(store_open);
     for (let i = 0; i < times.length; i++) {
       if (times[i].time === store_open) {
         setStoreOpen(times[i].time);
@@ -111,61 +103,89 @@ export default function AdminStore() {
     }
   };
 
-  const renderStoreHours = () => (
-    <>
-      <div className="my-1">
-        <p>Open</p>
-        <select
-          value={store_open}
-          onChange={({ target }) => handleSelectStoreOpen(target.value)}
-        >
-          {times &&
-            times.map((time, i) => (
-              <option key={i} value={time.time}>
-                {time.time}
-              </option>
-            ))}
-        </select>
-      </div>
-      <div className="my-1">
-        <p>Close</p>
-        <select
-          value={store_close}
-          onChange={({ target }) => handleSelectStoreClose(target.value)}
-        >
-          {times &&
-            times.map((time, i) => (
-              <option key={i} value={time.time}>
-                {time.time}
-              </option>
-            ))}
-        </select>
-      </div>
-      <div>
+  // Reset store hours in view if user cancels editing
+  const handleCancelEdit = () => {
+    setStoreOpen(store.store_open);
+    setStoreClose(store.store_close);
+    setShowEditHours(false);
+  };
+
+  const renderStoreHours = () =>
+    showEditHours ? ( // Render edit hours component
+      <>
+        <h3 className="my-2">Store Hours</h3>
+        <div className="my-1">
+          <p>Open</p>
+          <select
+            value={store_open}
+            onChange={({ target }) => handleSelectStoreOpen(target.value)}
+          >
+            {times &&
+              times.map((time, i) => (
+                <option key={i} value={time.time}>
+                  {time.time}
+                </option>
+              ))}
+          </select>
+        </div>
+        <div className="my-1">
+          <p>Close</p>
+          <select
+            value={store_close}
+            onChange={({ target }) => handleSelectStoreClose(target.value)}
+          >
+            {times &&
+              times.map((time, i) => (
+                <option key={i} value={time.time}>
+                  {time.time}
+                </option>
+              ))}
+          </select>
+        </div>
+        <div>
+          <button
+            className={`m-2 btn-sm ${!isSettingStoreHours && "btn-hovered"}`}
+            disabled={isSettingStoreHours}
+            onClick={() =>
+              // Set store hours if first time, otherwise update
+              storeFirstTime === true
+                ? handleSetStoreHours()
+                : handleUpdateStoreHours()
+            }
+          >
+            Save
+          </button>
+          <button
+            className={`m-2 btn-sm ${!isSettingStoreHours && "btn-hovered"}`}
+            disabled={isSettingStoreHours}
+            onClick={handleCancelEdit}
+          >
+            Cancel
+          </button>
+        </div>
+        {isSettingStoreHours && (
+          <Loader type="ThreeDots" height={10} color="rgb(50, 110, 150)" />
+        )}
+      </>
+    ) : (
+      // Render store hours
+      <>
+        {store_open && store_close ? (
+          <p className="my-2">
+            {store_open.toString()} - {store_close.toString()}
+          </p>
+        ) : (
+          // Render N/A if store's first time setting hours
+          <p className="my-2">N/A</p>
+        )}
         <button
-          className={`m-2 btn-sm ${!isSettingStoreHours && "btn-hovered"}`}
-          disabled={isSettingStoreHours}
-          onClick={() =>
-            storeFirstTime === true
-              ? handleSetStoreHours()
-              : handleUpdateStoreHours()
-          }
+          className="btn-med btn-hovered mt-1 mb-2"
+          onClick={() => setShowEditHours(true)}
         >
-          Save
+          Edit
         </button>
-        <button
-          className={`m-2 btn-sm ${!isSettingStoreHours && "btn-hovered"}`}
-          disabled={isSettingStoreHours}
-          onClick={() => setShowEditHours(false)}
-        >
-          Cancel
-        </button>
-      </div>
-      {isSettingStoreHours && (
-        <Loader type="ThreeDots" height={10} color="rgb(50, 110, 150)" />
-      )}
-    </>
-  );
+      </>
+    );
 
   const renderPresets = () => (
     <>
@@ -173,7 +193,7 @@ export default function AdminStore() {
       {presets &&
         presets.map((preset, i) =>
           isUpdating && updatingId === preset.p_id ? (
-            <div className="text-center">
+            <div className="text-center" key={i}>
               <Loader type="Oval" color="rgb(50, 110, 150)" height={20} />
             </div>
           ) : (
@@ -196,30 +216,39 @@ export default function AdminStore() {
   );
 
   useEffect(() => {
+    let isMounted = true;
+
     async function getData() {
       const times = await fetchTimes();
       const presets = await fetchPresets();
       const store = await fetchStoreHours();
 
-      setTimes(times);
-      setPresets(presets);
-
-      if (store) {
-        setStoreOpen(store.store_open);
-        setStoreClose(store.store_close);
-        setStoreOpenValue(store.store_open_value);
-        setStoreCloseValue(store.store_close_value);
-        setStoreOpenLevel(store.store_open_level);
-        setStoreCloseLevel(store.store_close_level);
-        setStoreFirstTime(false);
-      } else {
-        setStoreFirstTime(true);
+      // Set fetched data
+      if (times && presets && isMounted) {
+        setTimes(times);
+        setPresets(presets);
+        // Set store hours if it exists in db (if not first time)
+        if (store && isMounted) {
+          setStore(store);
+          setStoreOpen(store.store_open);
+          setStoreClose(store.store_close);
+          setStoreOpenValue(store.store_open_value);
+          setStoreCloseValue(store.store_close_value);
+          setStoreOpenLevel(store.store_open_level);
+          setStoreCloseLevel(store.store_close_level);
+          setStoreFirstTime(false);
+        } else {
+          // Otherwise set first time to true
+          // This will determine what the save button does
+          setStoreFirstTime(true);
+        }
+        setIsLoading(false);
       }
-
-      setIsLoading(false);
     }
 
     getData();
+
+    return () => (isMounted = false);
   }, []);
 
   return (
@@ -230,29 +259,8 @@ export default function AdminStore() {
         </div>
       ) : (
         <div className="store p-1">
-          <h3 className="my-2">Store Hours</h3>
-          {showEditHours ? (
-            renderStoreHours()
-          ) : (
-            <div>
-              {store_open && store_close ? (
-                <p className="my-2">
-                  {store_open.toString()} - {store_close.toString()}
-                </p>
-              ) : (
-                <p className="my-2">N/A</p>
-              )}
-              <button
-                className="btn-med btn-hovered mt-1 mb-2"
-                onClick={() => setShowEditHours(true)}
-              >
-                Edit
-              </button>
-            </div>
-          )}
-
+          {renderStoreHours()}
           <hr className="my-3" />
-
           {renderPresets()}
         </div>
       )}
