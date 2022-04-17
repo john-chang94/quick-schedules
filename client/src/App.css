@@ -1209,7 +1209,6 @@ select {
     grid-column: 2 / span 10;
   }
   .container-inner {
-    padding: 0;
     margin-bottom: 10px;
   }
   .container-grid {
