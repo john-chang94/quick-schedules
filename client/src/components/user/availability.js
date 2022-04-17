@@ -163,7 +163,7 @@ export default function UserAvailability() {
     }
 
     const renderAvailability = () => (
-        <div className="mt-4 grid2">
+        <div className="mt-4 grid">
             <div className="border-solid-1 border-smooth s10-offset-1 l6-offset-3">
                 <div>
                     {
@@ -183,7 +183,7 @@ export default function UserAvailability() {
     )
 
     const renderEditAvailability = () => (
-        <div className="mt-4 grid2">
+        <div className="mt-4 grid">
             <div className="border-solid-1 border-smooth s10-offset-1 l6-offset-3 text-center">
                 {days.map(({ day, dayStart, dayEnd, setDayStart, setDayEnd }, i) => (
                     <div key={i}>
@@ -231,20 +231,25 @@ export default function UserAvailability() {
     )
 
     useEffect(() => {
+        let isMounted = true;
         async function fetchData() {
             if (verifiedUser) {
                 const availability = await getUserAvailability(verifiedUser.u_id);
                 const times = await getTimes();
                 const store = await getStoreHours();
 
-                setAvailability(availability);
-                setTimes(times);
-                setStore(store);
-                setIsLoading(false);
+                if (availability && times && store && isMounted) {
+                    setAvailability(availability);
+                    setTimes(times);
+                    setStore(store);
+                    setIsLoading(false);
+                }
             }
         }
 
         fetchData();
+
+        return () => isMounted = false;
     }, [verifiedUser])
 
     return (

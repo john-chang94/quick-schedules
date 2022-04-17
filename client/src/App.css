@@ -1020,10 +1020,6 @@ select {
 
 .grid {
   display: grid;
-}
-
-.grid2 {
-  display: grid;
   grid-template-columns: repeat(12, 1fr);
   /* grid-template-columns: repeat(auto-fill, fit-content); */
   gap: 12px;
@@ -1305,6 +1301,7 @@ select {
     margin-left: auto;
     margin-right: auto;
   }
+  /* Hide two columns with smaller view */
   .users-list > thead > tr > th:nth-child(3) {
     display: none;
   }
@@ -1370,14 +1367,6 @@ select {
 /* OTHER MEDIA QUERIES */
 
 @media screen and (max-width: 1240px) {
-  .lg-2-6fr {
-    grid-template: repeat(2, 6fr) / repeat(2, 6fr);
-  }
-
-  .text-vw {
-    font-size: 0.95vw;
-  }
-
   .lg-w-50 {
     width: 50%;
   }
@@ -1400,8 +1389,6 @@ select {
 }
 
 @media screen and (max-width: 860px) {
-  
-  
   .med-w-50 {
     width: 50%;
   }
@@ -1424,14 +1411,6 @@ select {
 }
 
 @media screen and (max-width: 580px) {
-  .sm-1-12fr {
-    grid-template: repeat(1, 12fr) / repeat(1, 12fr);
-  }
-  
-  .sm-2-6fr {
-    grid-template: repeat(2, 6fr) / repeat(2, 6fr);
-  }
-  
   .sm-w-50 {
     width: 50%;
   }
@@ -1450,10 +1429,6 @@ select {
 
   .sm-w-90 {
     width: 90%;
-  }
-
-  .sm-flex-col {
-    flex-direction: column;
   }
 }
 
@@ -1492,9 +1467,5 @@ select {
 
   .xs-w-90 {
     width: 90%;
-  }
-
-  .xs-1-12f {
-    grid-template: repeat(1, 12fr) / repeat(1, 12fr);
   }
 }

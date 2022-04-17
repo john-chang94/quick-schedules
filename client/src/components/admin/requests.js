@@ -47,7 +47,7 @@ export default function AdminRequests() {
   const renderFilters = () => (
     <div className="flex flex-col align-center">
       <p className="mb-2">View by</p>
-      <div className="w-50 lg-w-60 med-w-80 xs-w-90 grid2">
+      <div className="w-50 lg-w-60 med-w-80 xs-w-90 grid">
         <button
           className={`border-solid-1 border-oval pointer-no-u py-1 hovered s6 l3
                         ${status === "All" && "bg-light-gray"}`}

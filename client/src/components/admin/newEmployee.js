@@ -55,7 +55,7 @@ export default function AdminNewEmployee() {
   };
 
   const renderEmployeeForm = () => (
-    <div className="grid2">
+    <div className="grid">
       <form
         onSubmit={handleSubmit}
         className="xs12 s10-offset-1 m8-offset-2 l6-offset-3"

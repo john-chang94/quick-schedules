@@ -174,18 +174,24 @@ export default function UserProfile() {
     )
 
     useEffect(() => {
+        let isMounted = true;
         async function fetchData() {
             const user = await getUser(verifiedUser.u_id);
-            setUid(user.u_id);
-            setUser(user);
-            setFirstName(user.first_name);
-            setLastName(user.last_name);
-            setEmail(user.email);
-            setPhone(user.phone);
-            setIsLoading(false);
+            
+            if (user && isMounted) {
+                setUid(user.u_id);
+                setUser(user);
+                setFirstName(user.first_name);
+                setLastName(user.last_name);
+                setEmail(user.email);
+                setPhone(user.phone);
+                setIsLoading(false);
+            }
         }
 
         fetchData();
+
+        return () => isMounted = false;
     }, [verifiedUser])
 
     return (

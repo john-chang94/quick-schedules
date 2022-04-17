@@ -227,15 +227,21 @@ export default function UserRequests() {
     )
 
     useEffect(() => {
+        let isMounted = true;
         async function fetchData() {
             if (verifiedUser) {
                 const requests = await getRequestsByUserUser(verifiedUser.u_id);
-                setRequests(requests);
-                setIsLoading(false);
+
+                if (requests && isMounted) {
+                    setRequests(requests);
+                    setIsLoading(false);
+                }
             }
         }
 
         fetchData();
+
+        return () => isMounted = false;
     }, [verifiedUser])
 
     return (
@@ -248,7 +254,7 @@ export default function UserRequests() {
                             color='rgb(50, 110, 150)'
                         />
                     </div>
-                    : <div className="grid2">
+                    : <div className="grid">
                         {renderRequests()}
                         {
                             createNewRequest

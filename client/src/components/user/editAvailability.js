@@ -2,7 +2,7 @@ export default function EditAvailability({ day, dayStart, dayEnd, setDayStart, s
     return (
         <div className="w-100 text-center">
             <p className="mt-2">{day}</p>
-            <div className="grid2">
+            <div className="grid">
                 <div className="xs5-offset-1 s4-offset-2 l4-offset-2">
                     <p>From</p>
                     <select value={dayStart} onChange={({ target }) => setDayStart(target.value)}>
