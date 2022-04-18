@@ -1,7 +1,7 @@
 // Add localhost to url in development mode because
 // proxy won't run smoothly (refer to setupProxy.js)
 
-let url;
+let url = "";
 if (process.env.NODE_ENV === "development") {
     url = "http://localhost:5000";
 }
