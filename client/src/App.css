@@ -37,14 +37,12 @@ td {
 
 header {
   height: 60px;
-  /* background-color: rgb(32, 87, 158); */
   display: flex;
   justify-content: flex-end;
   align-items: center;
 }
 
 .navbar {
-  /* background-color: rgb(32, 87, 158); */
   height: 100vh;
 }
 
