@@ -9,13 +9,13 @@ app.use(expressValidator());
 app.use(cors());
 app.use(express.json());
 
-app.use('/', require('./routes/roleRoutes'));
-app.use('/', require('./routes/authRoutes'));
-app.use('/', require('./routes/userRoutes'));
-app.use('/', require('./routes/presetRoutes'));
-app.use('/', require('./routes/shiftRoutes'));
-app.use('/', require('./routes/requestRoutes'));
-app.use('/', require('./routes/storeRoutes'));
+app.use('/api', require('./routes/roleRoutes'));
+app.use('/api', require('./routes/authRoutes'));
+app.use('/api', require('./routes/userRoutes'));
+app.use('/api', require('./routes/presetRoutes'));
+app.use('/api', require('./routes/shiftRoutes'));
+app.use('/api', require('./routes/requestRoutes'));
+app.use('/api', require('./routes/storeRoutes'));
 
 if (process.env.NODE_ENV === 'production') {
     app.use(express.static(path.join(__dirname, 'client/build')));

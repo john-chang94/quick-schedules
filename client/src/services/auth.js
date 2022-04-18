@@ -2,6 +2,8 @@ import axios from 'axios';
 import * as HTTP from "../constants/http";
 
 export const signIn = async (credentials) => {
+    console.log(HTTP.AUTH)
+    console.log(process.env.NODE_ENV)
     try {
         const res = await axios.post(`${HTTP.AUTH}/signin`, credentials);
         return res.data;
