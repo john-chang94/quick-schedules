@@ -1,17 +1,18 @@
 import axios from 'axios';
+import * as HTTP from "../constants/http";
 
 export const signIn = async (credentials) => {
     try {
-        const res = await axios.post('/auth/signin', credentials);
+        const res = await axios.post(`${HTTP.AUTH}/signin`, credentials);
         return res.data;
     } catch (err) {
         return { error: err.response.data };
     }
 }
 
-export const createUser = async (body, tokenConfig) => {
+export const register = async (body, tokenConfig) => {
     try {
-        const res = await axios.post('/auth/register', body, tokenConfig);
+        const res = await axios.post(`${HTTP.AUTH}/register`, body, tokenConfig);
         return res.data;
     } catch (err) {
         return { error: err.response.data };
@@ -20,7 +21,7 @@ export const createUser = async (body, tokenConfig) => {
 
 export const verifyUser = async (tokenConfig) => {
     try {
-        const res = await axios.get('/auth/verify', tokenConfig);
+        const res = await axios.get(`${HTTP.AUTH}/verify`, tokenConfig);
         return res.data;
     } catch (err) {
         return { error: err.response };

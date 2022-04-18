@@ -4,8 +4,7 @@ import { isAuthenticated } from '../../services/auth';
 import Loader from 'react-loader-spinner';
 import EditAvailability from './editAvailability';
 import { editUserAvailability, getUserAvailability } from '../../services/users';
-import { getTimes } from '../../services/presets';
-import { getStoreHours } from '../../services/store';
+import { getStoreHours, getTimes } from '../../services/store';
 
 export default function UserAvailability() {
     const { verifiedUser } = useContext(UserContext);

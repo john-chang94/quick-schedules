@@ -5,7 +5,8 @@ import {
   setStoreHours,
   updateStoreHours,
 } from "../../services/store";
-import { deletePreset, getPresets, getTimes } from "../../services/presets";
+import { deletePreset, getPresets } from "../../services/presets";
+import { getTimes } from "../../services/store";
 import { isAuthenticated } from "../../services/auth";
 
 export default function AdminStore() {

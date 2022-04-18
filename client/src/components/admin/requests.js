@@ -136,9 +136,9 @@ export default function AdminRequests() {
             >
               {request.status}
             </td>
-            <td className="py-1 px-2 text-center">
+            <td className="p-1 text-center">
               <button
-                className={`btn-sm my-1 mx-2 ${
+                className={`btn-sm m-1 ${
                   !isUpdating && "btn-hovered pointer-no-u"
                 }`}
                 onClick={() =>
@@ -149,7 +149,7 @@ export default function AdminRequests() {
                 Approve
               </button>
               <button
-                className={`btn-sm my-1 ${
+                className={`btn-sm m-1 ${
                   !isUpdating && "btn-hovered pointer-no-u"
                 }`}
                 onClick={() =>

@@ -236,39 +236,3 @@ exports.getAllUsersAndAvailability = async (req, res) => {
         return res.status(500).send(err.message);
     }
 }
-
-// Need to fix between dates
-exports.getUserAvailabilityAndRequests = async (req, res) => {
-    try {
-        const { u_id, week_start, week_end } = req.params;
-
-        const result = await client.query(
-            `WITH availability AS (
-                SELECT users.u_id, first_name, last_name, acn, mon, tue, wed, thur, fri, sat, sun
-                FROM roles JOIN users
-                    ON roles.role_id = users.role_id
-                JOIN availability
-                    ON users.u_id = availability.u_id
-                WHERE users.u_id = $1
-            ),
-            requests AS (
-                SELECT requests.u_id, array_agg(requested_date) AS requested_dates
-                FROM requests JOIN request_days
-                    ON requests.r_id = request_days.r_id
-                WHERE requests.u_id = $1
-                    AND requested_date >= $2
-                    AND requested_date <= $3
-                GROUP BY requests.u_id
-            )
-            SELECT a.first_name, a.last_name, a.acn, a.mon, a.tue, a.wed, a.thur,
-                a.fri, a.sat, a.sun, r.requested_dates
-            FROM availability AS a LEFT JOIN requests AS r
-                ON a.u_id = r.u_id`,
-            [u_id, week_start, week_end]
-        )
-
-        res.status(200).json(result.rows[0]);
-    } catch (err) {
-        res.status(500).send(err.message);
-    }
-}

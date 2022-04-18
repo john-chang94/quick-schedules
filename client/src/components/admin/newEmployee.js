@@ -3,7 +3,7 @@ import { Link } from "react-router-dom";
 import * as ROUTES from "../../constants/routes";
 import { isAuthenticated } from "../../services/auth";
 import { getRoles } from "../../services/roles";
-import { createUser } from "../../services/auth";
+import { register } from "../../services/auth";
 
 export default function AdminNewEmployee() {
   const [roles, setRoles] = useState(null);
@@ -35,7 +35,7 @@ export default function AdminNewEmployee() {
       started_at,
     };
 
-    const res = await createUser(body, tokenConfig);
+    const res = await register(body, tokenConfig);
     if (res.error) {
       setError(res.error);
       setIsSubmitting(false);

@@ -36,7 +36,7 @@ exports.isAdmin = async (req, res, next) => {
     next();
 }
 
-exports.createUserValidator = (req, res, next) => {
+exports.registerValidator = (req, res, next) => {
     req.check('first_name', 'First name required').notEmpty();
     req.check('last_name', 'Last name required').notEmpty();
     req.check('email', 'Email required').notEmpty();

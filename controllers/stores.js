@@ -48,3 +48,14 @@ exports.editStoreHours = async (req, res) => {
         res.status(500).send(err.message);
     }
 }
+
+// Get pre-built available time slots
+exports.getTimes = async (req, res) => {
+    try {
+        const times = await client.query('SELECT * FROM times');
+
+        res.status(200).json(times.rows);
+    } catch (err) {
+        res.status(500).send(err.message);
+    }
+}

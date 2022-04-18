@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { isAuthenticated } from '../../services/auth';
-import { createPreset, getPresets, getTimes } from '../../services/presets';
+import { createPreset, getPresets } from '../../services/presets';
+import { getTimes } from '../../services/store';
 import { createShift, getUsersSchedulesByDate, getUsersSchedulesByDateMobile, deleteShift, updateShift, createCopyOfWeeklySchedule, clearWeeklySchedule } from '../../services/shifts';
 import { getUsersAvailabilities } from '../../services/users';
 import { startOfToday, startOfWeek, addWeeks, subWeeks, subMonths, parseISO, format, toDate } from 'date-fns';

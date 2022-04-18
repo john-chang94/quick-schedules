@@ -3,7 +3,7 @@ const client = require('../config/db');
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
 
-exports.createUser = async (req, res) => {
+exports.register = async (req, res) => {
     try {
         let {
             role_id,
