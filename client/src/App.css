@@ -18,7 +18,7 @@ td {
 }
 
 .container-inner {
-  padding: 10px;
+  padding: 15px;
 }
 
 .pointer:hover {
@@ -1210,6 +1210,7 @@ select {
   }
   .container-inner {
     margin-bottom: 10px;
+    padding: 0;
   }
   .container-grid {
     display: grid;
@@ -1304,17 +1305,17 @@ select {
   .users-list > thead > tr > th:nth-child(3) {
     display: none;
   }
-  
   .users-list > thead > tr > th:nth-child(4) {
     display: none;
   }
-  
   .users-list > tbody > tr > td:nth-child(3) {
     display: none;
   }
-  
   .users-list > tbody > tr > td:nth-child(4) {
     display: none;
+  }
+  .employee-container {
+    padding: 10px 15px;
   }
 }
 

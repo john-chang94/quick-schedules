@@ -168,7 +168,7 @@ export default function AdminRequests() {
 
   // Render card layout in mobile view
   const renderRequestsCards = () => (
-    <div className="">
+    <div className="px-2">
       {requests.length ? (
         requests.map((request, r_i) => (
           <div

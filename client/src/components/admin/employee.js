@@ -359,7 +359,7 @@ export default function AdminEmployee() {
   }, [u_id]);
 
   return (
-    <div className="px-2">
+    <div className="employee-container">
       <div>
         <Link to={ROUTES.ADMIN_EMPLOYEES} className="text-no-u black pointer">
           <i className="fas fa-arrow-left"></i> Back
