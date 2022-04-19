@@ -45,7 +45,6 @@ export default function AdminSchedules() {
   // Used for getting time values when saving a shift
   const [shift_start_value, setShiftStartValue] = useState("0 0");
   const [shift_end_value, setShiftEndValue] = useState("0 0");
-  const [level, setLevel] = useState("");
   // Used to render edit shift mode for selected date and employee only
   const [userData, setUserData] = useState(null);
   const [availabilityIndex, setAvailabilityIndex] = useState(null);
@@ -239,7 +238,6 @@ export default function AdminSchedules() {
     setAvailabilityIndex(index);
     setShiftStartValue(startStartValue);
     setShiftEndValue(endStartValue);
-    setLevel(level);
   };
 
   // Get new dates for the week and fetch schedule

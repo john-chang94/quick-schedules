@@ -32,7 +32,13 @@ function App() {
   return (
     <Router>
       <Header />
-      <div className={`relative ${verifiedUser && "container-grid"}`}>
+      <div
+        className={`relative
+        ${
+          verifiedUser && // Use this grid style if signed in
+          "container-grid"
+        }`}
+      >
         <Navbar />
         <div className="container">
           <div className="container-inner">

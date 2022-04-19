@@ -77,7 +77,7 @@ export default function AdminEmployees() {
     // Fetch employees
     async function fetchData() {
       const users = await getUsers();
-      if (users && isMounted) setUsers(users);
+      if (isMounted) setUsers(users);
 
       setIsLoading(false);
     }

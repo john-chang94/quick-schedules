@@ -153,7 +153,7 @@ export default function AdminNewEmployee() {
     let isMounted = true;
     async function fetchData() {
       const roles = await getRoles();
-      if (roles && isMounted) setRoles(roles);
+      if (isMounted) setRoles(roles);
     }
 
     fetchData();

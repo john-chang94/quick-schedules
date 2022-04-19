@@ -232,7 +232,7 @@ export default function UserRequests() {
             if (verifiedUser) {
                 const requests = await getRequestsByUserUser(verifiedUser.u_id);
 
-                if (requests && isMounted) {
+                if (isMounted) {
                     setRequests(requests);
                     setIsLoading(false);
                 }
@@ -245,7 +245,7 @@ export default function UserRequests() {
     }, [verifiedUser])
 
     return (
-        <div className="m-2">
+        <div className="requests-container">
             {
                 isLoading
                     ? <div className="text-center" style={{ marginTop: '70px' }}>

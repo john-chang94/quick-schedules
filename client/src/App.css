@@ -1315,6 +1315,12 @@ select {
   .employee-container {
     padding: 10px 15px;
   }
+  .profile-container {
+    padding: 10px 15px;
+  }
+  .requests-container {
+    padding: 10px 20px;
+  }
 }
 
 @media screen and (max-width: 440px) {

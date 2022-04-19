@@ -229,7 +229,7 @@ export default function AdminStore() {
         setTimes(times);
         setPresets(presets);
         // Set store hours if it exists in db (if not first time)
-        if (store && isMounted) {
+        if (isMounted) {
           setStore(store);
           setStoreOpen(store.store_open);
           setStoreClose(store.store_close);

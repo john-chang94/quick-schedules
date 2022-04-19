@@ -168,7 +168,7 @@ export default function AdminRequests() {
 
   // Render card layout in mobile view
   const renderRequestsCards = () => (
-    <div className="px-2">
+    <>
       {requests.length ? (
         requests.map((request, r_i) => (
           <div
@@ -251,7 +251,7 @@ export default function AdminRequests() {
       ) : (
         <p className="text-center mt-3">None</p>
       )}
-    </div>
+    </>
   );
 
   useEffect(() => {
@@ -270,7 +270,7 @@ export default function AdminRequests() {
   }, []);
 
   return (
-    <div className="mt-4 mx-1">
+    <div className="requests-container">
       {renderFilters()}
       {isLoading ? (
         <div className="text-center" style={{ marginTop: "70px" }}>

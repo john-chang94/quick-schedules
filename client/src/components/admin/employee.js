@@ -339,7 +339,7 @@ export default function AdminEmployee() {
     async function fetchData() {
       const user = await getUser(u_id);
       const roles = await getRoles();
-      if (user && roles && isMounted) {
+      if (isMounted) {
         setUser(user);
         setRoles(roles);
         setFirstName(user.first_name);
