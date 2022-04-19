@@ -10,9 +10,9 @@ export const createShift = async (body, tokenConfig) => {
     }
 }
 
-export const createCopyOfWeeklySchedule = async (body) => {
+export const createCopyOfWeeklySchedule = async (body, tokenConfig) => {
     try {
-        const res = await axios.post(`${HTTP.SHIFTS}/copy`, body);
+        const res = await axios.post(`${HTTP.SHIFTS}/copy`, body, tokenConfig);
         return res.data;
     } catch (err) {
         return { error: err.response.data };

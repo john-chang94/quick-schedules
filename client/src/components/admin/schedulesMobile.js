@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useRef } from "react";
 import { format, toDate, parseISO } from "date-fns";
 import { isAuthenticated } from "../../services/auth";
 import { createShift, updateShift, deleteShift } from "../../services/shifts";
@@ -24,6 +24,7 @@ export default function SchedulesMobile({
   const [shiftEndValue, setShiftEndValue] = useState("");
   const [showAddShift, setShowAddShift] = useState(false);
   const [error, setError] = useState("");
+  const modalRef = useRef();
 
   const handleEditShift = (user, shiftIndex) => {
     // Set specific shift time values to match with times array in the select inputs
@@ -302,8 +303,9 @@ export default function SchedulesMobile({
         timeout={300}
         classNames="modal-fade"
         unmountOnExit
+        nodeRef={modalRef}
       >
-        <div>
+        <div ref={modalRef}>
           <div // Dimmed overlay with active modal
             className="modal-container"
             onClick={() => setShowAddShift(false)}
