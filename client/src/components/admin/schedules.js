@@ -114,16 +114,14 @@ export default function AdminSchedules() {
     // Get hour and minute in INT data type for date object
     const endTimeHour = parseInt(shift_end_value.split(" ")[0]);
     const endTimeMinute = parseInt(shift_end_value.split(" ")[1]);
-    // Create new date objects with year, month, day, hour, minute, and timezone
+    // Create new date objects with year, month, day, hour, minute
     const shift_start = new Date(
       date.getFullYear(),
       date.getMonth(),
       date.getDate(),
       startTimeHour,
       startTimeMinute
-    ).toLocaleString("en-US", {
-      timeZone: Intl.DateTimeFormat().resolvedOptions().timeZone,
-    }); // Local timezone
+    ).toLocaleString();
 
     const shift_end = new Date(
       date.getFullYear(),
@@ -131,14 +129,15 @@ export default function AdminSchedules() {
       date.getDate(),
       endTimeHour,
       endTimeMinute
-    ).toLocaleString("en-US", {
-      timeZone: Intl.DateTimeFormat().resolvedOptions().timeZone,
-    });
+    ).toLocaleString();
 
     const body = { u_id, shift_start, shift_end };
+
     if (s_id) {
+      // Update shift if shift id is provided
       await updateShift(s_id, body, tokenConfig);
     } else {
+      // Create new shift if no shift id is provided
       await createShift(body, tokenConfig);
     }
 

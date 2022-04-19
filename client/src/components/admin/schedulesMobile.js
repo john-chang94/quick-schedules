@@ -60,7 +60,7 @@ export default function SchedulesMobile({
     // Get hour and minute in INT data type for date object
     const endTimeHour = parseInt(shiftEndValue.split(" ")[0]);
     const endTimeMinute = parseInt(shiftEndValue.split(" ")[1]);
-    // Create new date objects with year, month, day, hour, minute, and timezone
+    // Create new date objects with year, month, day, hour, minute
     const shift_start = toDate(
       new Date(
         newDate.getFullYear(),
@@ -69,9 +69,7 @@ export default function SchedulesMobile({
         startTimeHour,
         startTimeMinute
       )
-    ).toLocaleString("en-US", {
-      timeZone: Intl.DateTimeFormat().resolvedOptions().timeZone,
-    }); // Local timezone
+    ).toLocaleString();
 
     const shift_end = toDate(
       new Date(
@@ -81,9 +79,7 @@ export default function SchedulesMobile({
         endTimeHour,
         endTimeMinute
       )
-    ).toLocaleString("en-US", {
-      timeZone: Intl.DateTimeFormat().resolvedOptions().timeZone,
-    });
+    ).toLocaleString();
 
     const body = { u_id, shift_start, shift_end };
     await createShift(body, tokenConfig);
@@ -107,7 +103,7 @@ export default function SchedulesMobile({
     // Get hour and minute in INT data type for date object
     const endTimeHour = parseInt(shiftEndValue.split(" ")[0]);
     const endTimeMinute = parseInt(shiftEndValue.split(" ")[1]);
-    // Create new date objects with year, month, day, hour, minute, and timezone
+    // Create new date objects with year, month, day, hour, minute
     const shift_start = toDate(
       new Date(
         date.getFullYear(),
@@ -157,6 +153,7 @@ export default function SchedulesMobile({
   };
 
   const handleSelectPreset = (shiftValue) => {
+    // Cancel if user clicks on default value 'select'
     if (!shiftValue) return;
     setShiftStartValue(shiftValue.split("-")[0]);
     setShiftEndValue(shiftValue.split("-")[1]);
