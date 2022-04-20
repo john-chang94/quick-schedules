@@ -170,9 +170,9 @@ export default function SchedulesMobile({
   const renderShift = (user, shiftIndex) => (
     <div className="p-1" onClick={() => handleEditShift(user, shiftIndex)}>
       <p>
-        {new Date(user.shift_start).toLocaleTimeString().replace(":00 ", " ")}{" "}
+        {new Date(user.shift_start).toString()}{" "}
         -&nbsp;
-        {new Date(user.shift_end).toLocaleTimeString().replace(":00 ", " ")}
+        {new Date(user.shift_end).toTimeString()}
       </p>
       <p>
         <strong>

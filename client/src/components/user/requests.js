@@ -106,7 +106,7 @@ export default function UserRequests() {
       <p>Select date</p>
       <input
         type="date"
-        value={dates[index] !== undefined ? dates[index] : ""}
+        value={dates[index] !== undefined && dates[index]}
         onChange={({ target }) => handleAddDate(index, target.value)}
       />
     </div>
@@ -118,7 +118,7 @@ export default function UserRequests() {
       <p>Select date</p>
       <input
         type="date"
-        value={dates[index] !== undefined ? dates[index] : ""}
+        value={dates[index] !== undefined && dates[index]}
         onChange={({ target }) => handleAddDate(index, target.value)}
       />
       <button
