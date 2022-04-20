@@ -112,9 +112,7 @@ export default function SchedulesMobile({
         startTimeHour,
         startTimeMinute
       )
-    ).toLocaleString("en-US", {
-      timeZone: Intl.DateTimeFormat().resolvedOptions().timeZone,
-    }); // Local timezone
+    ).toLocaleString();
 
     const shift_end = toDate(
       new Date(
@@ -124,10 +122,7 @@ export default function SchedulesMobile({
         endTimeHour,
         endTimeMinute
       )
-    ).toLocaleString("en-US", {
-      timeZone: Intl.DateTimeFormat().resolvedOptions().timeZone,
-    });
-
+    ).toLocaleString();
     const body = { u_id, shift_start, shift_end };
     await updateShift(s_id, body, tokenConfig);
 
@@ -167,12 +162,34 @@ export default function SchedulesMobile({
     setShowAddShift(false);
   };
 
+  const getDay = (shift) => {
+    let day = new Date(shift).toDateString().split(" ")[0];
+    return day.toString();
+  };
+  
+  const getDay2 = (shift) => {
+    let day = "";
+    day = day + new Date(shift).toDateString().split(" ")[2];
+    return day;
+  };
+  
+  const getTime = (shift) => {
+    let time = new Date(shift).toLocaleTimeString().replace(":00 ", " ")
+    return time.toString();
+  };
+
+  const getTime2 = (shift) => {
+    let time = "";
+    time = time + new Date(shift).toLocaleTimeString().replace(":00 ", " ")
+    return time;
+  };
+
   const renderShift = (user, shiftIndex) => (
     <div className="p-1" onClick={() => handleEditShift(user, shiftIndex)}>
       <p>
-        {new Date(user.shift_start).toString()}{" "}
+        {getTime(user.shift_start)}{" "}
         -&nbsp;
-        {new Date(user.shift_end).toTimeString()}
+        {getTime2(user.shift_end)}
       </p>
       <p>
         <strong>
@@ -442,12 +459,12 @@ export default function SchedulesMobile({
               >
                 <p>
                   <strong>
-                    {new Date(user.shift_start).toDateString().split(" ")[0]}
+                    {getDay(user.shift_start)}
                   </strong>
                 </p>
                 <p>
                   <strong>
-                    {new Date(user.shift_start).toDateString().split(" ")[2]}
+                    {getDay2(user.shift_start)}
                   </strong>
                 </p>
               </div>
