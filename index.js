@@ -4,6 +4,7 @@ const app = express();
 const path = require("path");
 const cors = require("cors");
 const expressValidator = require("express-validator");
+const fs = require("fs");
 
 app.use(expressValidator());
 app.use(cors());
@@ -21,9 +22,14 @@ if (process.env.NODE_ENV === "production") {
   app.use(express.static(path.join(__dirname, "client/build")));
 
   app.get("*", (req, res) => {
-    res.sendFile(path.join(__dirname, "client/build", "index.html"));
+    res.sendFile(path.join(__dirname, "/client/build", "index.html"));
   });
-  console.log(__dirname + "client")
+  
+  if (fs.existsSync(path.join(__dirname, "client/build"))) {
+    console.log('exists');
+  } else {
+    console.log('does not exist')
+  }
 }
 
 const PORT = process.env.PORT || 80;
