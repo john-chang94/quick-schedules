@@ -18,6 +18,7 @@ app.use("/api", require("./routes/requestRoutes"));
 app.use("/api", require("./routes/storeRoutes"));
 
 if (process.env.NODE_ENV === "production") {
+  app.use(express.static(__dirname));
   app.use(express.static(path.join(__dirname, "client/build")));
 
   app.get("*", (req, res) => {
