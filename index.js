@@ -22,11 +22,12 @@ if (process.env.NODE_ENV === "production") {
   app.use(express.static(path.join(__dirname, "client/build")));
 
   app.get("*", (req, res) => {
-    res.sendFile(path.join(__dirname, "/client/build", "index.html"));
+    res.sendFile(path.join(__dirname, "client/build", "index.html"));
   });
   
   if (fs.existsSync(path.join(__dirname, "client/build"))) {
     console.log('exists');
+    console.log(path.join(__dirname, "client/build"))
   } else {
     console.log('does not exist')
   }
