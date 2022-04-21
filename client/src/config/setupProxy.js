@@ -7,7 +7,7 @@ if (process.env.NODE_ENV === "development") {
             app.use(
                 ["/api"],
                 createProxyMiddleware({
-                    target: process.env.LOCAL_NETWORK_ADDRESS,
+                    target: process.env.REACT_APP_LOCAL_NETWORK_ADDRESS,
                 })
             );
         };
