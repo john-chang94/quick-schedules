@@ -17,6 +17,13 @@ app.use('/api', require('./routes/shiftRoutes'));
 app.use('/api', require('./routes/requestRoutes'));
 app.use('/api', require('./routes/storeRoutes'));
 
+
+// NOTE - ngrok http http://localhost:5000
+// app.use(express.static(path.join(__dirname, './client/build')));
+// app.get('*', (req, res) => {
+//     res.sendFile(path.join(__dirname, './client/build', 'index.html'));
+// })
+
 if (process.env.NODE_ENV === 'production') {
     app.use(express.static(path.join(__dirname, 'client/build')));
     
@@ -25,5 +32,6 @@ if (process.env.NODE_ENV === 'production') {
     })
 }
 
-const PORT = process.env.PORT || 5000;
-app.listen(PORT, () => console.log(`Server is running on port: ${PORT}`));
+const PORT = process.env.PORT || 8080;
+// app.listen(PORT, () => console.log(`Server is running on port: ${PORT}`));
+app.listen(PORT, process.env.IP, () => console.log(`Server is running on port: 80`));

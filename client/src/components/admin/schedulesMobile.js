@@ -163,33 +163,22 @@ export default function SchedulesMobile({
   };
 
   const getDay = (shift) => {
-    let day = new Date(shift).toDateString().split(" ")[0];
-    return day.toString();
-  };
-  
-  const getDay2 = (shift) => {
-    let day = "";
-    day = day + new Date(shift).toDateString().split(" ")[2];
-    return day;
-  };
-  
-  const getTime = (shift) => {
-    let time = new Date(shift).toLocaleTimeString().replace(":00 ", " ")
-    return time.toString();
+    return new Date(shift).toDateString().split(" ")[0];
   };
 
-  const getTime2 = (shift) => {
-    let time = "";
-    time = time + new Date(shift).toLocaleTimeString().replace(":00 ", " ")
-    return time;
+  const getDate = (shift) => {
+    return new Date(shift).toDateString().split(" ")[2];
+  };
+
+  const getTime = (shift) => {
+    return new Date(shift).toLocaleTimeString().replace(":00 ", " ");
   };
 
   const renderShift = (user, shiftIndex) => (
     <div className="p-1" onClick={() => handleEditShift(user, shiftIndex)}>
       <p>
-        {getTime(user.shift_start)}{" "}
-        -&nbsp;
-        {getTime2(user.shift_end)}
+        {getTime(user.shift_start)} -&nbsp;
+        {getTime(user.shift_end)}
       </p>
       <p>
         <strong>
@@ -458,14 +447,10 @@ export default function SchedulesMobile({
                 style={{ width: "20%" }}
               >
                 <p>
-                  <strong>
-                    {getDay(user.shift_start)}
-                  </strong>
+                  <strong>{getDay(user.shift_start)}</strong>
                 </p>
                 <p>
-                  <strong>
-                    {getDay2(user.shift_start)}
-                  </strong>
+                  <strong>{getDate(user.shift_start)}</strong>
                 </p>
               </div>
               <div className="w-80 border-solid-1">

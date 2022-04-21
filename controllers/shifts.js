@@ -340,6 +340,7 @@ exports.getAllUsersSchedulesByDateMobile = async (req, res) => {
         // will be rendered incorrectly in FE when creating a new date object.
         // The query above returns '2022-02-18T07:00:00' for some reason and
         // the query below returns '2022-02-18T07:00:00.000Z', they are different!
+        // (NOTE - removed SPLIT_PART and is working fine now..)
         const data = await client.query(
             `WITH users AS (
                 SELECT u_id, first_name, last_name, title, acn, level
@@ -353,8 +354,7 @@ exports.getAllUsersSchedulesByDateMobile = async (req, res) => {
                     AND shift_start::date <= $2
             )
             SELECT u.u_id, u.first_name, u.last_name, u.title, u.acn, u.level, s.s_id,
-            SPLIT_PART(s.shift_start::TEXT, '.', 1) AS shift_start,
-            SPLIT_PART(s.shift_end::TEXT, '.', 1) AS shift_end
+            s.shift_start, s.shift_end
             FROM users AS u
             JOIN shifts AS s
                 ON u.u_id = s.u_id
