@@ -39,7 +39,7 @@ export default function UserSchedules() {
 
   const getTime = (shift) => {
     // Dates are being calculated differently in heroku..
-    if (process.env.NOVE_ENV === "production") {
+    if (process.env.NODE_ENV === "production") {
       return addHours(new Date(shift), 7)
         .toLocaleTimeString()
         .replace(":00 ", " ");
@@ -183,12 +183,6 @@ export default function UserSchedules() {
         setUsers(users);
         setUsersMobile(usersMobile);
         setIsLoading(false);
-        console.log(users)
-        console.log(usersMobile)
-        console.log("ORIGINAL", new Date(users[0].shifts[0].shift_start).toLocaleTimeString().replace(":00 ", " "))
-        console.log("ORIGINAL", new Date(users[0].shifts[0].shift_end).toLocaleTimeString().replace(":00 ", " "))
-        console.log("ADD HOURS", addHours(new Date(users[0].shifts[0].shift_start), 7).toLocaleTimeString().replace(":00 ", " "))
-        console.log("ADD HOURS", addHours(new Date(users[0].shifts[0].shift_end), 7).toLocaleTimeString().replace(":00 ", " "))
       }
     }
 
