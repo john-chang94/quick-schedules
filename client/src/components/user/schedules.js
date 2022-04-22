@@ -39,13 +39,13 @@ export default function UserSchedules() {
 
   const getTime = (shift) => {
     // Dates are being calculated differently in heroku..
-    if (process.env.NODE_ENV === "production") {
-      return addHours(new Date(shift), 7)
-        .toLocaleTimeString()
-        .replace(":00 ", " ");
-    } else {
-      return new Date(shift).toLocaleTimeString().replace(":00 ", " ");
-    }
+    // if (process.env.NODE_ENV === "production") {
+    //   return addHours(new Date(shift), 7)
+    //     .toLocaleTimeString()
+    //     .replace(":00 ", " ");
+    // } else {
+    return new Date(shift).toLocaleTimeString().replace(":00 ", " ");
+    // }
   };
 
   const renderBlank = (a_i, time) => (
@@ -148,7 +148,7 @@ export default function UserSchedules() {
                     {new Date(user.shift_start)
                       .toLocaleTimeString()
                       .replace(":00 ", " ")}{" "}
-                    -
+                    -{" "}
                     {new Date(user.shift_end)
                       .toLocaleTimeString()
                       .replace(":00 ", " ")}
@@ -175,7 +175,11 @@ export default function UserSchedules() {
     async function fetchData() {
       const days = await getDatesOfTheWeek();
       const users = await getUsersSchedulesByDate(days[0], days[6]);
+      console.log(users);
       let usersMobile = await getUsersSchedulesByDateMobile(days[0], days[6]);
+      console.log(usersMobile);
+      console.log(new Date(usersMobile[0].shift_start).toLocaleTimeString());
+      console.log(new Date(usersMobile[0].shift_end).toLocaleTimeString());
       usersMobile = handleSortUsersMobile(usersMobile, days);
 
       if (isMounted) {

@@ -1,4 +1,6 @@
 const client = require('../config/db');
+// import { addHours } from "date-fns";
+const { addHours } = require("date-fns");
 
 exports.createShift = async (req, res) => {
     try {
@@ -361,6 +363,13 @@ exports.getAllUsersSchedulesByDateMobile = async (req, res) => {
             ORDER BY s.shift_start`,
             [start_date, end_date]
         )
+
+        if (process.env.NODE_ENV === "production") {
+            for (let shift of data.rows) {
+                shift.shift_start = addHours(new Date(shift.shift_start), 8);
+                shift.shift_end = addHours(new Date(shift.shift_end), 8);
+            }
+        }
 
         // if (!data.rows.length) return res.status(404).send("No records found");
 

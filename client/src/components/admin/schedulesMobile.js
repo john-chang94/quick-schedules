@@ -172,13 +172,13 @@ export default function SchedulesMobile({
 
   const getTime = (shift) => {
     // Dates are being calculated differently in heroku..
-    if (process.env.NODE_ENV === "production") {
-      return addHours(new Date(shift), 7)
-        .toLocaleTimeString()
-        .replace(":00 ", " ");
-    } else {
+    // if (process.env.NODE_ENV === "production") {
+    //   return addHours(new Date(shift), 7)
+    //     .toLocaleTimeString()
+    //     .replace(":00 ", " ");
+    // } else {
       return new Date(shift).toLocaleTimeString().replace(":00 ", " ");
-    }
+    // }
   };
 
   const renderShift = (user, shiftIndex) => (
