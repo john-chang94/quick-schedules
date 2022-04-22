@@ -25,10 +25,10 @@ if (process.env.NODE_ENV === "production") {
   });
 }
 
-const PORT = process.env.PORT || 80;
+const PORT = process.env.PORT || 8080;
 if (process.env.NODE_ENV === "development") {
   app.listen(PORT, process.env.IP, () =>
-    console.log(`Server is running on port: 80`)
+    console.log(`Server is running on port: 8080`)
   );
 } else {
   app.listen(PORT, () =>
