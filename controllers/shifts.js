@@ -117,7 +117,7 @@ exports.getShiftsByUser = async (req, res) => {
     }
 }
 
-// Unused for now
+// UNUSED FOR NOW, keeping for reference of horrendous approach from the start
 exports.getShiftsByDate = async (req, res) => {
     try {
         const { start_date, end_date } = req.params;
@@ -342,7 +342,9 @@ exports.getAllUsersSchedulesByDateMobile = async (req, res) => {
         // will be rendered incorrectly in FE when creating a new date object.
         // The query above returns '2022-02-18T07:00:00' for some reason and
         // the query below returns '2022-02-18T07:00:00.000Z', they are different!
-        // (NOTE - removed SPLIT_PART works in DEVELOPMENT but not HEROKU.. temp fix in FE)
+        // NOTE!! - had to remove SPLIT_PART because dates are INVALID on iOS
+        // but now causes time accuracy issues with the '.000Z' on HEROKU ONLY :(
+        // Development and production local work fine.. (temp fix below).
         const data = await client.query(
             `WITH users AS (
                 SELECT u_id, first_name, last_name, title, acn, level
@@ -364,14 +366,15 @@ exports.getAllUsersSchedulesByDateMobile = async (req, res) => {
             [start_date, end_date]
         )
 
+        // Add timezone difference when served from heroku to render correct times
         if (process.env.NODE_ENV === "production") {
             for (let shift of data.rows) {
-                shift.shift_start = addHours(new Date(shift.shift_start), 8);
-                shift.shift_end = addHours(new Date(shift.shift_end), 8);
+                shift.shift_start = addHours(new Date(shift.shift_start), 7);
+                shift.shift_end = addHours(new Date(shift.shift_end), 7);
             }
         }
 
-        // if (!data.rows.length) return res.status(404).send("No records found");
+        if (!data.rows.length) return res.status(404).send("No records found");
 
         res.status(200).json(data.rows);
 
