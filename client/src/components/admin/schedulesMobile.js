@@ -1,5 +1,5 @@
 import React, { useState, useRef } from "react";
-import { format, toDate, parseISO } from "date-fns";
+import { format, toDate, parseISO, addHours } from "date-fns";
 import { isAuthenticated } from "../../services/auth";
 import { createShift, updateShift, deleteShift } from "../../services/shifts";
 import Loader from "react-loader-spinner";
@@ -171,7 +171,12 @@ export default function SchedulesMobile({
   };
 
   const getTime = (shift) => {
-    return new Date(shift).toLocaleTimeString().replace(":00 ", " ");
+    // Dates are being calculated differently in heroku..
+    if (process.env.NOVE_ENV === "production") {
+      return addHours(new Date(shift), 7).toLocaleTimeString().replace(":00 ", " ");
+    } else {
+      return new Date(shift).toLocaleTimeString().replace(":00 ", " ");
+    }
   };
 
   const renderShift = (user, shiftIndex) => (

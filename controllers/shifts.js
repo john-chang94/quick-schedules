@@ -340,7 +340,7 @@ exports.getAllUsersSchedulesByDateMobile = async (req, res) => {
         // will be rendered incorrectly in FE when creating a new date object.
         // The query above returns '2022-02-18T07:00:00' for some reason and
         // the query below returns '2022-02-18T07:00:00.000Z', they are different!
-        // (NOTE - removed SPLIT_PART and is working fine now..)
+        // (NOTE - removed SPLIT_PART works in DEVELOPMENT but not HEROKU.. temp fix in FE)
         const data = await client.query(
             `WITH users AS (
                 SELECT u_id, first_name, last_name, title, acn, level
