@@ -1,6 +1,5 @@
-// Add localhost to url in development mode because
-// proxy won't run smoothly (refer to setupProxy.js)
-
+// Set domain to local network IP and match server port
+// during development to prevent CORS issues
 let url = "";
 if (process.env.NODE_ENV === "development") {
     url = process.env.REACT_APP_LOCAL_NETWORK_ADDRESS;

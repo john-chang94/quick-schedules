@@ -27,6 +27,8 @@ if (process.env.NODE_ENV === "production") {
 
 const PORT = process.env.PORT || 8080;
 if (process.env.NODE_ENV === "development") {
+  // Add IP so other devices can access during
+  // development without CORS issues
   app.listen(PORT, process.env.IP, () =>
     console.log(`Server is running on port: 8080`)
   );
