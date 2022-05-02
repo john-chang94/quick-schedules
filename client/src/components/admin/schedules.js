@@ -417,6 +417,7 @@ export default function AdminSchedules() {
     ></td>
   );
 
+  // Render new shift or edit existing
   const renderEditShift = (u_id, dayIndex, shift) => (
     <td key={dayIndex} className="bg-blue-grey-lighten-5">
       <div className="flex justify-evenly mt-1">
@@ -490,19 +491,19 @@ export default function AdminSchedules() {
         <div className="my-1">
           <Loader type="ThreeDots" color="rgb(50, 110, 150)" height={12} />
         </div>
-      ) : (
+      ) : ( // Render action buttons with icons
         <div className="my-2 w-100 flex justify-evenly">
           <div
             className="p-1 w-100 pointer hovered border-solid-1 bg-white"
             onClick={() => handleSaveShift(u_id, dayIndex, shift.s_id)}
           >
-            <i className="fas fa-check schedules-text"></i>
+            <i className="fas fa-check schedules-text" />
           </div>
           <div
             className="p-1 w-100 pointer hovered border-solid-1 bg-white"
             onClick={() => handleSavePreset()}
           >
-            <i className="fas fa-star schedules-text"></i>
+            <i className="fas fa-star schedules-text" />
           </div>
           <div
             className="p-1 w-100 pointer hovered border-solid-1 bg-white"
@@ -511,11 +512,11 @@ export default function AdminSchedules() {
             }
           >
             {shift.shift_end === null ? (
-              // Render X icon to close if new shift
-              <i className="fas fa-times schedules-text"></i>
+              // Render X to close if new shift
+              <i className="fas fa-times schedules-text" />
             ) : (
-              // Or render trash icon to delete if editing shift
-              <i className="fas fa-trash-alt schedules-text"></i>
+              // Or render trash to delete if existing shift
+              <i className="fas fa-trash-alt schedules-text" />
             )}
           </div>
         </div>
@@ -583,7 +584,7 @@ export default function AdminSchedules() {
         <div className="pointer" onClick={() => handlePreviousWeek()}>
           <em className="text-3">Prev&nbsp;week</em>
           <p>
-            <i className="fas fa-angle-double-left"></i>
+            <i className="fas fa-angle-double-left" />
           </p>
         </div>
         <div id="controller-date" className="relative">
@@ -598,7 +599,7 @@ export default function AdminSchedules() {
         <div className="pointer" onClick={() => handleNextWeek()}>
           <em className="text-3">Next&nbsp;week</em>
           <p>
-            <i className="fas fa-angle-double-right"></i>
+            <i className="fas fa-angle-double-right" />
           </p>
         </div>
       </div>
@@ -757,7 +758,6 @@ export default function AdminSchedules() {
             times={times}
             store={store}
             presets={presets}
-            getTime={getTime}
             getTimeValue={getTimeValue}
             handleFetchSchedule={handleFetchSchedule}
           />

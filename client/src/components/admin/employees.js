@@ -7,7 +7,7 @@ import Loader from "react-loader-spinner";
 export default function AdminEmployees() {
   const history = useHistory();
   const [users, setUsers] = useState(null);
-  const [width, setWidth] = useState(null);
+  const [width, setWidth] = useState(window.innerWidth);
   const [isLoading, setIsLoading] = useState(true);
 
   const handleClickUser = (u_id) => {
@@ -33,10 +33,10 @@ export default function AdminEmployees() {
         <table className="users-list border-collapse w-100 text-center">
           <thead>
             <tr>
-              <th className="p-3">Role</th>
-              <th className="p-3">Name</th>
-              <th className="p-3">Email</th>
-              <th className="p-3">Phone</th>
+              <th className="p-3 border-solid-1">Role</th>
+              <th className="p-3 border-solid-1">Name</th>
+              <th className="p-3 border-solid-1">Email</th>
+              <th className="p-3 border-solid-1">Phone</th>
             </tr>
           </thead>
           <tbody>
@@ -69,8 +69,6 @@ export default function AdminEmployees() {
   useEffect(() => {
     let isMounted = true;
 
-    // Set default width on page load
-    setWidth(window.innerWidth);
     // Listen for window width change
     window.addEventListener("resize", setWindowWidth);
 
