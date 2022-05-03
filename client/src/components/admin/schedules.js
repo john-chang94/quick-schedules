@@ -39,6 +39,9 @@ export default function AdminSchedules() {
   const [isLoading, setIsLoading] = useState(true);
   const [isUpdating, setIsUpdating] = useState(false);
   const [isModifying, setIsModifying] = useState(false);
+  const [showConfirmTooltip, setShowConfirmTooltip] = useState(false);
+  const [showPresetTooltip, setShowPresetTooltip] = useState(false);
+  const [showDynamicTooltip, setShowDynamicTooltip] = useState(false);
 
   // Used for datepicker
   const [dateISO, setDateISO] = useState(format(startOfToday(), "yyyy-MM-dd"));
@@ -146,6 +149,7 @@ export default function AdminSchedules() {
 
     setUserData("");
     setAvailabilityIndex("");
+    setShowConfirmTooltip(false);
     setIsUpdating(false);
   };
 
@@ -216,6 +220,7 @@ export default function AdminSchedules() {
   const handleCancelShift = () => {
     setUserData("");
     setAvailabilityIndex("");
+    setShowDynamicTooltip(false);
   };
 
   // Render edit shift (new)
@@ -240,7 +245,7 @@ export default function AdminSchedules() {
   };
 
   // Get new dates for the week and fetch schedule
-  const handleDateSelector = async (date) => {
+  const handleDatePicker = async (date) => {
     const days = await getDatesOfTheWeek(date);
     const users = await getUsersSchedulesByDate(days[0], days[6]);
     const requests = await getRequestsByStatusAndDate(
@@ -372,6 +377,7 @@ export default function AdminSchedules() {
       await handleFetchSchedule();
       setUserData("");
       setAvailabilityIndex("");
+      setShowDynamicTooltip(false);
       setIsUpdating(false);
     }
   };
@@ -491,40 +497,73 @@ export default function AdminSchedules() {
         <div className="my-1">
           <Loader type="ThreeDots" color="rgb(50, 110, 150)" height={12} />
         </div>
-      ) : ( // Render action buttons with icons
+      ) : (
+        // Render action buttons with icons
         <div className="my-2 w-100 flex justify-evenly">
           <div
-            className="p-1 w-100 pointer hovered border-solid-1 bg-white"
+            style={{ minHeight: "25px" }}
+            className="w-100 pointer-no-u hovered border-solid-1 bg-white relative flex flex-center"
             onClick={() => handleSaveShift(u_id, dayIndex, shift.s_id)}
           >
-            <i className="fas fa-check schedules-text" />
+            <span // Tooltip
+              className={`tooltip ${
+                showConfirmTooltip && "tooltip-open tooltip-mt-1"
+              }`}
+            >
+              Confirm
+            </span>
+            <i
+              className="fas fa-check schedules-text p-1"
+              onMouseEnter={() => setShowConfirmTooltip(true)}
+              onMouseLeave={() => setShowConfirmTooltip(false)}
+            />
           </div>
           <div
-            className="p-1 w-100 pointer hovered border-solid-1 bg-white"
+            style={{ minHeight: "25px" }}
+            className="w-100 pointer-no-u hovered border-solid-1 bg-white relative flex flex-center"
             onClick={() => handleSavePreset()}
           >
-            <i className="fas fa-star schedules-text" />
+            <span // Tooltip
+              className={`tooltip ${
+                showPresetTooltip && "tooltip-open tooltip-mt-2"
+              }`}
+            >
+              Save preset
+            </span>
+            <i
+              className="fas fa-star schedules-text p-1"
+              onMouseEnter={() => setShowPresetTooltip(true)}
+              onMouseLeave={() => setShowPresetTooltip(false)}
+            />
           </div>
           <div
-            className="p-1 w-100 pointer hovered border-solid-1 bg-white"
+            style={{ minHeight: "25px" }}
+            className="w-100 pointer-no-u hovered border-solid-1 bg-white relative flex flex-center"
             onClick={() =>
               shift.s_id ? handleRemoveShift(shift.s_id) : handleCancelShift()
             }
           >
-            {shift.shift_end === null ? (
-              // Render X to close if new shift
-              <i className="fas fa-times schedules-text" />
-            ) : (
-              // Or render trash to delete if existing shift
-              <i className="fas fa-trash-alt schedules-text" />
-            )}
+            <span // Tooltip
+              className={`tooltip ${
+                showDynamicTooltip && "tooltip-open tooltip-mt-1"
+              }`}
+            >
+              {shift.shift_end ? "Remove" : "Close"}
+            </span>
+            <i
+              className={`fas ${ // Render appropriate icon based on shift existing or not
+                shift.shift_end === null ? "fa-times" : "fa-trash-alt"
+              } schedules-text p-1`}
+              onMouseEnter={() => setShowDynamicTooltip(true)}
+              onMouseLeave={() => setShowDynamicTooltip(false)}
+            />
           </div>
         </div>
       )}
     </td>
   );
 
-  const RenderAvailability = () => (
+  const renderAvailability = () => (
     <div className="availability">
       <h3 className="text-center">Availability</h3>
       <table className="border-collapse w-100 text-center schedules-text">
@@ -578,7 +617,7 @@ export default function AdminSchedules() {
     </div>
   );
 
-  const RenderController = () => (
+  const renderController = () => (
     <div className="schedules-controller">
       <div className="select-week">
         <div className="pointer" onClick={() => handlePreviousWeek()}>
@@ -592,7 +631,7 @@ export default function AdminSchedules() {
             type="date"
             className="border-solid-1 border-smooth"
             value={dateISO} // Datepicker must be yyyy-mm-dd format
-            onChange={({ target }) => handleDateSelector(target.value)}
+            onChange={({ target }) => handleDatePicker(target.value)}
           />
           <div className="absolute">&nbsp;</div>
         </div>
@@ -649,7 +688,7 @@ export default function AdminSchedules() {
     </div>
   );
 
-  const RenderSchedule = () =>
+  const renderSchedule = () =>
     isLoading ? (
       <div className="text-center" style={{ marginTop: "70px" }}>
         <Loader type="Oval" color="rgb(50, 110, 150)" />
@@ -748,9 +787,9 @@ export default function AdminSchedules() {
         </div>
       ) : (
         <div>
-          <RenderController />
-          <RenderSchedule />
-          <RenderAvailability />
+          {renderController()}
+          {renderSchedule()}
+          {renderAvailability()}
           <SchedulesMobile
             usersMobile={usersMobile}
             users={users}

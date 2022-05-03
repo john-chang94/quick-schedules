@@ -16,7 +16,7 @@ exports.addStoreHours = async (req, res) => {
     try {
         const { store_open, store_close, store_open_value, store_close_value, store_open_level, store_close_level } = req.body;
 
-        const storeHours = await client.query(
+        await client.query(
             `INSERT INTO store (store_open, store_close, store_open_value, store_close_value, store_open_level, store_close_level)
             VALUES ($1, $2, $3, $4, $5, $6)`,
             [store_open, store_close, store_open_value, store_close_value, store_open_level, store_close_level]
@@ -32,7 +32,7 @@ exports.editStoreHours = async (req, res) => {
     try {
         const { store_open, store_close, store_open_value, store_close_value, store_open_level, store_close_level } = req.body;
 
-        const storeHours = await client.query(
+        await client.query(
             `UPDATE store
             SET store_open = $1,
             store_close = $2,

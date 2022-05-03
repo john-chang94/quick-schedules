@@ -78,7 +78,7 @@ exports.getAllRequests = async (req, res) => {
             ORDER BY requested_at DESC`
         );
 
-        // if (!requests.rows.length) return res.status(404).send('No records found');
+        if (!requests.rows.length) return res.status(404).send('No records found');
 
         res.status(200).send(requests.rows);
     } catch (err) {
@@ -110,7 +110,7 @@ exports.getAllRequestsByStatus = async (req, res) => {
             [status]
         );
 
-        // if (!requests.rows.length) return res.status(404).send('No records found');
+        if (!requests.rows.length) return res.status(404).send('No records found');
 
         res.status(200).send(requests.rows);
     } catch (err) {
@@ -145,7 +145,7 @@ exports.getAllRequestsByStatusAndDate = async (req, res) => {
             [status, weekStart, weekEnd]
         )
 
-        // if (!requests.rows.length) return res.status(404).send('No records found');
+        if (!requests.rows.length) return res.status(404).send('No records found');
 
         res.status(200).send(requests.rows);
     } catch (err) {

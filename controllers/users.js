@@ -42,7 +42,7 @@ exports.editUserGeneral = async (req, res) => {
         const { u_id } = req.params;
         const { first_name, last_name, email, phone } = req.body;
 
-        const updatedUser = await client.query(
+        await client.query(
             `UPDATE users
                 SET first_name = $1,
                 last_name = $2,
@@ -101,7 +101,7 @@ exports.editUserSystem = async (req, res) => {
         const { u_id } = req.params;
         const { role_id, hourly_pay, started_at, updated_at } = req.body;
 
-        const user = await client.query(
+        await client.query(
             `UPDATE users
                 SET role_id = $1,
                 hourly_pay = $2,
@@ -124,7 +124,7 @@ exports.deleteUser = async (req, res) => {
         const foundUser = await client.query('SELECT * FROM users WHERE u_id = $1', [u_id]);
         if (!foundUser.rows.length) return res.status(404).send('User does not exist');
 
-        const deletedUser = await client.query('DELETE FROM users WHERE u_id = $1', [u_id]);
+        await client.query('DELETE FROM users WHERE u_id = $1', [u_id]);
 
         res.status(200).json({ success: true });
     } catch (err) {
@@ -136,7 +136,7 @@ exports.addAdvailability = async (req, res) => {
     try {
         const { u_id, day, start_time, end_time, level } = req.body;
 
-        const availability = await client.query(
+        await client.query(
             `INSERT INTO avail (u_id, day, start_time, end_time, level)
             VALUES ($1, $2, $3, $4, $5)`,
             [u_id, day, start_time, end_time, level]
@@ -153,7 +153,7 @@ exports.editAvailability = async (req, res) => {
         const { a_id } = req.params;
         const { u_id, day, start_time, end_time, level } = req.body;
 
-        const availability = await client.query(
+        await client.query(
             `UPDATE avail
                 SET u_id = $1,
                 day = $2,

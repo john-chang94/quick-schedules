@@ -6,7 +6,7 @@ exports.createShift = async (req, res) => {
     try {
         const { u_id, shift_start, shift_end } = req.body;
 
-        const shift = await client.query(
+        await client.query(
             `INSERT INTO shifts (u_id, shift_start, shift_end)
             VALUES ($1, $2, $3)`,
             [u_id, shift_start, shift_end]
@@ -22,7 +22,7 @@ exports.copyWeeklySchedule = async (req, res) => {
     try {
         const { shifts, weekStart, weekEnd } = req.body;
 
-        const deleteShifts = await client.query(
+        await client.query(
             `DELETE FROM shifts
             WHERE shift_start::date >= $1 AND
                 shift_start::date <= $2`,
@@ -30,7 +30,7 @@ exports.copyWeeklySchedule = async (req, res) => {
         )
 
         for (let i = 0; i < shifts.length; i++) {
-            const shift = await client.query(
+            await client.query(
                 `INSERT INTO shifts (u_id, shift_start, shift_end)
                 VALUES ($1, $2, $3)`,
                 [shifts[i].u_id, shifts[i].shift_start, shifts[i].shift_end]
@@ -47,7 +47,7 @@ exports.clearWeeklySchedule = async (req, res) => {
     try {
         const { weekStart, weekEnd } = req.params;
 
-        const deleteShifts = await client.query(
+        await client.query(
             `DELETE FROM shifts
             WHERE shift_start::date >= $1 AND
                 shift_start::date <= $2`,
@@ -65,7 +65,7 @@ exports.editShift = async (req, res) => {
         const { s_id } = req.params;
         const { u_id, shift_start, shift_end, notes } = req.body;
 
-        const shift = await client.query(
+        await client.query(
             `UPDATE shifts
             SET u_id = $1,
                 shift_start = $2,
@@ -88,7 +88,7 @@ exports.deleteShift = async (req, res) => {
         const foundShift = await client.query('SELECT * FROM shifts WHERE s_id = $1', [s_id]);
         if (!foundShift.rows.length) return res.status(404).send('Record does not exist');
 
-        const deletedShift = await client.query('DELETE FROM shifts WHERE s_id = $1', [s_id]);
+        await client.query('DELETE FROM shifts WHERE s_id = $1', [s_id]);
 
         res.status(200).json({ success: true });
     } catch (err) {
@@ -278,6 +278,8 @@ exports.getAllUsersSchedulesByDate = async (req, res) => {
             [start_date, end_date]
         )
 
+        if (!data.rows.length) return res.status(404).send("No records found");
+
         let users = data.rows;
 
         let firstDate = new Date(start_date);
@@ -374,7 +376,7 @@ exports.getAllUsersSchedulesByDateMobile = async (req, res) => {
             }
         }
 
-        // if (!data.rows.length) return res.status(404).send("No records found");
+        if (!data.rows.length) return res.status(404).send("No records found");
 
         res.status(200).json(data.rows);
 
