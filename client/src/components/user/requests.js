@@ -1,4 +1,4 @@
-import { useEffect, useState, useContext } from "react";
+import { useEffect, useState, useContext, useRef } from "react";
 import { UserContext } from "../../contexts/userContext";
 import { isAuthenticated } from "../../services/auth";
 import Loader from "react-loader-spinner";
@@ -8,6 +8,7 @@ import {
   getRequestsByUserUser,
 } from "../../services/requests";
 import { format } from "date-fns";
+import { CSSTransition } from "react-transition-group";
 
 export default function UserRequests() {
   const { verifiedUser } = useContext(UserContext);
@@ -22,6 +23,8 @@ export default function UserRequests() {
   // Keep track of the number of date values to determine
   // how many date selectors are rendered
   const [numOfDateInputs, setNumOfDateInputs] = useState(1);
+  const [showNewRequest, setShowNewRequest] = useState(false);
+  const modalRef = useRef();
 
   const handleDeleteRequest = async (r_id) => {
     const doDelete = window.confirm("Delete request?");
@@ -68,7 +71,7 @@ export default function UserRequests() {
   };
 
   const handleCancelCreateNewRequest = () => {
-    setCreateNewRequest(false);
+    setShowNewRequest(false);
     clearForm();
   };
 
@@ -149,44 +152,60 @@ export default function UserRequests() {
   };
 
   const renderNewRequest = () => (
-    <div className="border-solid-1 border-smooth my-2 flex flex-col align-center text-center xs12 s10-offset-1 m8-offset-2 l6-offset-3">
-      <div className="w-50 sm-w-60">
-        {renderDateElements()}
-        <button
-          className={`btn-sm mb-2 ${
-            dates.length === numOfDateInputs && "btn-hovered"
-          }`}
-          // Disable if next date is not yet selected
-          disabled={dates.length !== numOfDateInputs}
-          onClick={() => setNumOfDateInputs(numOfDateInputs + 1)}
-        >
-          <i className="fas fa-plus"></i>&nbsp;Date
-        </button>
+    <CSSTransition
+      in={showNewRequest}
+      timeout={300}
+      classNames="modal-fade"
+      unmountOnExit
+      nodeRef={modalRef}
+    >
+      <div ref={modalRef}>
+        <div // Dimmed overlay with active modal
+          className="modal-container"
+          onClick={() => setShowNewRequest(false)}
+        ></div>
+        <div className="modal" style={{ backgroundColor: "white" }}>
+          <div className="my-2 flex flex-col align-center text-center">
+            <div style={{ width: "175px" }}>
+              {renderDateElements()}
+              <button
+                className={`btn-sm mb-2 ${
+                  dates.length === numOfDateInputs && "btn-hovered"
+                }`}
+                // Disable if next date is not yet selected
+                disabled={dates.length !== numOfDateInputs}
+                onClick={() => setNumOfDateInputs(numOfDateInputs + 1)}
+              >
+                <i className="fas fa-plus"></i>&nbsp;Date
+              </button>
+            </div>
+            <div style={{ width: "175px" }}>
+              <p>Notes</p>
+              <textarea
+                className="h-10 p-1"
+                onChange={({ target }) => setNotes(target.value)}
+              ></textarea>
+            </div>
+            <div>
+              <button
+                className="btn-med btn-hovered m-3"
+                disabled={isSubmitting}
+                onClick={() => handleCreateRequest()}
+              >
+                Submit
+              </button>
+              <button
+                className="btn-med btn-hovered m-3"
+                disabled={isSubmitting}
+                onClick={() => handleCancelCreateNewRequest()}
+              >
+                Cancel
+              </button>
+            </div>
+          </div>
+        </div>
       </div>
-      <div>
-        <p>Notes</p>
-        <textarea
-          className="h-10 p-1"
-          onChange={({ target }) => setNotes(target.value)}
-        ></textarea>
-      </div>
-      <div>
-        <button
-          className="btn-med btn-hovered m-3"
-          disabled={isSubmitting}
-          onClick={() => handleCreateRequest()}
-        >
-          Submit
-        </button>
-        <button
-          className="btn-med btn-hovered m-3"
-          disabled={isSubmitting}
-          onClick={() => handleCancelCreateNewRequest()}
-        >
-          Cancel
-        </button>
-      </div>
-    </div>
+    </CSSTransition>
   );
 
   // Render table layout in large view
@@ -201,46 +220,47 @@ export default function UserRequests() {
         </tr>
       </thead>
       <tbody>
-        {requests.length && requests.map((request, i) => (
-          <tr
-            key={i}
-            style={
-              i % 2 === 0
-                ? { backgroundColor: "rgb(240, 240, 240)" }
-                : { backgroundColor: "rbg(255, 255, 255)" }
-            }
-          >
-            <td className="py-1 px-2">
-              {request.requested_dates.map((rd, rd_i) => (
-                <span key={rd_i}>
-                  {
-                    // Add commas if more than one date
-                    rd_i === request.requested_dates.length - 1
-                      ? format(new Date(rd), "MM-dd-yyyy")
-                      : `${format(new Date(rd), "MM-dd-yyyy")}, `
-                  }
-                </span>
-              ))}
-            </td>
-            <td className="py-1 px-2">{request.notes}</td>
-            <td className="py-1 px-2 text-center">
-              {format(new Date(request.requested_at), "MM-dd-yyyy")}
-            </td>
-            <td
-              className={
-                request.status === "Pending"
-                  ? "blue py-1 px-2 text-center"
-                  : request.status === "Approved"
-                  ? "green py-1 px-2 text-center"
-                  : request.status === "Denied"
-                  ? "red py-1 px-2 text-center"
-                  : ""
+        {requests.length &&
+          requests.map((request, i) => (
+            <tr
+              key={i}
+              style={
+                i % 2 === 0
+                  ? { backgroundColor: "rgb(240, 240, 240)" }
+                  : { backgroundColor: "rbg(255, 255, 255)" }
               }
             >
-              {request.status}
-            </td>
-          </tr>
-        ))}
+              <td className="py-1 px-2">
+                {request.requested_dates.map((rd, rd_i) => (
+                  <span key={rd_i}>
+                    {
+                      // Add commas if more than one date
+                      rd_i === request.requested_dates.length - 1
+                        ? format(new Date(rd), "MM-dd-yyyy")
+                        : `${format(new Date(rd), "MM-dd-yyyy")}, `
+                    }
+                  </span>
+                ))}
+              </td>
+              <td className="py-1 px-2">{request.notes}</td>
+              <td className="py-1 px-2 text-center">
+                {format(new Date(request.requested_at), "MM-dd-yyyy")}
+              </td>
+              <td
+                className={
+                  request.status === "Pending"
+                    ? "blue py-1 px-2 text-center"
+                    : request.status === "Approved"
+                    ? "green py-1 px-2 text-center"
+                    : request.status === "Denied"
+                    ? "red py-1 px-2 text-center"
+                    : ""
+                }
+              >
+                {request.status}
+              </td>
+            </tr>
+          ))}
       </tbody>
     </table>
   );
@@ -328,28 +348,25 @@ export default function UserRequests() {
   }, [verifiedUser]);
 
   return (
-    <div className="requests-container">
+    <div className="requests-container relative">
       {isLoading ? (
         <div className="text-center" style={{ marginTop: "70px" }}>
           <Loader type="Oval" color="rgb(50, 110, 150)" />
         </div>
       ) : (
-        <div className="w-60 med-w-100">
-          {createNewRequest ? (
-            renderNewRequest()
-          ) : (
-            <div className="my-3 text-center">
-              <button
-                className="btn-lg btn-hovered"
-                onClick={() => setCreateNewRequest(true)}
-              >
-                <p>New Request</p>
-              </button>
-            </div>
-          )}
+        <div className="w-100">
+          {renderNewRequest()}
+          <div className="my-3 text-center">
+            <button
+              className="btn-lg btn-hovered"
+              onClick={() => setShowNewRequest(true)}
+            >
+              <p>New Request</p>
+            </button>
+          </div>
           <div className="mt-5">
-          {renderRequests()}
-          <div className="requests-cards">{renderRequestsCards()}</div>
+            {renderRequests()}
+            <div className="requests-cards">{renderRequestsCards()}</div>
           </div>
         </div>
       )}

@@ -1,4 +1,4 @@
-import { useEffect, useState, useContext } from "react";
+import { useEffect, useState, useContext, useReducer } from "react";
 import { UserContext } from "../../contexts/userContext";
 import { isAuthenticated } from "../../services/auth";
 import Loader from "react-loader-spinner";
@@ -8,6 +8,34 @@ import {
   getUserAvailability,
 } from "../../services/users";
 import { getStoreHours, getTimes } from "../../services/store";
+
+const initialState = {
+  monStart: "",
+  monEnd: "",
+  tueStart: "",
+  tueEnd: "",
+  wedStart: "",
+  wedEnd: "",
+  thurStart: "",
+  thurEnd: "",
+  friStart: "",
+  friEnd: "",
+  satStart: "",
+  satEnd: "",
+  sunStart: "",
+  sunEnd: ""
+};
+
+const reducer = (state, action) => {
+  switch (action.type) {
+    case "setValue":
+      return { ...state, [action.field]: action.value };
+    case "reset":
+      return initialState;
+    default:
+      return initialState;
+  }
+};
 
 export default function UserAvailability() {
   const { verifiedUser } = useContext(UserContext);
@@ -19,6 +47,8 @@ export default function UserAvailability() {
   const [availability, setAvailability] = useState(null);
   const [times, setTimes] = useState(null);
   const [store, setStore] = useState(null);
+
+  const [state, dispatch] = useReducer(reducer, initialState);
 
   const [monStart, setMonStart] = useState("");
   const [monEnd, setMonEnd] = useState("");
@@ -167,12 +197,12 @@ export default function UserAvailability() {
   };
 
   const renderAvailability = () => (
-    <div className="mt-4 grid">
-      <div className="border-solid-1 border-smooth s10-offset-1 l6-offset-3">
+    <div className="">
+      <div className="">
         <div>
           {availability &&
             availability.map((avail, i) => (
-              <div key={i} className="text-center my-2">
+              <div key={i} className="my-2">
                 <p className="my-1">
                   <strong>{avail.day}</strong>
                 </p>
@@ -182,7 +212,7 @@ export default function UserAvailability() {
               </div>
             ))}
         </div>
-        <div className="text-center my-5">
+        <div className="my-5">
           <button
             className="btn-sm btn-hovered"
             onClick={handleShowEditAvailability}
@@ -195,8 +225,8 @@ export default function UserAvailability() {
   );
 
   const renderEditAvailability = () => (
-    <div className="mt-4 grid">
-      <div className="border-solid-1 border-smooth s10-offset-1 l6-offset-3 text-center">
+    <div className="">
+      <div className="w-70 med-w-90">
         {days.map(({ day, dayStart, dayEnd, setDayStart, setDayEnd }, i) => (
           <div key={i}>
             <EditAvailability
@@ -229,7 +259,7 @@ export default function UserAvailability() {
         </div>
 
         {isUpdating && (
-          <div className="text-center my-1">
+          <div className="my-1">
             <Loader type="ThreeDots" height={10} color="rgb(50, 110, 150)" />
           </div>
         )}
@@ -266,11 +296,11 @@ export default function UserAvailability() {
           <Loader type="Oval" color="rgb(50, 110, 150)" />
         </div>
       ) : (
-        <>
+        <div className="availability-container">
           {showEditAvailability
             ? renderEditAvailability()
             : renderAvailability()}
-        </>
+        </div>
       )}
     </>
   );

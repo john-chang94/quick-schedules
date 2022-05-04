@@ -174,7 +174,7 @@ header {
   margin-left: auto;
   margin-top: 50px;
   text-align: center;
-  width: 50%;
+  width: 45%;
   background-color: rgb(240, 240, 240);
 }
 
@@ -1345,6 +1345,9 @@ select {
     padding: 10px 20px;
   }
   .requests-container {
+    padding: 10px 20px;
+  }
+  .availability-container {
     padding: 10px 20px;
   }
 }
