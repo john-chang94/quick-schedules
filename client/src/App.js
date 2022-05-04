@@ -1,6 +1,6 @@
 import "./Colors.css";
 import "./App.css";
-import { BrowserRouter as Router, Switch } from "react-router-dom";
+import { BrowserRouter as Router, Switch, Route } from "react-router-dom";
 import * as ROUTES from "./constants/routes";
 import { useUser } from "./contexts/userContext";
 import "react-loader-spinner/dist/loader/css/react-spinner-loader.css";
@@ -25,6 +25,7 @@ import UserSchedules from "./components/user/schedules";
 import ProtectedRoute from "./helpers/protectedRoute";
 import UserRoute from "./helpers/userRoute";
 import AuthRoute from "./helpers/authRoute";
+import { NotFound } from "./components/notFound";
 
 function App() {
   const { verifiedUser } = useUser();
@@ -108,6 +109,7 @@ function App() {
                 path={ROUTES.USER_PROFILE}
                 component={UserProfile}
               />
+              <Route path="*" component={NotFound} />
             </Switch>
           </div>
         </div>

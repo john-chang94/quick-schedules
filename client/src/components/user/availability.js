@@ -23,7 +23,7 @@ const initialState = {
   satStart: "",
   satEnd: "",
   sunStart: "",
-  sunEnd: ""
+  sunEnd: "",
 };
 
 const reducer = (state, action) => {
@@ -197,73 +197,65 @@ export default function UserAvailability() {
   };
 
   const renderAvailability = () => (
-    <div className="">
-      <div className="">
-        <div>
-          {availability &&
-            availability.map((avail, i) => (
-              <div key={i} className="my-2">
-                <p className="my-1">
-                  <strong>{avail.day}</strong>
-                </p>
-                <p>
-                  {avail.start_time} - {avail.end_time}
-                </p>
-              </div>
-            ))}
-        </div>
-        <div className="my-5">
-          <button
-            className="btn-sm btn-hovered"
-            onClick={handleShowEditAvailability}
-          >
-            Edit
-          </button>
-        </div>
-      </div>
+    <div className="sm-text-center">
+      {availability &&
+        availability.map((avail, i) => (
+          <div key={i} className="my-2">
+            <p className="my-1">
+              <strong>{avail.day}</strong>
+            </p>
+            <p>
+              {avail.start_time} - {avail.end_time}
+            </p>
+          </div>
+        ))}
+      <button
+        className="btn-sm btn-hovered mt-3"
+        onClick={handleShowEditAvailability}
+      >
+        Edit
+      </button>
     </div>
   );
 
   const renderEditAvailability = () => (
-    <div className="">
-      <div className="w-70 med-w-90">
-        {days.map(({ day, dayStart, dayEnd, setDayStart, setDayEnd }, i) => (
-          <div key={i}>
-            <EditAvailability
-              day={day}
-              dayStart={dayStart}
-              dayEnd={dayEnd}
-              setDayStart={setDayStart}
-              setDayEnd={setDayEnd}
-              times={times}
-              store={store}
-            />
-          </div>
-        ))}
-
-        <div className="m-2">
-          <button
-            className={`btn-sm m-2 ${!isUpdating && "btn-hovered"}`}
-            disabled={isUpdating}
-            onClick={() => handleSaveAvailability()}
-          >
-            Save
-          </button>
-          <button
-            className={`btn-sm m-2 ${!isUpdating && "btn-hovered"}`}
-            disabled={isUpdating}
-            onClick={() => setShowEditAvailability(false)}
-          >
-            Cancel
-          </button>
+    <div className="w-50 sm-w-100">
+      {days.map(({ day, dayStart, dayEnd, setDayStart, setDayEnd }, i) => (
+        <div key={i}>
+          <EditAvailability
+            day={day}
+            dayStart={dayStart}
+            dayEnd={dayEnd}
+            setDayStart={setDayStart}
+            setDayEnd={setDayEnd}
+            times={times}
+            store={store}
+          />
         </div>
+      ))}
 
-        {isUpdating && (
-          <div className="my-1">
-            <Loader type="ThreeDots" height={10} color="rgb(50, 110, 150)" />
-          </div>
-        )}
+      <div className="w-50 sm-w-80 text-center sm-x-center">
+        <button
+          className={`btn-sm m-2 ${!isUpdating && "btn-hovered"}`}
+          disabled={isUpdating}
+          onClick={() => handleSaveAvailability()}
+        >
+          Save
+        </button>
+        <button
+          className={`btn-sm m-2 ${!isUpdating && "btn-hovered"}`}
+          disabled={isUpdating}
+          onClick={() => setShowEditAvailability(false)}
+        >
+          Cancel
+        </button>
       </div>
+
+      {isUpdating && (
+        <div className="my-1">
+          <Loader type="ThreeDots" height={10} color="rgb(50, 110, 150)" />
+        </div>
+      )}
     </div>
   );
 

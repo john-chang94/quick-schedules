@@ -1000,6 +1000,13 @@ select {
   position: absolute;
 }
 
+.x-center {
+  left: 0;
+  right: 0;
+  margin-left: auto;
+  margin-right: auto;
+}
+
 /* BORDER STYLES */
 
 .border-solid-1 {
@@ -1065,20 +1072,6 @@ select {
 .gap-2 {
   grid-gap: 10px;
 }
-
-.xl-3-6-3 {
-  grid-template-columns: 3fr 6fr 3fr;
-}
-
-.xl-2-6fr {
-  grid-template: repeat(2, 6fr) / repeat(2, 6fr);
-}
-
-.col-xl-4-3fr {
-  grid-template-columns: repeat(4, 3fr);
-}
-
-/* NEW GRID STYLES */
 
 .l1 {
   grid-column: span 1;
@@ -1349,6 +1342,18 @@ select {
   }
   .availability-container {
     padding: 10px 20px;
+  }
+  .sm-w-100 {
+    width: 100%;
+  }
+  .sm-x-center {
+    left: 0;
+    right: 0;
+    margin-right: auto;
+    margin-left: auto;
+  }
+  .sm-text-center {
+    text-align: center;
   }
 }
 
