@@ -376,7 +376,7 @@ exports.getAllUsersSchedulesByDateMobile = async (req, res) => {
             }
         }
 
-        if (!data.rows.length) return res.status(404).send("No records found");
+        // if (!data.rows.length) return res.status(404).send("No records found");
 
         res.status(200).json(data.rows);
 

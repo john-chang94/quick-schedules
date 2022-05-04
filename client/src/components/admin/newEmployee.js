@@ -1,9 +1,31 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useReducer } from "react";
 import { Link } from "react-router-dom";
 import * as ROUTES from "../../constants/routes";
 import { isAuthenticated } from "../../services/auth";
 import { getRoles } from "../../services/roles";
 import { register } from "../../services/auth";
+
+const initialState = {
+  role_id: 6,
+  first_name: "",
+  last_name: "",
+  email: "",
+  phone: "",
+  password: "",
+  hourly_pay: "",
+  started_at: "",
+};
+
+const reducer = (state, action) => {
+  switch (action.type) {
+    case "setValue":
+      return { ...state, [action.field]: action.value };
+    case "reset":
+      return initialState;
+    default:
+      return initialState;
+  }
+};
 
 export default function AdminNewEmployee() {
   const [roles, setRoles] = useState(null);
@@ -11,44 +33,20 @@ export default function AdminNewEmployee() {
   const [success, setSuccess] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
 
-  const [role_id, setRoleId] = useState(6); // Default is trainee
-  const [first_name, setFirstName] = useState("");
-  const [last_name, setLastName] = useState("");
-  const [email, setEmail] = useState("");
-  const [phone, setPhone] = useState("");
-  const [password, setPassword] = useState("");
-  const [hourly_pay, setHourlyPay] = useState("");
-  const [started_at, setStartedAt] = useState("");
+  const [state, dispatch] = useReducer(reducer, initialState);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     setIsSubmitting(true);
     const tokenConfig = isAuthenticated();
-    const body = {
-      role_id,
-      first_name,
-      last_name,
-      email,
-      phone,
-      password,
-      hourly_pay,
-      started_at,
-    };
 
-    const res = await register(body, tokenConfig);
+    const res = await register(state, tokenConfig);
     if (res.error) {
       setError(res.error);
       setIsSubmitting(false);
     } else {
       setError("");
-      setRoleId(6);
-      setFirstName("");
-      setLastName("");
-      setEmail("");
-      setPhone("");
-      setPassword("");
-      setHourlyPay("");
-      setStartedAt("");
+      dispatch({ type: "reset" });
       setSuccess(true);
       setIsSubmitting(false);
     }
@@ -63,70 +61,110 @@ export default function AdminNewEmployee() {
         <p>First Name</p>
         <input
           type="text"
-          value={first_name}
+          value={state.first_name}
           className="form-input"
-          onChange={({ target }) => setFirstName(target.value)}
+          onChange={({ target }) =>
+            dispatch({
+              type: "setValue",
+              field: "first_name",
+              value: target.value,
+            })
+          }
         />
       </div>
       <div className="my-2">
         <p>Last Name</p>
         <input
           type="text"
-          value={last_name}
+          value={state.last_name}
           className="form-input"
-          onChange={({ target }) => setLastName(target.value)}
+          onChange={({ target }) =>
+            dispatch({
+              type: "setValue",
+              field: "last_name",
+              value: target.value,
+            })
+          }
         />
       </div>
       <div className="my-2">
         <p>Email</p>
         <input
           type="email"
-          value={email}
+          value={state.email}
           className="form-input"
-          onChange={({ target }) => setEmail(target.value)}
+          onChange={({ target }) =>
+            dispatch({ type: "setValue", field: "email", value: target.value })
+          }
         />
       </div>
       <div className="my-2">
         <p>Phone</p>
         <input
           type="text"
-          value={phone}
+          value={state.phone}
           className="form-input"
-          onChange={({ target }) => setPhone(target.value)}
+          onChange={({ target }) =>
+            dispatch({ type: "setValue", field: "phone", value: target.value })
+          }
         />
       </div>
       <div className="my-2">
         <p>Password</p>
         <input
           type="password"
-          value={password}
+          value={state.password}
           className="form-input"
-          onChange={({ target }) => setPassword(target.value)}
+          onChange={({ target }) =>
+            dispatch({
+              type: "setValue",
+              field: "password",
+              value: target.value,
+            })
+          }
         />
       </div>
       <div className="my-2">
         <p>Hourly Pay</p>
         <input
           type="text"
-          value={hourly_pay}
+          value={state.hourly_pay}
           className="form-input"
-          onChange={({ target }) => setHourlyPay(target.value)}
+          onChange={({ target }) =>
+            dispatch({
+              type: "setValue",
+              field: "hourly_pay",
+              value: target.value,
+            })
+          }
         />
       </div>
       <div className="my-2">
         <p>Starting Date</p>
         <input
           type="date"
-          value={started_at}
+          value={state.started_at}
           className="form-input"
-          onChange={({ target }) => setStartedAt(target.value)}
+          onChange={({ target }) =>
+            dispatch({
+              type: "setValue",
+              field: "started_at",
+              value: target.value,
+            })
+          }
         />
       </div>
       <div className="my-2">
         <p>Role</p>
         <select
-          value={role_id}
-          onChange={({ target }) => setRoleId(parseInt(target.value))}
+          value={state.role_id}
+          onChange={({ target }) =>
+            dispatch({
+              type: "setValue",
+              field: "role_id",
+              value: parseInt(target.value),
+            })
+          }
         >
           {roles &&
             roles.map((role, i) => (

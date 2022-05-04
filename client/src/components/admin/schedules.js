@@ -757,7 +757,10 @@ export default function AdminSchedules() {
       );
 
       let usersMobile = await getUsersSchedulesByDateMobile(days[0], days[6]);
-      usersMobile = handleSortUsersMobile(usersMobile, days);
+      console.log(usersMobile)
+      if (usersMobile.length) {
+        usersMobile = handleSortUsersMobile(usersMobile, days);
+      }
 
       if (isMounted) {
         setDays(days);

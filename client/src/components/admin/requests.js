@@ -94,7 +94,7 @@ export default function AdminRequests() {
         </tr>
       </thead>
       <tbody>
-        {requests.map((request, i) => (
+        {requests.length && requests.map((request, i) => (
           <tr
             key={i}
             style={
