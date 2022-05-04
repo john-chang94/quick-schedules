@@ -1339,10 +1339,10 @@ select {
     display: none;
   }
   .employee-container {
-    padding: 10px 15px;
+    padding: 10px 20px;
   }
   .profile-container {
-    padding: 10px 15px;
+    padding: 10px 20px;
   }
   .requests-container {
     padding: 10px 20px;
@@ -1437,6 +1437,9 @@ select {
   
   .med-w-90 {
     width: 90%;
+  }
+  .med-w-100 {
+    width: 100%;
   }
 }
 

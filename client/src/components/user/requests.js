@@ -150,7 +150,7 @@ export default function UserRequests() {
 
   const renderNewRequest = () => (
     <div className="border-solid-1 border-smooth my-2 flex flex-col align-center text-center xs12 s10-offset-1 m8-offset-2 l6-offset-3">
-      <div className="w-50">
+      <div className="w-50 sm-w-60">
         {renderDateElements()}
         <button
           className={`btn-sm mb-2 ${
@@ -189,7 +189,63 @@ export default function UserRequests() {
     </div>
   );
 
-  const renderRequests = () =>
+  // Render table layout in large view
+  const renderRequests = () => (
+    <table className="border-collapse w-100 requests-table">
+      <thead>
+        <tr>
+          <th className="p-2 border-solid-1">Requested Dates</th>
+          <th className="p-2 border-solid-1">Notes</th>
+          <th className="p-2 border-solid-1">Submission Date</th>
+          <th className="p-2 border-solid-1">Status</th>
+        </tr>
+      </thead>
+      <tbody>
+        {requests.length && requests.map((request, i) => (
+          <tr
+            key={i}
+            style={
+              i % 2 === 0
+                ? { backgroundColor: "rgb(240, 240, 240)" }
+                : { backgroundColor: "rbg(255, 255, 255)" }
+            }
+          >
+            <td className="py-1 px-2">
+              {request.requested_dates.map((rd, rd_i) => (
+                <span key={rd_i}>
+                  {
+                    // Add commas if more than one date
+                    rd_i === request.requested_dates.length - 1
+                      ? format(new Date(rd), "MM-dd-yyyy")
+                      : `${format(new Date(rd), "MM-dd-yyyy")}, `
+                  }
+                </span>
+              ))}
+            </td>
+            <td className="py-1 px-2">{request.notes}</td>
+            <td className="py-1 px-2 text-center">
+              {format(new Date(request.requested_at), "MM-dd-yyyy")}
+            </td>
+            <td
+              className={
+                request.status === "Pending"
+                  ? "blue py-1 px-2 text-center"
+                  : request.status === "Approved"
+                  ? "green py-1 px-2 text-center"
+                  : request.status === "Denied"
+                  ? "red py-1 px-2 text-center"
+                  : ""
+              }
+            >
+              {request.status}
+            </td>
+          </tr>
+        ))}
+      </tbody>
+    </table>
+  );
+
+  const renderRequestsCards = () =>
     requests &&
     requests.map((request, i) => (
       <div
@@ -278,12 +334,11 @@ export default function UserRequests() {
           <Loader type="Oval" color="rgb(50, 110, 150)" />
         </div>
       ) : (
-        <div className="grid">
-          {renderRequests()}
+        <div className="w-60 med-w-100">
           {createNewRequest ? (
             renderNewRequest()
           ) : (
-            <div className="mt-4 xs12 s10-offset-1 m8-offset-2 l6-offset-3 text-center">
+            <div className="my-3 text-center">
               <button
                 className="btn-lg btn-hovered"
                 onClick={() => setCreateNewRequest(true)}
@@ -292,6 +347,10 @@ export default function UserRequests() {
               </button>
             </div>
           )}
+          <div className="mt-5">
+          {renderRequests()}
+          <div className="requests-cards">{renderRequestsCards()}</div>
+          </div>
         </div>
       )}
     </div>

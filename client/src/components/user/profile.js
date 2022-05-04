@@ -219,7 +219,7 @@ export default function UserProfile() {
           <Loader type="Oval" color="rgb(50, 110, 150)" />
         </div>
       ) : (
-        <div>
+        <div className="w-60 med-w-100">
           {user && (
             <div>
               {showEditGeneral ? renderEditGeneral() : renderUserGeneral()}

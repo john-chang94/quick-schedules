@@ -114,7 +114,6 @@ export default function AdminStore() {
   const renderStoreHours = () =>
     showEditHours ? ( // Render edit hours component
       <>
-        <h3 className="my-2">Store Hours</h3>
         <div className="my-1">
           <p>Open</p>
           <select
@@ -260,6 +259,7 @@ export default function AdminStore() {
         </div>
       ) : (
         <div className="store p-1">
+          <h3 className="my-2">Store Hours</h3>
           {renderStoreHours()}
           <hr className="my-3" />
           {renderPresets()}
