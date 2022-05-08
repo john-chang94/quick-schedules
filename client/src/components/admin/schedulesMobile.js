@@ -280,22 +280,41 @@ export default function SchedulesMobile({
             className="py-1 w-100 text-center pointer hovered border-solid-1 bg-white"
             onClick={() => handleSaveShift(user.u_id, user.s_id)}
           >
-            <i className="fas fa-check"></i>
+            <i className="fas fa-check" />
           </div>
           <div
             className="py-1 w-100 text-center pointer hovered border-solid-1 bg-white"
             onClick={() => handleRemoveShift(user.s_id)}
           >
-            <i className="fas fa-trash-alt"></i>
+            <i className="fas fa-trash-alt" />
           </div>
           <div
             className="py-1 w-100 text-center pointer hovered border-solid-1 bg-white"
             onClick={() => setEditShiftIndex(null)}
           >
-            <i className="fas fa-times"></i>
+            <i className="fas fa-times" />
           </div>
         </div>
       )}
+    </div>
+  );
+
+  const renderSchedule = (user, i) => (
+    <div className="flex">
+      <div
+        className="flex flex-col flex-center border-solid-1 p-1"
+        style={{ width: "20%" }}
+      >
+        <p>
+          <strong>{getDay(user.shift_start)}</strong>
+        </p>
+        <p>
+          <strong>{getDate(user.shift_start)}</strong>
+        </p>
+      </div>
+      <div className="w-80 border-solid-1">
+        {editShiftIndex === i ? renderEditShift(user) : renderShift(user, i)}
+      </div>
     </div>
   );
 
@@ -434,31 +453,14 @@ export default function SchedulesMobile({
       {renderAddShift()}
       {usersMobile.map((user, i) => (
         <div key={i}>
-          {user.label ? (
+          {user.label ? ( // Render date labels for mobile schedule
             <div className="w-100 border-x bg-x-light-gray text-center">
               <p>
                 <strong>{format(new Date(user.shift_start), "PP")}</strong>
               </p>
             </div>
           ) : (
-            <div className="flex">
-              <div
-                className="flex flex-col flex-center border-solid-1 p-1"
-                style={{ width: "20%" }}
-              >
-                <p>
-                  <strong>{getDay(user.shift_start)}</strong>
-                </p>
-                <p>
-                  <strong>{getDate(user.shift_start)}</strong>
-                </p>
-              </div>
-              <div className="w-80 border-solid-1">
-                {editShiftIndex === i
-                  ? renderEditShift(user)
-                  : renderShift(user, i)}
-              </div>
-            </div>
+            renderSchedule(user, i)
           )}
         </div>
       ))}

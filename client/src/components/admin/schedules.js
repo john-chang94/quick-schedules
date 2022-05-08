@@ -39,6 +39,7 @@ export default function AdminSchedules() {
   const [isLoading, setIsLoading] = useState(true);
   const [isUpdating, setIsUpdating] = useState(false);
   const [isModifying, setIsModifying] = useState(false);
+  const [isLoadingSchedule, setIsLoadingSchedule] = useState(false);
   const [showConfirmTooltip, setShowConfirmTooltip] = useState(false);
   const [showPresetTooltip, setShowPresetTooltip] = useState(false);
   const [showDynamicTooltip, setShowDynamicTooltip] = useState(false);
@@ -160,7 +161,7 @@ export default function AdminSchedules() {
     if (doCopy) {
       const tokenConfig = isAuthenticated();
       setIsModifying(true);
-      setIsLoading(true);
+      setIsLoadingSchedule(true);
 
       let shifts = [];
       // Copy shifts from current week for all users
@@ -196,7 +197,7 @@ export default function AdminSchedules() {
       // Display following week after copying schedule
       handleNextWeek();
       setIsModifying(false);
-      setIsLoading(false);
+      setIsLoadingSchedule(false);
     }
   };
 
@@ -205,7 +206,7 @@ export default function AdminSchedules() {
     if (doClear) {
       const tokenConfig = isAuthenticated();
       setIsModifying(true);
-      setIsLoading(true);
+      setIsLoadingSchedule(true);
 
       // Delete all shifts for the current week
       await clearWeeklySchedule(days[0], days[6], tokenConfig);
@@ -213,7 +214,7 @@ export default function AdminSchedules() {
       await handleFetchSchedule();
 
       setIsModifying(false);
-      setIsLoading(false);
+      setIsLoadingSchedule(false);
     }
   };
 
@@ -246,6 +247,7 @@ export default function AdminSchedules() {
 
   // Get new dates for the week and fetch schedule
   const handleDatePicker = async (date) => {
+    setIsLoadingSchedule(true);
     const days = await getDatesOfTheWeek(date);
     const users = await getUsersSchedulesByDate(days[0], days[6]);
     const requests = await getRequestsByStatusAndDate(
@@ -260,12 +262,14 @@ export default function AdminSchedules() {
     setUsers(users);
     setRequests(requests);
     setUsersMobile(usersMobile);
+    setIsLoadingSchedule(false);
   };
 
   const handlePreviousWeek = async () => {
+    setIsLoadingSchedule(true);
     // New Date object will adjust hours based on timezone so use toDate
     let date = subWeeks(toDate(parseISO(dateISO)), 1);
-    // Format date so date selector can read it
+    // Format date so datepicker can read it
     let formattedDate = format(date, "yyyy-MM-dd");
     setDateISO(formattedDate);
 
@@ -286,12 +290,14 @@ export default function AdminSchedules() {
     setUsersMobile(usersMobile);
     setUserData("");
     setAvailabilityIndex("");
+    setIsLoadingSchedule(false);
   };
 
   const handleNextWeek = async () => {
+    setIsLoadingSchedule(true);
     // New Date object will adjust hours based on timezone so use toDate
     let date = addWeeks(toDate(parseISO(dateISO)), 1);
-    // Format date so date selector can read it
+    // Format date so datepicker can read it
     let formattedDate = format(date, "yyyy-MM-dd");
     setDateISO(formattedDate);
 
@@ -312,6 +318,7 @@ export default function AdminSchedules() {
     setUsersMobile(usersMobile);
     setUserData("");
     setAvailabilityIndex("");
+    setIsLoadingSchedule(false);
   };
 
   const handleSelectPreset = (shiftValue) => {
@@ -551,7 +558,8 @@ export default function AdminSchedules() {
               {shift.shift_end ? "Remove" : "Close"}
             </span>
             <i
-              className={`fas ${ // Render appropriate icon based on shift existing or not
+              className={`fas ${
+                // Render appropriate icon based on shift existing or not
                 shift.shift_end === null ? "fa-times" : "fa-trash-alt"
               } schedules-text p-1`}
               onMouseEnter={() => setShowDynamicTooltip(true)}
@@ -689,8 +697,11 @@ export default function AdminSchedules() {
   );
 
   const renderSchedule = () =>
-    isLoading ? (
-      <div className="text-center" style={{ marginTop: "70px" }}>
+    isLoadingSchedule ? (
+      <div
+        className="text-center"
+        style={{ marginTop: "70px" }}
+      >
         <Loader type="Oval" color="rgb(50, 110, 150)" />
       </div>
     ) : (
@@ -757,7 +768,7 @@ export default function AdminSchedules() {
       );
 
       let usersMobile = await getUsersSchedulesByDateMobile(days[0], days[6]);
-      console.log(usersMobile)
+      console.log(usersMobile);
       if (usersMobile.length) {
         usersMobile = handleSortUsersMobile(usersMobile, days);
       }
@@ -793,16 +804,18 @@ export default function AdminSchedules() {
           {renderController()}
           {renderSchedule()}
           {renderAvailability()}
-          <SchedulesMobile
-            usersMobile={usersMobile}
-            users={users}
-            days={days}
-            times={times}
-            store={store}
-            presets={presets}
-            getTimeValue={getTimeValue}
-            handleFetchSchedule={handleFetchSchedule}
-          />
+          {!isLoadingSchedule && (
+            <SchedulesMobile
+              usersMobile={usersMobile}
+              users={users}
+              days={days}
+              times={times}
+              store={store}
+              presets={presets}
+              getTimeValue={getTimeValue}
+              handleFetchSchedule={handleFetchSchedule}
+            />
+          )}
         </div>
       )}
     </>
