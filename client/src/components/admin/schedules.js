@@ -519,7 +519,7 @@ export default function AdminSchedules() {
         <div className="my-2 w-100 flex justify-evenly">
           <div
             style={{ minHeight: "25px" }}
-            className="w-100 pointer-no-u hovered border-solid-1 bg-white relative flex flex-center"
+            className="w-100 pointer-no-dec hovered border-solid-1 bg-white relative flex flex-center"
             onClick={() => handleSaveShift(u_id, dayIndex, shift.s_id)}
           >
             <span // Tooltip
@@ -537,7 +537,7 @@ export default function AdminSchedules() {
           </div>
           <div
             style={{ minHeight: "25px" }}
-            className="w-100 pointer-no-u hovered border-solid-1 bg-white relative flex flex-center"
+            className="w-100 pointer-no-dec hovered border-solid-1 bg-white relative flex flex-center"
             onClick={() => handleSavePreset()}
           >
             <span // Tooltip
@@ -555,7 +555,7 @@ export default function AdminSchedules() {
           </div>
           <div
             style={{ minHeight: "25px" }}
-            className="w-100 pointer-no-u hovered border-solid-1 bg-white relative flex flex-center"
+            className="w-100 pointer-no-dec hovered border-solid-1 bg-white relative flex flex-center"
             onClick={() =>
               shift.s_id ? handleRemoveShift(shift.s_id) : handleCancelShift()
             }

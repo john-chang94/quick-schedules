@@ -4,17 +4,44 @@ import {
   getUsersSchedulesByDate,
   getUsersSchedulesByDateMobile,
 } from "../../services/shifts";
-import { startOfWeek, format } from "date-fns";
+import {
+  startOfToday,
+  startOfWeek,
+  subWeeks,
+  addWeeks,
+  subMonths,
+  toDate,
+  parseISO,
+  format,
+} from "date-fns";
 
 export default function UserSchedules() {
   const [isLoading, setIsLoading] = useState(true);
-  const [users, setUsers] = useState(null);
-  const [usersMobile, setUsersMobile] = useState(null);
-  const [days, setDays] = useState(null);
+  const [isLoadingSchedule, setIsLoadingSchedule] = useState(false);
+  const [users, setUsers] = useState([]);
+  const [usersMobile, setUsersMobile] = useState([]);
+  const [days, setDays] = useState([]);
+  // Used for datepicker
+  const [dateISO, setDateISO] = useState(format(startOfToday(), "yyyy-MM-dd"));
 
-  const getDatesOfTheWeek = async () => {
+  const getDatesOfTheWeek = async (selectedDate) => {
+    let dateToAdd;
+    if (selectedDate) {
+      // Create new date with separate identifiers because it is inaccurate for Mondays
+      let year = selectedDate.split("-")[0];
+      let month = selectedDate.split("-")[1];
+      let day = selectedDate.split("-")[2];
+      // Subtract one month because they are counted from zero
+      // i.e. "2022-02-18" is considered March
+      dateToAdd = startOfWeek(subMonths(new Date(year, month, day), 1), {
+        weekStartsOn: 1,
+      });
+      setDateISO(selectedDate); // For datepicker value
+    } else {
+      dateToAdd = startOfWeek(new Date(), { weekStartsOn: 1 });
+    }
+
     let daysArray = [];
-    let dateToAdd = startOfWeek(new Date(), { weekStartsOn: 1 });
     for (let i = 0; i < 7; i++) {
       daysArray.push(dateToAdd.toISOString());
       dateToAdd = new Date(dateToAdd.setDate(dateToAdd.getDate() + 1));
@@ -41,6 +68,65 @@ export default function UserSchedules() {
     return new Date(shift).toLocaleTimeString().replace(":00 ", " ");
   };
 
+  const handleDatePicker = async (date) => {
+    setIsLoadingSchedule(true);
+    const days = await getDatesOfTheWeek(date);
+    const users = await getUsersSchedulesByDate(days[0], days[6]);
+    let usersMobile = await getUsersSchedulesByDateMobile(days[0], days[6]);
+    if (usersMobile.length) {
+      usersMobile = handleSortUsersMobile(usersMobile, days);
+    }
+
+    setDays(days);
+    setUsers(users);
+    setUsersMobile(usersMobile);
+    setIsLoadingSchedule(false);
+  };
+
+  const handlePreviousWeek = async () => {
+    setIsLoadingSchedule(true);
+    // New Date object will adjust hours based on timezone so use toDate
+    let date = subWeeks(toDate(parseISO(dateISO)), 1);
+    // Format date so datepicker can read it
+    let formattedDate = format(date, "yyyy-MM-dd");
+    setDateISO(formattedDate);
+
+    // Get new dates for the week and fetch schedule
+    const days = await getDatesOfTheWeek(formattedDate);
+    const users = await getUsersSchedulesByDate(days[0], days[6]);
+    let usersMobile = await getUsersSchedulesByDateMobile(days[0], days[6]);
+    if (usersMobile.length) {
+      usersMobile = handleSortUsersMobile(usersMobile, days);
+    }
+
+    setDays(days);
+    setUsers(users);
+    setUsersMobile(usersMobile);
+    setIsLoadingSchedule(false);
+  };
+
+  const handleNextWeek = async () => {
+    setIsLoadingSchedule(true);
+    // New Date object will adjust hours based on timezone so use toDate
+    let date = addWeeks(toDate(parseISO(dateISO)), 1);
+    // Format date so datepicker can read it
+    let formattedDate = format(date, "yyyy-MM-dd");
+    setDateISO(formattedDate);
+
+    // Get new dates for the week and fetch schedule
+    const days = await getDatesOfTheWeek(formattedDate);
+    const users = await getUsersSchedulesByDate(days[0], days[6]);
+    let usersMobile = await getUsersSchedulesByDateMobile(days[0], days[6]);
+    if (usersMobile.length) {
+      usersMobile = handleSortUsersMobile(usersMobile, days);
+    }
+
+    setDays(days);
+    setUsers(users);
+    setUsersMobile(usersMobile);
+    setIsLoadingSchedule(false);
+  };
+
   const renderBlank = (a_i, time) => (
     <td
       key={a_i}
@@ -56,8 +142,40 @@ export default function UserSchedules() {
     </td>
   );
 
-  const renderSchedule = () => (
-    <>
+  const renderController = () => (
+    <div className="schedules-controller">
+      <div className="select-week">
+        <div className="pointer" onClick={() => handlePreviousWeek()}>
+          <em className="text-3">Prev&nbsp;week</em>
+          <p>
+            <i className="fas fa-angle-double-left" />
+          </p>
+        </div>
+        <div id="controller-date" className="relative">
+          <input
+            type="date"
+            className="border-solid-1 border-smooth"
+            value={dateISO} // Datepicker must be yyyy-mm-dd format
+            onChange={({ target }) => handleDatePicker(target.value)}
+          />
+          <div className="absolute">&nbsp;</div>
+        </div>
+        <div className="pointer" onClick={() => handleNextWeek()}>
+          <em className="text-3">Next&nbsp;week</em>
+          <p>
+            <i className="fas fa-angle-double-right" />
+          </p>
+        </div>
+      </div>
+    </div>
+  );
+
+  const renderSchedule = () =>
+    isLoadingSchedule ? (
+      <div className="text-center" style={{ marginTop: "70px" }}>
+        <Loader type="Oval" color="rgb(50, 110, 150)" />
+      </div>
+    ) : (
       <table className="schedules-table w-100 mt-1 border-collapse text-center table-fixed schedules-text">
         <tbody>
           <tr>
@@ -98,19 +216,11 @@ export default function UserSchedules() {
             ))}
         </tbody>
       </table>
-    </>
-  );
+    );
 
   const renderMobileSchedules = () => (
     <div className="schedules-mobile">
-      {isLoading ? (
-        <Loader
-          type="Oval"
-          color="rgb(50, 110, 150)"
-          className="text-center mt-4"
-        />
-      ) : (
-        usersMobile.length &&
+      {usersMobile.length > 0 &&
         usersMobile.map((user, i) => (
           <div key={i} className="flex">
             {user.label ? (
@@ -158,8 +268,7 @@ export default function UserSchedules() {
               </>
             )}
           </div>
-        ))
-      )}
+        ))}
     </div>
   );
 
@@ -169,7 +278,9 @@ export default function UserSchedules() {
       const days = await getDatesOfTheWeek();
       const users = await getUsersSchedulesByDate(days[0], days[6]);
       let usersMobile = await getUsersSchedulesByDateMobile(days[0], days[6]);
-      usersMobile = handleSortUsersMobile(usersMobile, days);
+      if (usersMobile.length) {
+        usersMobile = handleSortUsersMobile(usersMobile, days);
+      }
 
       if (isMounted) {
         setDays(days);
@@ -192,8 +303,9 @@ export default function UserSchedules() {
         </div>
       ) : (
         <div>
+          {renderController()}
           {renderSchedule()}
-          {renderMobileSchedules()}
+          {!isLoadingSchedule && renderMobileSchedules()}
         </div>
       )}
     </div>

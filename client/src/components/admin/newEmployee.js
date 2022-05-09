@@ -202,7 +202,7 @@ export default function AdminNewEmployee() {
   return (
     <div className="grid mt-2">
       <div className="xs10-offset-1 s10-offset-1 l6-offset-3">
-        <Link to={ROUTES.ADMIN_EMPLOYEES} className="text-no-u black pointer">
+        <Link to={ROUTES.ADMIN_EMPLOYEES} className="text-no-dec black pointer">
           <i className="fas fa-arrow-left"></i> Back
         </Link>
       </div>

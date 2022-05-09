@@ -10,7 +10,7 @@ export default function Navbar() {
     // Navbar for large screens
     const renderSideNav = () => (
         <div className="navbar text-center bg-light-blue-darken-4">
-            <Link to={verifiedUser.is_admin ? ROUTES.ADMIN_EMPLOYEES : ROUTES.USER_SCHEDULES} className="s12 m6 l3 text-no-u">
+            <Link to={verifiedUser.is_admin ? ROUTES.ADMIN_EMPLOYEES : ROUTES.USER_SCHEDULES} className="s12 m6 l3 text-no-dec">
                 <div className="hovered py-2 off-white">
                     <p className="text-5">{verifiedUser.is_admin ? "Employees" : "Schedules"}</p>
                     <p className="text-7">
@@ -18,7 +18,7 @@ export default function Navbar() {
                     </p>
                 </div>
             </Link>
-            <Link to={verifiedUser.is_admin ? ROUTES.ADMIN_SCHEDULES : ROUTES.USER_REQUESTS} className="s12 m6 l3 text-no-u">
+            <Link to={verifiedUser.is_admin ? ROUTES.ADMIN_SCHEDULES : ROUTES.USER_REQUESTS} className="s12 m6 l3 text-no-dec">
                 <div className="hovered py-2 off-white">
                     <p className="text-5">{verifiedUser.is_admin ? "Schedules" : "Requests"}</p>
                     <p className="text-7">
@@ -26,7 +26,7 @@ export default function Navbar() {
                     </p>
                 </div>
             </Link>
-            <Link to={verifiedUser.is_admin ? ROUTES.ADMIN_REQUESTS : ROUTES.USER_AVAILABILITY} className="s12 m6 l3 text-no-u">
+            <Link to={verifiedUser.is_admin ? ROUTES.ADMIN_REQUESTS : ROUTES.USER_AVAILABILITY} className="s12 m6 l3 text-no-dec">
                 <div className="hovered py-2 off-white">
                     <p className="text-5">{verifiedUser.is_admin ? "Requests" : "Availability"}</p>
                     <p className="text-7">
@@ -34,7 +34,7 @@ export default function Navbar() {
                     </p>
                 </div>
             </Link>
-            <Link to={verifiedUser.is_admin ? ROUTES.ADMIN_STORE : ROUTES.USER_PROFILE} className="s12 m6 l3 text-no-u">
+            <Link to={verifiedUser.is_admin ? ROUTES.ADMIN_STORE : ROUTES.USER_PROFILE} className="s12 m6 l3 text-no-dec">
                 <div className="hovered py-2 off-white">
                     <p className="text-5">{verifiedUser.is_admin ? "Store" : "Profile"}</p>
                     <p className="text-7">
@@ -52,22 +52,22 @@ export default function Navbar() {
                 <i className="fas fa-bars"></i>
                 {dropDown ? (
                     <div className="navbar-top text-center bg-light-blue-darken-4">
-                        <Link to={verifiedUser.is_admin ? ROUTES.ADMIN_EMPLOYEES : ROUTES.USER_SCHEDULES} className="s12 m6 l3 text-no-u">
+                        <Link to={verifiedUser.is_admin ? ROUTES.ADMIN_EMPLOYEES : ROUTES.USER_SCHEDULES} className="s12 m6 l3 text-no-dec">
                             <div className="py-4 hovered off-white">
                                 <p className="text-4">{verifiedUser.is_admin ? "Employees" : "Schedules"}</p>
                             </div>
                         </Link>
-                        <Link to={verifiedUser.is_admin ? ROUTES.ADMIN_SCHEDULES : ROUTES.USER_REQUESTS} className="s12 m6 l3 text-no-u">
+                        <Link to={verifiedUser.is_admin ? ROUTES.ADMIN_SCHEDULES : ROUTES.USER_REQUESTS} className="s12 m6 l3 text-no-dec">
                             <div className="py-4 hovered off-white">
                                 <p className="text-4">{verifiedUser.is_admin ? "Schedules" : "Requests"}</p>
                             </div>
                         </Link>
-                        <Link to={verifiedUser.is_admin ? ROUTES.ADMIN_REQUESTS : ROUTES.USER_AVAILABILITY} className="s12 m6 l3 text-no-u">
+                        <Link to={verifiedUser.is_admin ? ROUTES.ADMIN_REQUESTS : ROUTES.USER_AVAILABILITY} className="s12 m6 l3 text-no-dec">
                             <div className="py-4 hovered off-white">
                                 <p className="text-4">{verifiedUser.is_admin ? "Requests" : "Availability"}</p>
                             </div>
                         </Link>
-                        <Link to={verifiedUser.is_admin ? ROUTES.ADMIN_STORE : ROUTES.USER_PROFILE} className="s12 m6 l3 text-no-u">
+                        <Link to={verifiedUser.is_admin ? ROUTES.ADMIN_STORE : ROUTES.USER_PROFILE} className="s12 m6 l3 text-no-dec">
                             <div className="py-4 hovered off-white">
                                 <p className="text-4">{verifiedUser.is_admin ? "Store" : "Profile"}</p>
                             </div>

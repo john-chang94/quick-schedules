@@ -26,7 +26,7 @@ td {
   text-decoration: underline;
 }
 
-.pointer-no-u:hover {
+.pointer-no-dec:hover {
   cursor: pointer;
   text-decoration: none;
 }
@@ -116,12 +116,18 @@ header {
   right: 0;
   margin-top: -35px;
   font-size: small;
-  opacity: 0;
-  transition: opacity 150ms ease-in-out;
+  /* opacity: 0; */
+  display: none;
+  /* transition: opacity 150ms ease-in-out; */
 }
 
 .tooltip-open {
-  opacity: 1;
+  /*
+    Cursor is detected with display block
+    so no fade effect atm
+  */
+  /* opacity: 1; */
+  display: block;
 }
 
 .tooltip-mt-1 {
@@ -739,7 +745,7 @@ header {
   text-decoration: underline;
 }
 
-.text-no-u {
+.text-no-dec {
   text-decoration: none;
 }
 

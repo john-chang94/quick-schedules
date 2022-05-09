@@ -59,28 +59,28 @@ export default function AdminRequests() {
       <p className="mb-2">View by</p>
       <div className="w-50 lg-w-60 med-w-80 xs-w-90 grid">
         <button
-          className={`border-solid-1 border-oval pointer-no-u py-1 hovered s6 l3
+          className={`border-solid-1 border-oval pointer-no-dec py-1 hovered s6 l3
                         ${status === "All" && "bg-light-gray"}`}
           onClick={() => handleSortRequests("All")}
         >
           All
         </button>
         <button
-          className={`border-solid-1 border-oval pointer-no-u py-1 hovered s6 l3
+          className={`border-solid-1 border-oval pointer-no-dec py-1 hovered s6 l3
                         ${status === "Pending" && "bg-light-gray"}`}
           onClick={() => handleSortRequests("Pending")}
         >
           Pending
         </button>
         <button
-          className={`border-solid-1 border-oval pointer-no-u py-1 hovered s6 l3
+          className={`border-solid-1 border-oval pointer-no-dec py-1 hovered s6 l3
                         ${status === "Approved" && "bg-light-gray"}`}
           onClick={() => handleSortRequests("Approved")}
         >
           Approved
         </button>
         <button
-          className={`border-solid-1 border-oval pointer-no-u py-1 hovered s6 l3
+          className={`border-solid-1 border-oval pointer-no-dec py-1 hovered s6 l3
                         ${status === "Denied" && "bg-light-gray"}`}
           onClick={() => handleSortRequests("Denied")}
         >
@@ -150,7 +150,7 @@ export default function AdminRequests() {
               <td className="p-1 text-center">
                 <button
                   className={`btn-sm m-1 ${
-                    !isUpdating && "btn-hovered pointer-no-u"
+                    !isUpdating && "btn-hovered pointer-no-dec"
                   }`}
                   onClick={() =>
                     handleUpdateRequestStatus(request.r_id, "Approved")
@@ -161,7 +161,7 @@ export default function AdminRequests() {
                 </button>
                 <button
                   className={`btn-sm m-1 ${
-                    !isUpdating && "btn-hovered pointer-no-u"
+                    !isUpdating && "btn-hovered pointer-no-dec"
                   }`}
                   onClick={() =>
                     handleUpdateRequestStatus(request.r_id, "Denied")
@@ -236,7 +236,7 @@ export default function AdminRequests() {
             <div>
               <button
                 className={`btn-med m-1 ${
-                  isUpdating ? "" : "btn-hovered pointer-no-u"
+                  isUpdating ? "" : "btn-hovered pointer-no-dec"
                 }`}
                 onClick={() =>
                   handleUpdateRequestStatus(request.r_id, "Approved")
@@ -247,7 +247,7 @@ export default function AdminRequests() {
               </button>
               <button
                 className={`btn-med m-1 ${
-                  isUpdating ? "" : "btn-hovered pointer-no-u"
+                  isUpdating ? "" : "btn-hovered pointer-no-dec"
                 }`}
                 onClick={() =>
                   handleUpdateRequestStatus(request.r_id, "Denied")

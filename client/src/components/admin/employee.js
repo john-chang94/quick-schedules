@@ -394,7 +394,7 @@ export default function AdminEmployee() {
   return (
     <div className="employee-container">
       <div>
-        <Link to={ROUTES.ADMIN_EMPLOYEES} className="text-no-u black pointer">
+        <Link to={ROUTES.ADMIN_EMPLOYEES} className="text-no-dec black pointer">
           <i className="fas fa-arrow-left"></i> Back
         </Link>
       </div>
@@ -420,7 +420,7 @@ export default function AdminEmployee() {
           )}
           <div className="mt-8 text-center">
             <button
-              className="btn-med red btn-hovered pointer-no-u"
+              className="btn-med red btn-hovered pointer-no-dec"
               onClick={handleRemoveUser}
             >
               Remove
