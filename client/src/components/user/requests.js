@@ -48,23 +48,12 @@ export default function UserRequests() {
     if (request) {
       setIsSubmitting(true);
       const tokenConfig = isAuthenticated();
-      let datesArr = dates.slice();
-
-      // Format each date for storing in db
-      for (let i = 0; i < datesArr.length; i++) {
-        // Same concept as creating a shift
-        // Creating a new date object with separate values
-        // works for browsers in production
-        const date = datesArr[i].split("-");
-        const dateToAdd = new Date(date[0], date[1], date[2]).toLocaleString();
-        datesArr[i] = dateToAdd;
-      }
 
       const body = {
         u_id: verifiedUser.u_id,
-        requested_at: new Date(Date.now()).toLocaleString(),
+        requested_at: new Date(Date.now()),
         notes,
-        requested_dates: datesArr,
+        requested_dates: dates,
       };
 
       // Create new request and refresh list
@@ -90,7 +79,6 @@ export default function UserRequests() {
   };
 
   const handleAddDate = (index, newDate) => {
-    console.log(new Date(Date.now()).toLocaleString())
     // Run if date value already exists in array to replace old value
     if (dates[index] !== undefined) {
       let arrCopy = dates.slice();
@@ -110,6 +98,16 @@ export default function UserRequests() {
     setDates(arrCopy);
     setNumOfDateInputs(numOfDateInputs - 1);
   };
+
+  // Format date to 'mm-dd-yyyy' without using new Date
+  // Production fetches dates without timezone, while dev
+  // fetches with timezone.. so manually parse date
+  const handleFormatDate = (date) => {
+    const init = date.split("T")[0];
+    const split = init.split("-");
+    const newDate = `${split[1]}-${split[2]}-${split[0]}`;
+    return newDate;
+  }
 
   // First datepicker
   // Does not include a delete button
@@ -258,8 +256,8 @@ export default function UserRequests() {
                       {
                         // Add commas if more than one date
                         rd_i === request.requested_dates.length - 1
-                          ? format(new Date(rd), "MM-dd-yyyy")
-                          : `${format(new Date(rd), "MM-dd-yyyy")}, `
+                          ? handleFormatDate(rd)
+                          : `${handleFormatDate(rd)}, `
                       }
                     </span>
                   ))}
@@ -361,7 +359,6 @@ export default function UserRequests() {
         if (isMounted) {
           setRequests(requests);
           setIsLoading(false);
-          console.log(requests)
         }
       }
     }
