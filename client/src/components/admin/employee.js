@@ -123,11 +123,28 @@ export default function AdminEmployee() {
     }
   };
 
+  const handleShowEditGeneral = () => {
+    setError("");
+    setFirstName(user.first_name);
+    setLastName(user.last_name);
+    setEmail(user.email);
+    setPhone(user.phone);
+    setShowEditGeneral(true);
+  };
+
+  const handleShowEditInfo = () => {
+    setError("");
+    setRoleId(user.role_id);
+    setHourlyPay(user.hourly_pay);
+    setStartedAt(user.started_at);
+    setShowEditInfo(true);
+  }
+
   const handleCancelEdit = () => {
     setShowEditGeneral(false);
     setShowEditInfo(false);
     setError("");
-  }
+  };
 
   const renderUserGeneral = () => (
     <div className="my-2">
@@ -150,7 +167,7 @@ export default function AdminEmployee() {
           className={`btn-med ${
             verifiedUser.level <= user.level && "btn-hovered"
           }`}
-          onClick={() => setShowEditGeneral(true)}
+          onClick={handleShowEditGeneral}
           disabled={verifiedUser.level > user.level}
         >
           Edit
@@ -186,7 +203,7 @@ export default function AdminEmployee() {
           className={`btn-med ${
             verifiedUser.level <= user.level && "btn-hovered"
           }`}
-          onClick={() => setShowEditInfo(true)}
+          onClick={handleShowEditInfo}
           disabled={verifiedUser.level > user.level}
         >
           Edit
@@ -249,7 +266,7 @@ export default function AdminEmployee() {
           Cancel
         </button>
       </div>
-      {(error && errorType === "general") && <p className="red">{error}</p>}
+      {error && errorType === "general" && <p className="red">{error}</p>}
     </div>
   );
 
@@ -303,7 +320,7 @@ export default function AdminEmployee() {
           Cancel
         </button>
       </div>
-      {(error && errorType === "info") && <p className="red">{error}</p>}
+      {error && errorType === "info" && <p className="red">{error}</p>}
     </div>
   );
 
@@ -358,13 +375,6 @@ export default function AdminEmployee() {
       if (isMounted) {
         setUser(user);
         setRoles(roles);
-        setFirstName(user.first_name);
-        setLastName(user.last_name);
-        setEmail(user.email);
-        setPhone(user.phone);
-        setRoleId(user.role_id);
-        setHourlyPay(user.hourly_pay);
-        setStartedAt(user.started_at);
         setIsLoading(false);
       }
     }
@@ -397,7 +407,7 @@ export default function AdminEmployee() {
                 verifiedUser.u_id === user.u_id &&
                 renderEditPassword()}
 
-              {(error && errorType === "auth") && <p className="red">{error}</p>}
+              {error && errorType === "auth" && <p className="red">{error}</p>}
               {success && <p className="green">{success}</p>}
             </div>
           )}
