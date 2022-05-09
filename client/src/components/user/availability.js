@@ -234,7 +234,7 @@ export default function UserAvailability() {
         </div>
       ))}
 
-      <div className="w-50 sm-w-80 text-center sm-x-center">
+      <div className="w-50 sm-w-80 mt-5 text-center sm-x-center">
         <button
           className={`btn-sm m-2 ${!isUpdating && "btn-hovered"}`}
           disabled={isUpdating}

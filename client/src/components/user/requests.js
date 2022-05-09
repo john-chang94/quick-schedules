@@ -240,7 +240,7 @@ export default function UserRequests() {
               >
                 <td className="py-1 px-2 text-center">
                   <button
-                    className={`border-none ${
+                    className={`border-none bg-none ${
                       request.status === "Pending" && "pointer-no-u"
                     }`}
                     style={{ padding: "2px" }}
