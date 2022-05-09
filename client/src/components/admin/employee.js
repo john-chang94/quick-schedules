@@ -22,6 +22,7 @@ export default function AdminEmployee() {
   const [user, setUser] = useState(null);
   const [roles, setRoles] = useState(null);
   const [error, setError] = useState("");
+  const [errorType, setErrorType] = useState("auth");
   const [success, setSuccess] = useState("");
   const [isLoading, setIsLoading] = useState(true);
   const [isUpdating, setIsUpdating] = useState(false);
@@ -51,6 +52,7 @@ export default function AdminEmployee() {
     const res = await editPassword(u_id, body, tokenConfig);
     if (res.error) {
       setError(res.error);
+      setErrorType("auth");
       setIsUpdating(false);
     } else {
       setError("");
@@ -71,6 +73,8 @@ export default function AdminEmployee() {
 
     if (res.error) {
       setError(res.error);
+      setErrorType("general");
+      setIsUpdating(false);
     } else {
       const user = await getUser(u_id);
       setError("");
@@ -94,6 +98,7 @@ export default function AdminEmployee() {
 
     if (res.error) {
       setError(res.error);
+      setErrorType("info");
       setIsUpdating(false);
     } else {
       const user = await getUser(u_id);
@@ -118,6 +123,12 @@ export default function AdminEmployee() {
     }
   };
 
+  const handleCancelEdit = () => {
+    setShowEditGeneral(false);
+    setShowEditInfo(false);
+    setError("");
+  }
+
   const renderUserGeneral = () => (
     <div className="my-2">
       <div className="my-2">
@@ -136,8 +147,11 @@ export default function AdminEmployee() {
       </div>
       <div className="my-2">
         <button
-          className="btn-med btn-hovered"
+          className={`btn-med ${
+            verifiedUser.level <= user.level && "btn-hovered"
+          }`}
           onClick={() => setShowEditGeneral(true)}
+          disabled={verifiedUser.level > user.level}
         >
           Edit
         </button>
@@ -170,7 +184,7 @@ export default function AdminEmployee() {
       <div className="my-2">
         <button
           className={`btn-med ${
-            verifiedUser.level > user.level ? "" : "btn-hovered"
+            verifiedUser.level <= user.level && "btn-hovered"
           }`}
           onClick={() => setShowEditInfo(true)}
           disabled={verifiedUser.level > user.level}
@@ -188,7 +202,7 @@ export default function AdminEmployee() {
         <input
           type="text"
           className="form-input"
-          defaultValue={first_name}
+          defaultValue={user.first_name}
           onChange={({ target }) => setFirstName(target.value)}
         />
       </div>
@@ -197,7 +211,7 @@ export default function AdminEmployee() {
         <input
           type="text"
           className="form-input"
-          defaultValue={last_name}
+          defaultValue={user.last_name}
           onChange={({ target }) => setLastName(target.value)}
         />
       </div>
@@ -206,7 +220,7 @@ export default function AdminEmployee() {
         <input
           type="text"
           className="form-input"
-          defaultValue={email}
+          defaultValue={user.email}
           onChange={({ target }) => setEmail(target.value)}
         />
       </div>
@@ -215,7 +229,7 @@ export default function AdminEmployee() {
         <input
           type="text"
           className="form-input"
-          defaultValue={phone}
+          defaultValue={user.phone}
           onChange={({ target }) => setPhone(target.value)}
         />
       </div>
@@ -230,11 +244,12 @@ export default function AdminEmployee() {
         <button
           className="btn-med btn-hovered ml-5"
           disabled={isUpdating}
-          onClick={() => setShowEditGeneral(false)}
+          onClick={handleCancelEdit}
         >
           Cancel
         </button>
       </div>
+      {(error && errorType === "general") && <p className="red">{error}</p>}
     </div>
   );
 
@@ -259,16 +274,16 @@ export default function AdminEmployee() {
         <input
           type="text"
           className="form-input"
-          defaultValue={hourly_pay}
+          defaultValue={user.hourly_pay}
           onChange={({ target }) => setHourlyPay(target.value)}
         />
       </div>
       <div className="my-2">
         <p>Started At</p>
         <input
-          type="text"
+          type="date"
           className="form-input"
-          defaultValue={new Date(started_at).toLocaleDateString()}
+          defaultValue={user.started_at.split("T")[0]}
           onChange={({ target }) => setStartedAt(target.value)}
         />
       </div>
@@ -283,11 +298,12 @@ export default function AdminEmployee() {
         <button
           className="btn-med btn-hovered ml-5"
           disabled={isUpdating}
-          onClick={() => setShowEditInfo(false)}
+          onClick={handleCancelEdit}
         >
           Cancel
         </button>
       </div>
+      {(error && errorType === "info") && <p className="red">{error}</p>}
     </div>
   );
 
@@ -381,8 +397,8 @@ export default function AdminEmployee() {
                 verifiedUser.u_id === user.u_id &&
                 renderEditPassword()}
 
-              {error ? <p className="red">{error}</p> : null}
-              {success ? <p className="green">{success}</p> : null}
+              {(error && errorType === "auth") && <p className="red">{error}</p>}
+              {success && <p className="green">{success}</p>}
             </div>
           )}
           <div className="mt-8 text-center">

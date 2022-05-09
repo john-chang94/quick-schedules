@@ -1,6 +1,6 @@
 const express = require('express');
 const router = express.Router();
-const { authorizeToken } = require('../middlewares');
+const { authorizeToken, updateUserGeneralValidator, updateUserSystemValidator } = require('../middlewares');
 const {
     getUserById,
     getAllUsers,
@@ -18,8 +18,8 @@ const {
 router.get('/users', getAllUsers);
 router.get('/users/:u_id', getUserById);
 router.put('/users/reset-pw/:u_id', authorizeToken, editUserPassword);
-router.put('/users/general/:u_id', authorizeToken, editUserGeneral);
-router.put('/users/info/:u_id', authorizeToken, editUserSystem);
+router.put('/users/general/:u_id', authorizeToken, updateUserGeneralValidator, editUserGeneral);
+router.put('/users/info/:u_id', authorizeToken, updateUserSystemValidator, editUserSystem);
 router.delete('/users/:u_id', authorizeToken, deleteUser);
 router.post('/users/availability', authorizeToken, addAdvailability);
 router.put('/users/availability/:a_id', authorizeToken, editAvailability);

@@ -40,10 +40,43 @@ exports.registerValidator = (req, res, next) => {
     req.check('first_name', 'First name required').notEmpty();
     req.check('last_name', 'Last name required').notEmpty();
     req.check('email', 'Email required').notEmpty();
+    req.check('email', 'Invalid email').isEmail();
     req.check('password', 'Password required').notEmpty();
     req.check('phone', 'Phone number required').notEmpty();
+    req.check('phone', 'Enter 10 digit phone number').isLength(10);
+    req.check('phone', 'Enter 10 digit phone number').isNumeric();
     req.check('hourly_pay', 'Hourly pay required').notEmpty();
+    req.check('hourly_pay', 'Enter hourly pay').isFloat();
     req.check('started_at', 'Starting date required').notEmpty();
+
+    const errors = req.validationErrors();
+    if (errors) {
+        return res.status(400).send(errors[0].msg);
+    }
+
+    next();
+}
+
+exports.updateUserGeneralValidator = (req, res, next) => {
+    req.check('first_name', 'First name required').notEmpty();
+    req.check('last_name', 'Last name required').notEmpty();
+    req.check('email', 'Email required').notEmpty();
+    req.check('email', 'Invalid email').isEmail();
+    req.check('phone', 'Phone number required').notEmpty();
+    req.check('phone', 'Enter 10 digit phone number').isLength(10);
+    req.check('phone', 'Enter 10 digit phone number').isNumeric();
+
+    const errors = req.validationErrors();
+    if (errors) {
+        return res.status(400).send(errors[0].msg);
+    }
+
+    next();
+}
+
+exports.updateUserSystemValidator = (req, res, next) => {
+    req.check('hourly_pay', 'Hourly pay required').notEmpty();
+    req.check('hourly_pay', 'Enter hourly pay').isFloat();
 
     const errors = req.validationErrors();
     if (errors) {
