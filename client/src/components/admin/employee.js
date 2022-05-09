@@ -1,6 +1,7 @@
 import { useState, useEffect, useContext } from "react";
 import { useParams, useHistory } from "react-router";
 import { Link } from "react-router-dom";
+import { subDays } from "date-fns";
 import * as ROUTES from "../../constants/routes";
 import { isAuthenticated } from "../../services/auth";
 import {
@@ -136,7 +137,7 @@ export default function AdminEmployee() {
     setError("");
     setRoleId(user.role_id);
     setHourlyPay(user.hourly_pay);
-    setStartedAt(user.started_at);
+    setStartedAt(new Date(user.started_at).toISOString().split("T")[0]);
     setShowEditInfo(true);
   }
 
@@ -219,7 +220,7 @@ export default function AdminEmployee() {
         <input
           type="text"
           className="form-input"
-          defaultValue={user.first_name}
+          defaultValue={first_name}
           onChange={({ target }) => setFirstName(target.value)}
         />
       </div>
@@ -228,7 +229,7 @@ export default function AdminEmployee() {
         <input
           type="text"
           className="form-input"
-          defaultValue={user.last_name}
+          defaultValue={last_name}
           onChange={({ target }) => setLastName(target.value)}
         />
       </div>
@@ -237,7 +238,7 @@ export default function AdminEmployee() {
         <input
           type="text"
           className="form-input"
-          defaultValue={user.email}
+          defaultValue={email}
           onChange={({ target }) => setEmail(target.value)}
         />
       </div>
@@ -246,7 +247,7 @@ export default function AdminEmployee() {
         <input
           type="text"
           className="form-input"
-          defaultValue={user.phone}
+          defaultValue={phone}
           onChange={({ target }) => setPhone(target.value)}
         />
       </div>
@@ -275,7 +276,7 @@ export default function AdminEmployee() {
       <div className="my-2">
         <p>Role</p>
         <select
-          defaultValue={user.role_id}
+          defaultValue={role_id}
           onChange={({ target }) => setRoleId(parseInt(target.value))}
         >
           {roles &&
@@ -291,7 +292,7 @@ export default function AdminEmployee() {
         <input
           type="text"
           className="form-input"
-          defaultValue={user.hourly_pay}
+          defaultValue={hourly_pay}
           onChange={({ target }) => setHourlyPay(target.value)}
         />
       </div>
@@ -300,7 +301,7 @@ export default function AdminEmployee() {
         <input
           type="date"
           className="form-input"
-          defaultValue={user.started_at.split("T")[0]}
+          defaultValue={started_at}
           onChange={({ target }) => setStartedAt(target.value)}
         />
       </div>
