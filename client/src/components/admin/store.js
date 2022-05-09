@@ -164,7 +164,9 @@ export default function AdminStore() {
           </button>
         </div>
         {isSettingStoreHours && (
-          <Loader type="ThreeDots" height={10} color="rgb(50, 110, 150)" />
+          <div className="text-center">
+            <Loader type="ThreeDots" height={10} color="rgb(50, 110, 150)" />
+          </div>
         )}
       </>
     ) : (

@@ -252,7 +252,7 @@ export default function UserAvailability() {
       </div>
 
       {isUpdating && (
-        <div className="my-1">
+        <div className="w-50 sm-w-80 my-1 text-center sm-x-center">
           <Loader type="ThreeDots" height={10} color="rgb(50, 110, 150)" />
         </div>
       )}

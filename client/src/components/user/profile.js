@@ -64,6 +64,19 @@ export default function UserProfile() {
     }
   };
 
+  const handleShowEdit = () => {
+    setFirstName(user.first_name);
+    setLastName(user.last_name);
+    setEmail(user.email);
+    setPhone(user.phone);
+    setShowEditGeneral(true);
+  };
+
+  const handleCancelEdit = () => {
+    setShowEditGeneral(false);
+    setError("");
+  };
+
   const renderUserGeneral = () => (
     <>
       <div className="py-1">
@@ -83,7 +96,7 @@ export default function UserProfile() {
       <div className="py-1">
         <button
           className="btn-med btn-hovered"
-          onClick={() => setShowEditGeneral(true)}
+          onClick={handleShowEdit}
         >
           Edit
         </button>
@@ -98,7 +111,7 @@ export default function UserProfile() {
         <input
           type="text"
           className="form-input"
-          defaultValue={first_name}
+          defaultValue={user.first_name}
           onChange={({ target }) => setFirstName(target.value)}
         />
       </div>
@@ -107,7 +120,7 @@ export default function UserProfile() {
         <input
           type="text"
           className="form-input"
-          defaultValue={last_name}
+          defaultValue={user.last_name}
           onChange={({ target }) => setLastName(target.value)}
         />
       </div>
@@ -116,7 +129,7 @@ export default function UserProfile() {
         <input
           type="text"
           className="form-input"
-          defaultValue={email}
+          defaultValue={user.email}
           onChange={({ target }) => setEmail(target.value)}
         />
       </div>
@@ -125,7 +138,7 @@ export default function UserProfile() {
         <input
           type="text"
           className="form-input"
-          defaultValue={phone}
+          defaultValue={user.phone}
           onChange={({ target }) => setPhone(target.value)}
         />
       </div>
@@ -140,7 +153,7 @@ export default function UserProfile() {
         <button
           className="btn-med btn-hovered ml-5"
           disabled={isUpdating}
-          onClick={() => setShowEditGeneral(false)}
+          onClick={handleCancelEdit}
         >
           Cancel
         </button>
@@ -199,10 +212,6 @@ export default function UserProfile() {
       if (isMounted) {
         setUid(user.u_id);
         setUser(user);
-        setFirstName(user.first_name);
-        setLastName(user.last_name);
-        setEmail(user.email);
-        setPhone(user.phone);
         setIsLoading(false);
       }
     }
