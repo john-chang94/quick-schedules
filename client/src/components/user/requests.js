@@ -85,6 +85,7 @@ export default function UserRequests() {
   };
 
   const handleAddDate = (index, newDate) => {
+    console.log(new Date(newDate))
     // Run if date value already exists in array to replace old value
     if (dates[index] !== undefined) {
       let arrCopy = dates.slice();
@@ -355,6 +356,7 @@ export default function UserRequests() {
         if (isMounted) {
           setRequests(requests);
           setIsLoading(false);
+          console.log(requests)
         }
       }
     }
