@@ -1,7 +1,6 @@
 import { useState, useEffect, useContext } from "react";
 import { useParams, useHistory } from "react-router";
 import { Link } from "react-router-dom";
-import { subDays } from "date-fns";
 import * as ROUTES from "../../constants/routes";
 import { isAuthenticated } from "../../services/auth";
 import {

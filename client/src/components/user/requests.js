@@ -52,12 +52,17 @@ export default function UserRequests() {
 
       // Format each date for storing in db
       for (let i = 0; i < datesArr.length; i++) {
-        datesArr[i] = new Date(datesArr[i]).toISOString();
+        // Same concept as creating a shift
+        // Creating a new date object with separate values
+        // works for browsers in production
+        const date = datesArr[i].split("-");
+        const dateToAdd = new Date(date[0], date[1], date[2]).toLocaleString();
+        datesArr[i] = dateToAdd;
       }
 
       const body = {
         u_id: verifiedUser.u_id,
-        requested_at: format(new Date(), "yyyy-MM-dd'T'HH:mm:ss"),
+        requested_at: new Date(Date.now()).toLocaleString(),
         notes,
         requested_dates: datesArr,
       };
@@ -85,7 +90,7 @@ export default function UserRequests() {
   };
 
   const handleAddDate = (index, newDate) => {
-    console.log(new Date(newDate))
+    console.log(new Date(Date.now()).toLocaleString())
     // Run if date value already exists in array to replace old value
     if (dates[index] !== undefined) {
       let arrCopy = dates.slice();
