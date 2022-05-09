@@ -370,13 +370,13 @@ export default function AdminEmployee() {
           <Loader type="Oval" color="rgb(50, 110, 150)" />
         </div>
       ) : (
-        <div className="mt-3">
+        <div className="mt-3 w-50 sm-w-100">
           {user && (
             <div>
               {showEditGeneral ? renderEditGeneral() : renderUserGeneral()}
-              <hr />
+              <hr className="my-4" />
               {showEditInfo ? renderEditInfo() : renderUserInfo()}
-              <hr />
+              <hr className="my-4" />
               {verifiedUser && // Render update p/w component if viewing own account
                 verifiedUser.u_id === user.u_id &&
                 renderEditPassword()}

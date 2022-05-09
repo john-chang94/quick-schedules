@@ -16,12 +16,11 @@ export default function UserRequests() {
   const [isLoading, setIsLoading] = useState(true);
   const [isDeleting, setIsDeleting] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const [createNewRequest, setCreateNewRequest] = useState(false);
   const [requests, setRequests] = useState(null);
   const [notes, setNotes] = useState("");
   const [dates, setDates] = useState([]);
   // Keep track of the number of date values to determine
-  // how many date selectors are rendered
+  // how many datepickers are rendered
   const [numOfDateInputs, setNumOfDateInputs] = useState(1);
   const [showNewRequest, setShowNewRequest] = useState(false);
   const modalRef = useRef();
@@ -41,6 +40,10 @@ export default function UserRequests() {
   };
 
   const handleCreateRequest = async () => {
+    if (!dates.length) {
+      return alert("No dates selected");
+    }
+
     const request = window.confirm("Submit request?");
     if (request) {
       setIsSubmitting(true);
@@ -64,7 +67,7 @@ export default function UserRequests() {
       const requests = await getRequestsByUserUser(verifiedUser.u_id);
 
       setRequests(requests);
-      setCreateNewRequest(false);
+      setShowNewRequest(false);
       clearForm();
       setIsSubmitting(false);
     }
@@ -102,7 +105,7 @@ export default function UserRequests() {
     setNumOfDateInputs(numOfDateInputs - 1);
   };
 
-  // First date selector
+  // First datepicker
   // Does not include a delete button
   const DateElement = ({ index }) => (
     <div className="my-2">
@@ -115,7 +118,7 @@ export default function UserRequests() {
     </div>
   );
 
-  // Additional date selectors
+  // Additional datepickers
   const XDateElement = ({ index }) => (
     <div className="my-2">
       <p>Select date</p>
@@ -133,21 +136,21 @@ export default function UserRequests() {
     </div>
   );
 
-  // Render date selectors based on numOfDateInputs
+  // Render datepickers based on numOfDateInputs
   const renderDateElements = () => {
     let dateElements = [];
     // Render based on number of values that are stored in dates array
     for (let i = 0; i < numOfDateInputs; i++) {
       if (numOfDateInputs > 1 && i === numOfDateInputs - 1) {
-        // Render additional date selectors
+        // Render additional datepickers
         dateElements.push(<XDateElement key={i} index={i} />);
       } else {
-        // Render initial date selector
+        // Render initial datepicker
         dateElements.push(<DateElement key={i} index={i} />);
       }
     }
 
-    // Return date selectors to render
+    // Return datepickers to render
     return dateElements;
   };
 
@@ -213,6 +216,7 @@ export default function UserRequests() {
     <table className="border-collapse w-100 requests-table">
       <thead>
         <tr>
+          <th className="p-2 border-solid-1"></th>
           <th className="p-2 border-solid-1">Requested Dates</th>
           <th className="p-2 border-solid-1">Notes</th>
           <th className="p-2 border-solid-1">Submission Date</th>
@@ -230,6 +234,18 @@ export default function UserRequests() {
                     : { backgroundColor: "rbg(255, 255, 255)" }
                 }
               >
+                <td className="py-1 px-2 text-center">
+                  <button
+                    className={`border-none ${
+                      request.status === "Pending" && "pointer-no-u"
+                    }`}
+                    style={{ padding: "2px" }}
+                    disabled={request.status !== "Pending"}
+                    onClick={() => handleDeleteRequest(request.r_id)}
+                  >
+                    <i className="fas fa-trash-alt" />
+                  </button>
+                </td>
                 <td className="py-1 px-2">
                   {request.requested_dates.map((rd, rd_i) => (
                     <span key={rd_i}>

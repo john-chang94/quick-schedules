@@ -223,7 +223,7 @@ export default function UserProfile() {
           {user && (
             <div>
               {showEditGeneral ? renderEditGeneral() : renderUserGeneral()}
-              <hr className="my-2" />
+              <hr className="my-4" />
               {renderEditPassword()}
 
               {error ? <p className="red">{error}</p> : null}

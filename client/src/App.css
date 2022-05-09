@@ -1288,9 +1288,6 @@ select {
   .schedules-table {
     display: none;
   }
-  /* .schedules-loader {
-    display: none;
-  } */
   .schedules-mobile {
     display: block;
     width: 100%;

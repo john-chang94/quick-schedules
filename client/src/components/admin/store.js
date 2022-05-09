@@ -142,7 +142,7 @@ export default function AdminStore() {
               ))}
           </select>
         </div>
-        <div>
+        <div className="text-center">
           <button
             className={`m-2 btn-sm ${!isSettingStoreHours && "btn-hovered"}`}
             disabled={isSettingStoreHours}
