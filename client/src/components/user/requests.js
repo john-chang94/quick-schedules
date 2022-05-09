@@ -297,7 +297,7 @@ export default function UserRequests() {
           <div className="w-100">
             <div className="m-2">
               <strong>Submission date</strong>
-              <p>{new Date(request.requested_at).toLocaleDateString()}</p>
+              <p>{handleFormatDate(request.requested_at)}</p>
             </div>
             <div className="m-2">
               <p>
@@ -324,8 +324,8 @@ export default function UserRequests() {
               {request.requested_dates.map((rd, rd_i) => (
                 <p key={rd_i}>
                   {rd_i === request.requested_dates.length - 1
-                    ? new Date(rd).toLocaleDateString()
-                    : `${new Date(rd).toLocaleDateString()},`}
+                    ? handleFormatDate(rd)
+                    : `${handleFormatDate(rd)},`}
                 </p>
               ))}
             </div>

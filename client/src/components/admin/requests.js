@@ -44,6 +44,16 @@ export default function AdminRequests() {
     }
   };
 
+  // Format date to 'mm-dd-yyyy' without using new Date
+  // Production fetches dates without timezone, while dev
+  // fetches with timezone.. so manually parse date
+  const handleFormatDate = (date) => {
+    const init = date.split("T")[0];
+    const split = init.split("-");
+    const newDate = `${split[1]}-${split[2]}-${split[0]}`;
+    return newDate;
+  };
+
   const renderFilters = () => (
     <div className="flex flex-col align-center">
       <p className="mb-2">View by</p>
@@ -94,74 +104,75 @@ export default function AdminRequests() {
         </tr>
       </thead>
       <tbody>
-        {requests.length && requests.map((request, i) => (
-          <tr
-            key={i}
-            style={
-              i % 2 === 0
-                ? { backgroundColor: "rgb(240, 240, 240)" }
-                : { backgroundColor: "rbg(255, 255, 255)" }
-            }
-          >
-            <td className="py-1 px-2">
-              {request.first_name} {request.last_name} <br />
-              <em className="text-3">{request.title}</em>
-            </td>
-            <td className="py-1 px-2">
-              {request.requested_dates.map((rd, rd_i) => (
-                <span key={rd_i}>
-                  {
-                    // Add commas if more than one date
-                    rd_i === request.requested_dates.length - 1
-                      ? format(new Date(rd), "MM-dd-yyyy")
-                      : `${format(new Date(rd), "MM-dd-yyyy")}, `
-                  }
-                </span>
-              ))}
-            </td>
-            <td className="py-1 px-2">{request.notes}</td>
-            <td className="py-1 px-2 text-center">
-              {format(new Date(request.requested_at), "MM-dd-yyyy")}
-            </td>
-            <td
-              className={
-                request.status === "Pending"
-                  ? "blue py-1 px-2 text-center"
-                  : request.status === "Approved"
-                  ? "green py-1 px-2 text-center"
-                  : request.status === "Denied"
-                  ? "red py-1 px-2 text-center"
-                  : ""
+        {requests.length &&
+          requests.map((request, i) => (
+            <tr
+              key={i}
+              style={
+                i % 2 === 0
+                  ? { backgroundColor: "rgb(240, 240, 240)" }
+                  : { backgroundColor: "rbg(255, 255, 255)" }
               }
             >
-              {request.status}
-            </td>
-            <td className="p-1 text-center">
-              <button
-                className={`btn-sm m-1 ${
-                  !isUpdating && "btn-hovered pointer-no-u"
-                }`}
-                onClick={() =>
-                  handleUpdateRequestStatus(request.r_id, "Approved")
+              <td className="py-1 px-2">
+                {request.first_name} {request.last_name} <br />
+                <em className="text-3">{request.title}</em>
+              </td>
+              <td className="py-1 px-2">
+                {request.requested_dates.map((rd, rd_i) => (
+                  <span key={rd_i}>
+                    {
+                      // Add commas if more than one date
+                      rd_i === request.requested_dates.length - 1
+                        ? handleFormatDate(rd)
+                        : `${handleFormatDate(rd)}, `
+                    }
+                  </span>
+                ))}
+              </td>
+              <td className="py-1 px-2">{request.notes}</td>
+              <td className="py-1 px-2 text-center">
+                {format(new Date(request.requested_at), "MM-dd-yyyy")}
+              </td>
+              <td
+                className={
+                  request.status === "Pending"
+                    ? "blue py-1 px-2 text-center"
+                    : request.status === "Approved"
+                    ? "green py-1 px-2 text-center"
+                    : request.status === "Denied"
+                    ? "red py-1 px-2 text-center"
+                    : ""
                 }
-                disabled={isUpdating}
               >
-                Approve
-              </button>
-              <button
-                className={`btn-sm m-1 ${
-                  !isUpdating && "btn-hovered pointer-no-u"
-                }`}
-                onClick={() =>
-                  handleUpdateRequestStatus(request.r_id, "Denied")
-                }
-                disabled={isUpdating}
-              >
-                Deny
-              </button>
-            </td>
-          </tr>
-        ))}
+                {request.status}
+              </td>
+              <td className="p-1 text-center">
+                <button
+                  className={`btn-sm m-1 ${
+                    !isUpdating && "btn-hovered pointer-no-u"
+                  }`}
+                  onClick={() =>
+                    handleUpdateRequestStatus(request.r_id, "Approved")
+                  }
+                  disabled={isUpdating}
+                >
+                  Approve
+                </button>
+                <button
+                  className={`btn-sm m-1 ${
+                    !isUpdating && "btn-hovered pointer-no-u"
+                  }`}
+                  onClick={() =>
+                    handleUpdateRequestStatus(request.r_id, "Denied")
+                  }
+                  disabled={isUpdating}
+                >
+                  Deny
+                </button>
+              </td>
+            </tr>
+          ))}
       </tbody>
     </table>
   );
@@ -207,15 +218,15 @@ export default function AdminRequests() {
                     {
                       // Add commas if more than one date
                       rd_i === request.requested_dates.length - 1
-                        ? new Date(rd).toDateString()
-                        : `${new Date(rd).toDateString()},`
+                        ? handleFormatDate(rd)
+                        : `${handleFormatDate(rd)},`
                     }
                   </p>
                 ))}
               </div>
               <div className="my-1">
                 <strong>Submission date</strong>
-                <p>{new Date(request.requested_at).toDateString()}</p>
+                <p>{handleFormatDate(request.requested_at)}</p>
               </div>
               <div className="my-1">
                 <strong>Notes</strong>
@@ -266,7 +277,7 @@ export default function AdminRequests() {
 
     fetchData();
 
-    return () => isMounted = false;
+    return () => (isMounted = false);
   }, []);
 
   return (

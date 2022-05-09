@@ -87,9 +87,16 @@ export default function AdminEmployee() {
   const handleUpdateUserInfo = async () => {
     setIsUpdating(true);
     const tokenConfig = isAuthenticated();
+    let pay;
+    if (hourly_pay.indexOf("$") !== -1) {
+      // Remove $ for float data validation
+      pay = hourly_pay.slice(1);
+    } else {
+      pay = hourly_pay;
+    }
     const body = {
       role_id,
-      hourly_pay,
+      hourly_pay: pay,
       started_at,
       updated_at: new Date(Date.now()).toLocaleDateString(),
     };
