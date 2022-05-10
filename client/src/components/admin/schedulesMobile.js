@@ -154,6 +154,12 @@ export default function SchedulesMobile({
     setShiftEndValue(shiftValue.split("-")[1]);
   };
 
+  const handleShowAddShift = () => {
+    setShiftStartValue(store.store_open_value);
+    setShiftEndValue(store.store_close_value);
+    setShowAddShift(true);
+  }
+
   const handleCancelAddShift = () => {
     setShiftStartValue("");
     setShiftEndValue("");
@@ -438,7 +444,7 @@ export default function SchedulesMobile({
         // Hide add button when modal is active
         <div
           className="add-shift-btn flex flex-center pointer"
-          onClick={() => setShowAddShift(true)}
+          onClick={handleShowAddShift}
         >
           <p className="white text-7">
             <i className="fas fa-plus" />
