@@ -409,7 +409,7 @@ export default function AdminSchedules() {
   const handleFormatDate = (date) => {
     console.log(new Date(date))
     console.log(new Date(date).toLocaleDateString())
-    console.log(new Date(date).toJSON())
+    console.log(new Date(date).toISOString())
     const init = date.split("T")[0];
     const split = init.split("-");
     const newDate = `${split[1]}/${split[2]}/${split[0]}`;
@@ -783,6 +783,7 @@ export default function AdminSchedules() {
       if (usersMobile.length) {
         usersMobile = handleSortUsersMobile(usersMobile, days);
       }
+      console.log(users)
 
       if (isMounted) {
         setDays(days);
