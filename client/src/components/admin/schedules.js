@@ -50,7 +50,7 @@ export default function AdminSchedules() {
   const [shift_start_value, setShiftStartValue] = useState("0 0");
   const [shift_end_value, setShiftEndValue] = useState("0 0");
   // Used to render edit shift mode for selected date and employee only
-  const [userData, setUserData] = useState(null);
+  const [userId, setUserId] = useState(null);
   const [availabilityIndex, setAvailabilityIndex] = useState(null);
 
   // Sort schedules array for mobile
@@ -107,17 +107,17 @@ export default function AdminSchedules() {
   };
 
   // Can create or update shift based on s_id being provided
-  const handleSaveShift = async (u_id, dayIndex, s_id) => {
+  const handleSaveShift = async (u_id, a_i, s_id) => {
     setIsUpdating(true);
     const tokenConfig = isAuthenticated();
     // Get shift date
-    const date = new Date(days[dayIndex]);
-    // Get hour and minute in INT data type for date object
-    const startTimeHour = parseInt(shift_start_value.split(" ")[0]);
-    const startTimeMinute = parseInt(shift_start_value.split(" ")[1]);
-    // Get hour and minute in INT data type for date object
-    const endTimeHour = parseInt(shift_end_value.split(" ")[0]);
-    const endTimeMinute = parseInt(shift_end_value.split(" ")[1]);
+    const date = new Date(days[a_i]);
+    // Get hour and minute for new date object
+    const startTimeHour = shift_start_value.split(" ")[0];
+    const startTimeMinute = shift_start_value.split(" ")[1];
+    // Get hour and minute for new date object
+    const endTimeHour = shift_end_value.split(" ")[0];
+    const endTimeMinute = shift_end_value.split(" ")[1];
     // Create new date objects with year, month, day, hour, minute
     const shift_start = new Date(
       date.getFullYear(),
@@ -148,7 +148,7 @@ export default function AdminSchedules() {
     // Refresh schedule
     await handleFetchSchedule();
 
-    setUserData("");
+    setUserId("");
     setAvailabilityIndex("");
     setShowConfirmTooltip(false);
     setIsUpdating(false);
@@ -165,30 +165,44 @@ export default function AdminSchedules() {
 
       let shifts = [];
       // Copy shifts from current week for all users
-      for (let i = 0; i < users.length; i++) {
-        for (let j = 0; j < users[i].shifts.length; j++) {
-          if (users[i].shifts[j].shift_end !== null) {
-            let shift = {
-              u_id: users[i].u_id,
-              shift_start: format(
-                addWeeks(parseISO(users[i].shifts[j].shift_start), 1),
-                "yyyy-MM-dd'T'HH:mm:ss"
-              ),
-              shift_end: format(
-                addWeeks(parseISO(users[i].shifts[j].shift_end), 1),
-                "yyyy-MM-dd'T'HH:mm:ss"
-              ),
-            };
-            shifts.push(shift);
-          }
-        }
-      }
+      // for (let i = 0; i < users.length; i++) {
+      //   for (let j = 0; j < users[i].shifts.length; j++) {
+      //     if (users[i].shifts[j].shift_end !== null) {
+      //       let shift = {
+      //         u_id: users[i].u_id,
+      //         shift_start: format(
+      //           addWeeks(parseISO(users[i].shifts[j].shift_start), 1),
+      //           "yyyy-MM-dd'T'HH:mm:ss"
+      //         ),
+      //         shift_end: format(
+      //           addWeeks(parseISO(users[i].shifts[j].shift_end), 1),
+      //           "yyyy-MM-dd'T'HH:mm:ss"
+      //         ),
+      //       };
+      //       shifts.push(shift);
+      //     }
+      //   }
+      // }
+
+      let shift = {
+        u_id: users[0].u_id,
+        shift_start: addWeeks(parseISO(users[0].shifts[0].shift_start), 1),
+        shift_end: addWeeks(parseISO(users[0].shifts[0].shift_end), 1),
+      };
+      let shift2 = {
+        u_id: users[0].u_id,
+        shift_start: addWeeks(parseISO(users[0].shifts[1].shift_start), 1),
+        shift_end: addWeeks(parseISO(users[0].shifts[1].shift_end), 1),
+      };
+      shifts.push(shift);
+      shifts.push(shift2);
 
       const body = {
         shifts,
         weekStart: addWeeks(parseISO(days[0]), 1),
         weekEnd: addWeeks(parseISO(days[6]), 1),
       };
+      console.log(body)
 
       // Copy shifts from current week to the following week
       await createCopyOfWeeklySchedule(body, tokenConfig);
@@ -219,15 +233,15 @@ export default function AdminSchedules() {
   };
 
   const handleCancelShift = () => {
-    setUserData("");
+    setUserId("");
     setAvailabilityIndex("");
     setShowDynamicTooltip(false);
   };
 
   // Render edit shift (new)
-  const handleShiftClickNew = (u_id, index) => {
-    setUserData(u_id);
-    setAvailabilityIndex(index);
+  const handleShiftClickNew = (u_id, a_i) => {
+    setUserId(u_id);
+    setAvailabilityIndex(a_i);
     setShiftStartValue(store.store_open_value);
     setShiftEndValue(store.store_close_value);
   };
@@ -235,12 +249,12 @@ export default function AdminSchedules() {
   // Render edit shift (update)
   const handleShiftClickEdit = (
     u_id,
-    index,
+    a_i,
     startStartValue,
     endStartValue
   ) => {
-    setUserData(u_id);
-    setAvailabilityIndex(index);
+    setUserId(u_id);
+    setAvailabilityIndex(a_i);
     setShiftStartValue(startStartValue);
     setShiftEndValue(endStartValue);
   };
@@ -288,7 +302,7 @@ export default function AdminSchedules() {
     setUsers(users);
     setRequests(requests);
     setUsersMobile(usersMobile);
-    setUserData("");
+    setUserId("");
     setAvailabilityIndex("");
     setIsLoadingSchedule(false);
   };
@@ -316,7 +330,7 @@ export default function AdminSchedules() {
     setUsers(users);
     setRequests(requests);
     setUsersMobile(usersMobile);
-    setUserData("");
+    setUserId("");
     setAvailabilityIndex("");
     setIsLoadingSchedule(false);
   };
@@ -382,7 +396,7 @@ export default function AdminSchedules() {
 
       // Refresh schedule
       await handleFetchSchedule();
-      setUserData("");
+      setUserId("");
       setAvailabilityIndex("");
       setShowDynamicTooltip(false);
       setIsUpdating(false);
@@ -398,7 +412,10 @@ export default function AdminSchedules() {
   };
 
   const getTime = (shift) => {
+    console.log('toLocaleTimeString', new Date(shift).toLocaleTimeString())
+    console.log('toLocaleTimeString', new Date(shift).toTimeString())
     return new Date(shift).toLocaleTimeString().replace(":00 ", " ");
+    // return new Date(shift).toLocaleString();
   };
 
   // Format date to 'mm-dd-yyyy' without using new Date
@@ -441,8 +458,8 @@ export default function AdminSchedules() {
   );
 
   // Render new shift or edit existing
-  const renderEditShift = (u_id, dayIndex, shift) => (
-    <td key={dayIndex} className="bg-blue-grey-lighten-5">
+  const renderEditShift = (u_id, a_i, shift) => (
+    <td key={a_i} className="bg-blue-grey-lighten-5">
       <div className="flex justify-evenly mt-1">
         <p>Preset</p>
         <select
@@ -520,7 +537,7 @@ export default function AdminSchedules() {
           <div
             style={{ minHeight: "25px" }}
             className="w-100 pointer-no-dec hovered border-solid-1 bg-white relative flex flex-center"
-            onClick={() => handleSaveShift(u_id, dayIndex, shift.s_id)}
+            onClick={() => handleSaveShift(u_id, a_i, shift.s_id)}
           >
             <span // Tooltip
               className={`tooltip ${
@@ -741,7 +758,7 @@ export default function AdminSchedules() {
                 </td>
                 {user.availability.map((time, a_i) =>
                   // Only render edit mode for the selected date and employee
-                  userData === user.u_id && availabilityIndex === a_i
+                  userId === user.u_id && availabilityIndex === a_i
                     ? renderEditShift(user.u_id, a_i, user.shifts[a_i])
                     : // Render shifts if they exist during the selected week
                     user.shifts[a_i].shift_end === null

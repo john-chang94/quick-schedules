@@ -54,12 +54,12 @@ export default function SchedulesMobile({
     const tokenConfig = isAuthenticated();
     const newDate = toDate(parseISO(date));
 
-    // Get hour and minute in INT data type for date object
-    const startTimeHour = parseInt(shiftStartValue.split(" ")[0]);
-    const startTimeMinute = parseInt(shiftStartValue.split(" ")[1]);
-    // Get hour and minute in INT data type for date object
-    const endTimeHour = parseInt(shiftEndValue.split(" ")[0]);
-    const endTimeMinute = parseInt(shiftEndValue.split(" ")[1]);
+    // Get hour and minute for new date object
+    const startTimeHour = shiftStartValue.split(" ")[0];
+    const startTimeMinute = shiftStartValue.split(" ")[1];
+    // Get hour and minute for new date object
+    const endTimeHour = shiftEndValue.split(" ")[0];
+    const endTimeMinute = shiftEndValue.split(" ")[1];
     // Create new date objects with year, month, day, hour, minute
     const shift_start = toDate(
       new Date(
