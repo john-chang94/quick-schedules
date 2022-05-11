@@ -165,44 +165,30 @@ export default function AdminSchedules() {
 
       let shifts = [];
       // Copy shifts from current week for all users
-      // for (let i = 0; i < users.length; i++) {
-      //   for (let j = 0; j < users[i].shifts.length; j++) {
-      //     if (users[i].shifts[j].shift_end !== null) {
-      //       let shift = {
-      //         u_id: users[i].u_id,
-      //         shift_start: format(
-      //           addWeeks(parseISO(users[i].shifts[j].shift_start), 1),
-      //           "yyyy-MM-dd'T'HH:mm:ss"
-      //         ),
-      //         shift_end: format(
-      //           addWeeks(parseISO(users[i].shifts[j].shift_end), 1),
-      //           "yyyy-MM-dd'T'HH:mm:ss"
-      //         ),
-      //       };
-      //       shifts.push(shift);
-      //     }
-      //   }
-      // }
-
-      let shift = {
-        u_id: users[0].u_id,
-        shift_start: addWeeks(parseISO(users[0].shifts[0].shift_start), 1),
-        shift_end: addWeeks(parseISO(users[0].shifts[0].shift_end), 1),
-      };
-      let shift2 = {
-        u_id: users[0].u_id,
-        shift_start: addWeeks(parseISO(users[0].shifts[1].shift_start), 1),
-        shift_end: addWeeks(parseISO(users[0].shifts[1].shift_end), 1),
-      };
-      shifts.push(shift);
-      shifts.push(shift2);
+      for (let i = 0; i < users.length; i++) {
+        for (let j = 0; j < users[i].shifts.length; j++) {
+          if (users[i].shifts[j].shift_end !== null) {
+            let shift = {
+              u_id: users[i].u_id,
+              shift_start: format(
+                addWeeks(parseISO(users[i].shifts[j].shift_start), 1),
+                "yyyy-MM-dd'T'HH:mm:ss"
+              ),
+              shift_end: format(
+                addWeeks(parseISO(users[i].shifts[j].shift_end), 1),
+                "yyyy-MM-dd'T'HH:mm:ss"
+              ),
+            };
+            shifts.push(shift);
+          }
+        }
+      }
 
       const body = {
         shifts,
         weekStart: addWeeks(parseISO(days[0]), 1),
         weekEnd: addWeeks(parseISO(days[6]), 1),
       };
-      console.log(body)
 
       // Copy shifts from current week to the following week
       await createCopyOfWeeklySchedule(body, tokenConfig);
@@ -412,16 +398,18 @@ export default function AdminSchedules() {
   };
 
   const getTime = (shift) => {
-    console.log('toLocaleTimeString', new Date(shift).toLocaleTimeString())
-    console.log('toLocaleTimeString', new Date(shift).toTimeString())
     return new Date(shift).toLocaleTimeString().replace(":00 ", " ");
-    // return new Date(shift).toLocaleString();
   };
 
   // Format date to 'mm-dd-yyyy' without using new Date
   // Production fetches dates without timezone, while dev
   // fetches with timezone.. so manually parse date
+  // CHECK AGAIN - near end of day
+  // Previously used new Date(date).toLocaleDateString()
   const handleFormatDate = (date) => {
+    console.log(new Date(date))
+    console.log(new Date(date).toLocaleDateString())
+    console.log(new Date(date).toJSON())
     const init = date.split("T")[0];
     const split = init.split("-");
     const newDate = `${split[1]}/${split[2]}/${split[0]}`;
