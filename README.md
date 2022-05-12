@@ -8,14 +8,13 @@ Employee management system with exclusive administrative and standard privileges
 - PostgreSQL
 
 ## Features
----
 **Admin**
 - Manage store employees
 - Create and modify work schedules
 - Respond to employee requests
 - Change store hours
 
-<br><br>
+<br>
 **Employee**
 - View work schedules
 - Submit requests for days off
