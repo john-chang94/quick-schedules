@@ -233,12 +233,7 @@ export default function AdminSchedules() {
   };
 
   // Render edit shift (update)
-  const handleShiftClickEdit = (
-    u_id,
-    a_i,
-    startStartValue,
-    endStartValue
-  ) => {
+  const handleShiftClickEdit = (u_id, a_i, startStartValue, endStartValue) => {
     setUserId(u_id);
     setAvailabilityIndex(a_i);
     setShiftStartValue(startStartValue);
@@ -401,15 +396,15 @@ export default function AdminSchedules() {
     return new Date(shift).toLocaleTimeString().replace(":00 ", " ");
   };
 
-  // Format date to 'mm-dd-yyyy' without using new Date
+  // Format date to 'mm/dd/yyyy' without using new Date
   // Production fetches dates without timezone, while dev
   // fetches with timezone.. so manually parse date
   // CHECK AGAIN - near end of day
   // Previously used new Date(date).toLocaleDateString()
   const handleFormatDate = (date) => {
-    console.log(new Date(date))
-    console.log(new Date(date).toLocaleDateString())
-    console.log(new Date(date).toISOString())
+    console.log(new Date('date', date));
+    console.log(new Date('tolocalstring', date).toLocaleDateString());
+    console.log(new Date('toisostring', date).toISOString());
     const init = date.split("T")[0];
     const split = init.split("-");
     const newDate = `${split[1]}/${split[2]}/${split[0]}`;
@@ -718,21 +713,21 @@ export default function AdminSchedules() {
       </div>
     ) : (
       <table className="schedules-table w-100 border-collapse text-center table-fixed schedules-text">
-        <tbody>
+        <thead>
           <tr>
-            <td className="bg-x-light-gray">
-              <strong>Name</strong>
-            </td>
+            <th className="bg-x-light-gray">Name</th>
             {days &&
               days.map((day, i) => (
-                <td key={i} className="bg-x-light-gray">
-                  <strong>{new Date(day).toString().split(" ")[0]}</strong>
-                  <p>
+                <th key={i} className="bg-x-light-gray">
+                  <p>{new Date(day).toString().split(" ")[0]}</p>
+                  <p style={{ fontWeight: "normal" }}>
                     <em>{new Date(day).toLocaleDateString()}</em>
                   </p>
-                </td>
+                </th>
               ))}
           </tr>
+        </thead>
+        <tbody>
           {users &&
             users.map((user, u_i) => (
               <tr key={u_i}>
@@ -783,7 +778,7 @@ export default function AdminSchedules() {
       if (usersMobile.length) {
         usersMobile = handleSortUsersMobile(usersMobile, days);
       }
-      console.log(users)
+      console.log(users);
 
       if (isMounted) {
         setDays(days);
