@@ -29,11 +29,11 @@ exports.copyWeeklySchedule = async (req, res) => {
             [weekStart, weekEnd]
         )
 
-        for (let i = 0; i < shifts.length; i++) {
+        for (let shift of shifts) {
             await client.query(
                 `INSERT INTO shifts (u_id, shift_start, shift_end)
                 VALUES ($1, $2, $3)`,
-                [shifts[i].u_id, shifts[i].shift_start, shifts[i].shift_end]
+                [shift.u_id, shift.shift_start, shift.shift_end]
             )
         }
 
@@ -290,8 +290,8 @@ exports.getAllUsersSchedulesByDate = async (req, res) => {
             let day = new Date(
                 firstDate.getFullYear(),
                 firstDate.getMonth(),
-                firstDate.getDate() + i, 0).toLocaleString();
-            // Format so
+                firstDate.getDate() + i, 0);
+            // Format to ISO for parsing dates when checking below
             dateToAdd = new Date(day).toISOString();
             dates.push({ 'shift_start': dateToAdd, 'shift_end': null });
         }
@@ -301,17 +301,16 @@ exports.getAllUsersSchedulesByDate = async (req, res) => {
         const getMissingDates = (shifts, dates) => {
             let missingDates = [];
     
-            // Use hashing instead of nested for loops to find missing dates
-            // Store user's shifts in a hash
+            // Store user's shifts in a set
             const set = new Set();
-            for (let i = 0; i < shifts.length; i++) {
-                set.add(shifts[i].shift_start.split("T")[0]);
+            for (let shift of shifts) {
+                set.add(shift.shift_start.split("T")[0]);
             }
     
             // Identify filler dates that are missing in user's work week
-            for (let i = 0; i < dates.length; i++) {
-                if (!set.has(dates[i].shift_start.split("T")[0])) {
-                    missingDates.push(dates[i])
+            for (let date of dates) {
+                if (!set.has(date.shift_start.split("T")[0])) {
+                    missingDates.push(date);
                 }
             }
     
@@ -319,15 +318,15 @@ exports.getAllUsersSchedulesByDate = async (req, res) => {
         }
 
         // Loop through all users' shifts
-        for (let i = 0; i < users.length; i++) {       
+        for (let user of users) {       
             // Get missing dates in each user's work week
-            let missingDates = getMissingDates(users[i].shifts, dates);
-            for (let k = 0; k < missingDates.length; k++) {
+            let missingDates = getMissingDates(user.shifts, dates);
+            for (let date of missingDates) {
                 // Add missing dates to user's work week
-                users[i].shifts.push(missingDates[k]);
+                user.shifts.push(date);
             }
             // Sort shifts by date
-            users[i].shifts.sort((a, b) => new Date(a.shift_start) - new Date(b.shift_start));
+            user.shifts.sort((a, b) => new Date(a.shift_start) - new Date(b.shift_start));
         }
 
         res.status(200).json(users);

@@ -27,7 +27,8 @@ export default function UserSchedules() {
   const getDatesOfTheWeek = async (selectedDate) => {
     let dateToAdd;
     if (selectedDate) {
-      // Create new date with separate identifiers because it is inaccurate for Mondays
+      // Create new date with separate identifiers because instantiating
+      // a new date string without a time will assume UTC time
       let year = selectedDate.split("-")[0];
       let month = selectedDate.split("-")[1];
       let day = selectedDate.split("-")[2];

@@ -81,12 +81,13 @@ export default function AdminSchedules() {
   const getDatesOfTheWeek = async (selectedDate) => {
     let dateToAdd;
     if (selectedDate) {
-      // Create new date with separate identifiers because it is inaccurate for Mondays
+      // Create new date with separate identifiers because instantiating
+      // a new date string without a time will assume UTC time
       let year = selectedDate.split("-")[0];
       let month = selectedDate.split("-")[1];
       let day = selectedDate.split("-")[2];
       // Subtract one month because they are counted from zero
-      // i.e. "2022-02-18" is considered March
+      // ex. "2022-02-18" is considered March
       dateToAdd = startOfWeek(subMonths(new Date(year, month, day), 1), {
         weekStartsOn: 1,
       });
@@ -396,21 +397,6 @@ export default function AdminSchedules() {
     return new Date(shift).toLocaleTimeString().replace(":00 ", " ");
   };
 
-  // Format date to 'mm/dd/yyyy' without using new Date
-  // Production fetches dates without timezone, while dev
-  // fetches with timezone.. so manually parse date
-  // CHECK AGAIN - near end of day
-  // Previously used new Date(date).toLocaleDateString()
-  const handleFormatDate = (date) => {
-    console.log(new Date('date', date));
-    console.log(new Date('tolocalstring', date).toLocaleDateString());
-    console.log(new Date('toisostring', date).toISOString());
-    const init = date.split("T")[0];
-    const split = init.split("-");
-    const newDate = `${split[1]}/${split[2]}/${split[0]}`;
-    return newDate;
-  };
-
   const renderShift = (u_id, a_i, shift_start, shift_end) => (
     <td
       key={a_i}
@@ -675,8 +661,8 @@ export default function AdminSchedules() {
                     <span key={r_i}>
                       &nbsp;
                       {r_i === request.requested_dates.length - 1
-                        ? handleFormatDate(date)
-                        : `${handleFormatDate(date)},`}
+                        ? new Date(date).toLocaleDateString()
+                        : `${new Date(date).toLocaleDateString()},`}
                     </span>
                   ))}
                 </p>
@@ -778,7 +764,6 @@ export default function AdminSchedules() {
       if (usersMobile.length) {
         usersMobile = handleSortUsersMobile(usersMobile, days);
       }
-      console.log(users);
 
       if (isMounted) {
         setDays(days);
