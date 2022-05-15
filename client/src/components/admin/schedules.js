@@ -397,6 +397,16 @@ export default function AdminSchedules() {
     return new Date(shift).toLocaleTimeString().replace(":00 ", " ");
   };
 
+  // Format date without using new Date
+  // Production fetches dates without timezone, while dev
+  // fetches with timezone.. so manually parse date
+  const handleFormatDate = (date) => {
+    const init = date.split("T")[0];
+    const split = init.split("-");
+    const newDate = `${split[1]}/${split[2]}/${split[0]}`;
+    return newDate;
+  }
+
   const renderShift = (u_id, a_i, shift_start, shift_end) => (
     <td
       key={a_i}
@@ -661,8 +671,8 @@ export default function AdminSchedules() {
                     <span key={r_i}>
                       &nbsp;
                       {r_i === request.requested_dates.length - 1
-                        ? new Date(date).toLocaleDateString()
-                        : `${new Date(date).toLocaleDateString()},`}
+                        ? handleFormatDate(date)
+                        : `${handleFormatDate(date)},`}
                     </span>
                   ))}
                 </p>
