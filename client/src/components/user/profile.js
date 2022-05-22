@@ -95,7 +95,7 @@ export default function UserProfile() {
       </div>
       <div className="py-1">
         <button
-          className="btn-med btn-hovered"
+          className="btn-md btn-hovered"
           onClick={handleShowEdit}
         >
           Edit
@@ -144,14 +144,14 @@ export default function UserProfile() {
       </div>
       <div className="py-1">
         <button
-          className="btn-med btn-hovered"
+          className="btn-md btn-hovered"
           disabled={isUpdating}
           onClick={() => handleUpdateUserGeneral()}
         >
           Save
         </button>
         <button
-          className="btn-med btn-hovered ml-5"
+          className="btn-md btn-hovered ml-5"
           disabled={isUpdating}
           onClick={handleCancelEdit}
         >
@@ -194,7 +194,7 @@ export default function UserProfile() {
         </div>
         <div className="py-2">
           <button
-            className={`btn-med ${isUpdating ? "" : "btn-hovered"}`}
+            className={`btn-md ${isUpdating ? "" : "btn-hovered"}`}
             disabled={isUpdating}
           >
             Update

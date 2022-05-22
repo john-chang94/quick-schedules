@@ -176,7 +176,7 @@ export default function AdminNewEmployee() {
       </div>
       <div className="text-center mt-5">
         <button
-          className={`btn-med ${!isSubmitting && "btn-hovered"}`}
+          className={`btn-md ${!isSubmitting && "btn-hovered"}`}
           disabled={isSubmitting}
         >
           Submit

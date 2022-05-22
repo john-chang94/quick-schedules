@@ -177,6 +177,8 @@ export default function SchedulesMobile({
   };
 
   const getTime = (shift) => {
+    console.log('MOBILE DATE', shift)
+    console.log('MOBILE NEW DATE', new Date(shift))
     return new Date(shift).toLocaleTimeString().replace(":00 ", " ");
   };
 
@@ -424,13 +426,13 @@ export default function SchedulesMobile({
               {error && <p className="red schedules-mobile-text">{error}</p>}
               <div className="mt-1">
                 <button
-                  className="btn-med hovered m-1 bg-white"
+                  className="btn-md hovered m-1 bg-white"
                   onClick={() => handleCreateShift(u_id)}
                 >
                   Save
                 </button>
                 <button
-                  className="btn-med hovered m-1 bg-white"
+                  className="btn-md hovered m-1 bg-white"
                   onClick={handleCancelAddShift}
                 >
                   Cancel

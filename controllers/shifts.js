@@ -342,8 +342,8 @@ exports.getAllUsersSchedulesByDateMobile = async (req, res) => {
     try {
         // Use SPLIT_PART to remove '.000Z' in returned dates because they
         // will be rendered incorrectly in FE when creating a new date object.
-        // The query above returns '2022-02-18T07:00:00' for some reason and
-        // the query below returns '2022-02-18T07:00:00.000Z', they are different!
+        // The query above returns '2022-02-18T07:00:00' and
+        // the query below returns '2022-02-18T014:00:00.000Z' ...
         // NOTE!! - had to remove SPLIT_PART because dates are INVALID on iOS
         // but now causes time accuracy issues with the '.000Z' on HEROKU ONLY :(
         // Development and production local work fine.. (temp fix below).

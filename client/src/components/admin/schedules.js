@@ -42,7 +42,7 @@ export default function AdminSchedules() {
   const [isLoadingSchedule, setIsLoadingSchedule] = useState(false);
   const [showConfirmTooltip, setShowConfirmTooltip] = useState(false);
   const [showPresetTooltip, setShowPresetTooltip] = useState(false);
-  const [showDynamicTooltip, setShowDynamicTooltip] = useState(false);
+  const [showOtherTooltip, setShowOtherTooltip] = useState(false);
 
   // Used for datepicker
   const [dateISO, setDateISO] = useState(format(startOfToday(), "yyyy-MM-dd"));
@@ -222,7 +222,7 @@ export default function AdminSchedules() {
   const handleCancelShift = () => {
     setUserId("");
     setAvailabilityIndex("");
-    setShowDynamicTooltip(false);
+    setShowOtherTooltip(false);
   };
 
   // Render edit shift (new)
@@ -259,6 +259,8 @@ export default function AdminSchedules() {
     setRequests(requests);
     setUsersMobile(usersMobile);
     setIsLoadingSchedule(false);
+    console.log(users)
+    console.log(usersMobile)
   };
 
   const handlePreviousWeek = async () => {
@@ -380,7 +382,7 @@ export default function AdminSchedules() {
       await handleFetchSchedule();
       setUserId("");
       setAvailabilityIndex("");
-      setShowDynamicTooltip(false);
+      setShowOtherTooltip(false);
       setIsUpdating(false);
     }
   };
@@ -394,10 +396,12 @@ export default function AdminSchedules() {
   };
 
   const getTime = (shift) => {
+    console.log('ORIGINAL DATE', shift)
+    console.log('ORIGINAL NEW DATE', new Date(shift))
     return new Date(shift).toLocaleTimeString().replace(":00 ", " ");
   };
 
-  // Format date without using new Date
+  // Format date to 'mm/dd/yyyy' without using new Date
   // Production fetches dates without timezone, while dev
   // fetches with timezone.. so manually parse date
   const handleFormatDate = (date) => {
@@ -406,6 +410,17 @@ export default function AdminSchedules() {
     const newDate = `${split[1]}/${split[2]}/${split[0]}`;
     return newDate;
   }
+
+  const renderBlank = (u_id, a_i, time) => (
+    <td
+      key={a_i}
+      // Keep bg color black if employee is 'N/A' for availability
+      className={`pointer ${
+        time.start_time === "N/A" ? "bg-black" : "hovered"
+      }`}
+      onClick={() => handleShiftClickNew(u_id, a_i)}
+    ></td>
+  );
 
   const renderShift = (u_id, a_i, shift_start, shift_end) => (
     <td
@@ -423,17 +438,6 @@ export default function AdminSchedules() {
       {getTime(shift_start)} -&nbsp;
       {getTime(shift_end)}
     </td>
-  );
-
-  const renderBlank = (u_id, a_i, time) => (
-    <td
-      key={a_i}
-      // Keep bg color black if employee is 'N/A' for availability
-      className={`pointer ${
-        time.start_time === "N/A" ? "bg-black" : "hovered"
-      }`}
-      onClick={() => handleShiftClickNew(u_id, a_i)}
-    ></td>
   );
 
   // Render new shift or edit existing
@@ -558,7 +562,7 @@ export default function AdminSchedules() {
           >
             <span // Tooltip
               className={`tooltip ${
-                showDynamicTooltip && "tooltip-open tooltip-mt-1"
+                showOtherTooltip && "tooltip-open tooltip-mt-1"
               }`}
             >
               {shift.shift_end ? "Remove" : "Close"}
@@ -566,10 +570,10 @@ export default function AdminSchedules() {
             <i
               className={`fas ${
                 // Render appropriate icon based on shift existing or not
-                shift.shift_end === null ? "fa-times" : "fa-trash-alt"
+                shift.shift_end ? "fa-trash-alt" : "fa-times"
               } schedules-text p-1`}
-              onMouseEnter={() => setShowDynamicTooltip(true)}
-              onMouseLeave={() => setShowDynamicTooltip(false)}
+              onMouseEnter={() => setShowOtherTooltip(true)}
+              onMouseLeave={() => setShowOtherTooltip(false)}
             />
           </div>
         </div>
@@ -787,6 +791,8 @@ export default function AdminSchedules() {
         setShiftStartValue(store.store_open_value);
         setShiftEndValue(store.store_close_value);
         setIsLoading(false);
+        console.log(users)
+        console.log(usersMobile)
       }
     }
 

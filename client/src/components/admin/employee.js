@@ -171,7 +171,7 @@ export default function AdminEmployee() {
       </div>
       <div className="my-2">
         <button
-          className={`btn-med ${
+          className={`btn-md ${
             verifiedUser.level <= user.level && "btn-hovered"
           }`}
           onClick={handleShowEditGeneral}
@@ -207,7 +207,7 @@ export default function AdminEmployee() {
       </div>
       <div className="my-2">
         <button
-          className={`btn-med ${
+          className={`btn-md ${
             verifiedUser.level <= user.level && "btn-hovered"
           }`}
           onClick={handleShowEditInfo}
@@ -259,14 +259,14 @@ export default function AdminEmployee() {
       </div>
       <div className="my-3">
         <button
-          className="btn-med btn-hovered"
+          className="btn-md btn-hovered"
           disabled={isUpdating}
           onClick={() => handleUpdateUserGeneral()}
         >
           Save
         </button>
         <button
-          className="btn-med btn-hovered ml-5"
+          className="btn-md btn-hovered ml-5"
           disabled={isUpdating}
           onClick={handleCancelEdit}
         >
@@ -313,14 +313,14 @@ export default function AdminEmployee() {
       </div>
       <div className="my-3">
         <button
-          className="btn-med btn-hovered"
+          className="btn-md btn-hovered"
           disabled={isUpdating}
           onClick={() => handleUpdateUserInfo()}
         >
           Save
         </button>
         <button
-          className="btn-med btn-hovered ml-5"
+          className="btn-md btn-hovered ml-5"
           disabled={isUpdating}
           onClick={handleCancelEdit}
         >
@@ -364,7 +364,7 @@ export default function AdminEmployee() {
         </div>
         <div className="my-3">
           <button
-            className={`btn-med ${isUpdating ? "" : "btn-hovered"}`}
+            className={`btn-md ${isUpdating ? "" : "btn-hovered"}`}
             disabled={isUpdating}
           >
             Update
@@ -420,7 +420,7 @@ export default function AdminEmployee() {
           )}
           <div className="mt-8 text-center">
             <button
-              className="btn-med red btn-hovered pointer-no-dec"
+              className="btn-md red btn-hovered pointer-no-dec"
               onClick={handleRemoveUser}
             >
               Remove

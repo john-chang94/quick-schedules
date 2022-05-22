@@ -866,7 +866,7 @@ header {
   font-size: 14px;
 }
 
-.btn-med {
+.btn-md {
   width: 100px;
   border-radius: 5px;
   padding: 4px 0;
@@ -1433,26 +1433,26 @@ select {
 }
 
 @media screen and (max-width: 860px) {
-  .med-w-50 {
+  .md-w-50 {
     width: 50%;
   }
   
-  .med-w-60 {
+  .md-w-60 {
     width: 60%;
   }
   
-  .med-w-70 {
+  .md-w-70 {
     width: 70%;
   }
   
-  .med-w-80 {
+  .md-w-80 {
     width: 80%;
   }
   
-  .med-w-90 {
+  .md-w-90 {
     width: 90%;
   }
-  .med-w-100 {
+  .md-w-100 {
     width: 100%;
   }
 }
@@ -1484,7 +1484,7 @@ select {
     width: 50px;
   }
 
-  .btn-med {
+  .btn-md {
     width: 75px;
   }
 

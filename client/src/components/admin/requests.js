@@ -57,7 +57,7 @@ export default function AdminRequests() {
   const renderFilters = () => (
     <div className="flex flex-col align-center">
       <p className="mb-2">View by</p>
-      <div className="w-50 lg-w-60 med-w-80 xs-w-90 grid">
+      <div className="w-50 lg-w-60 md-w-80 xs-w-90 grid">
         <button
           className={`border-solid-1 border-oval pointer-no-dec py-1 hovered s6 l3
                         ${status === "All" && "bg-light-gray"}`}
@@ -235,7 +235,7 @@ export default function AdminRequests() {
             </div>
             <div>
               <button
-                className={`btn-med m-1 ${
+                className={`btn-md m-1 ${
                   isUpdating ? "" : "btn-hovered pointer-no-dec"
                 }`}
                 onClick={() =>
@@ -246,7 +246,7 @@ export default function AdminRequests() {
                 Approve
               </button>
               <button
-                className={`btn-med m-1 ${
+                className={`btn-md m-1 ${
                   isUpdating ? "" : "btn-hovered pointer-no-dec"
                 }`}
                 onClick={() =>

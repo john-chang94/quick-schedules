@@ -181,7 +181,7 @@ export default function AdminStore() {
           <p className="my-2">N/A</p>
         )}
         <button
-          className="btn-med btn-hovered mt-1 mb-2"
+          className="btn-md btn-hovered mt-1 mb-2"
           onClick={() => setShowEditHours(true)}
         >
           Edit
