@@ -252,7 +252,7 @@ export default function AdminSchedules() {
       days[6]
     );
     let usersMobile = await getUsersSchedulesByDateMobile(days[0], days[6]);
-    usersMobile = handleSortUsersMobile(usersMobile, days);
+    if (usersMobile.length > 0) usersMobile = handleSortUsersMobile(usersMobile, days);
 
     setDays(days);
     setUsers(users);
@@ -280,7 +280,7 @@ export default function AdminSchedules() {
       days[6]
     );
     let usersMobile = await getUsersSchedulesByDateMobile(days[0], days[6]);
-    usersMobile = handleSortUsersMobile(usersMobile, days);
+    if (usersMobile.length > 0) usersMobile = handleSortUsersMobile(usersMobile, days);
 
     setDays(days);
     setUsers(users);
@@ -308,7 +308,7 @@ export default function AdminSchedules() {
       days[6]
     );
     let usersMobile = await getUsersSchedulesByDateMobile(days[0], days[6]);
-    usersMobile = handleSortUsersMobile(usersMobile, days);
+    if (usersMobile.length > 0) usersMobile = handleSortUsersMobile(usersMobile, days);
 
     setDays(days);
     setUsers(users);
@@ -396,8 +396,6 @@ export default function AdminSchedules() {
   };
 
   const getTime = (shift) => {
-    console.log('ORIGINAL DATE', shift)
-    console.log('ORIGINAL NEW DATE', new Date(shift))
     return new Date(shift).toLocaleTimeString().replace(":00 ", " ");
   };
 

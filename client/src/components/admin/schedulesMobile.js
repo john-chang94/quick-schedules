@@ -177,8 +177,6 @@ export default function SchedulesMobile({
   };
 
   const getTime = (shift) => {
-    console.log('MOBILE DATE', shift)
-    console.log('MOBILE NEW DATE', new Date(shift))
     return new Date(shift).toLocaleTimeString().replace(":00 ", " ");
   };
 
@@ -459,7 +457,7 @@ export default function SchedulesMobile({
   return (
     <div className="schedules-mobile">
       {renderAddShift()}
-      {usersMobile.map((user, i) => (
+      {usersMobile.length > 0 && usersMobile.map((user, i) => (
         <div key={i}>
           {user.label ? ( // Render date labels for mobile schedule
             <div className="w-100 border-x bg-x-light-gray text-center">

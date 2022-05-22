@@ -343,7 +343,7 @@ exports.getAllUsersSchedulesByDateMobile = async (req, res) => {
         // Use SPLIT_PART to remove '.000Z' in returned dates because they
         // will be rendered incorrectly in FE when creating a new date object.
         // The query above returns '2022-02-18T07:00:00' and
-        // the query below returns '2022-02-18T014:00:00.000Z' ...
+        // the query below returns '2022-02-18T07:00:00.000Z' ...
         // NOTE!! - had to remove SPLIT_PART because dates are INVALID on iOS
         // but now causes time accuracy issues with the '.000Z' on HEROKU ONLY :(
         // Development and production local work fine.. (temp fix below).
@@ -368,7 +368,7 @@ exports.getAllUsersSchedulesByDateMobile = async (req, res) => {
             [start_date, end_date]
         )
 
-        // Add timezone difference when served from heroku to render correct times
+        // Add hour difference when served from heroku to render correct times
         if (process.env.NODE_ENV === "production") {
             for (let shift of data.rows) {
                 shift.shift_start = addHours(new Date(shift.shift_start), 7);
@@ -376,7 +376,7 @@ exports.getAllUsersSchedulesByDateMobile = async (req, res) => {
             }
         }
 
-        // if (!data.rows.length) return res.status(404).send("No records found");
+        if (!data.rows.length) return res.status(404).send("No records found");
 
         res.status(200).json(data.rows);
 
