@@ -1,28 +1,12 @@
-import { useState, useEffect } from "react";
-import { useHistory } from "react-router";
-import { getUsers } from "../../services/users";
-import * as ROUTES from "../../constants/routes";
-import Loader from "react-loader-spinner";
+import React from "react";
 
-export default function AdminEmployees() {
-  const history = useHistory();
-  const [users, setUsers] = useState(null);
-  const [width, setWidth] = useState(window.innerWidth);
-  const [isLoading, setIsLoading] = useState(true);
-
-  const handleClickUser = (u_id) => {
-    history.push(`${ROUTES.ADMIN_EMPLOYEES}/${u_id}`);
-  };
-
-  const handleAddEmployee = () => {
-    history.push(ROUTES.ADMIN_NEW_EMPLOYEE);
-  };
-
-  const setWindowWidth = () => {
-    setWidth(window.innerWidth);
-  };
-
-  const renderEmployees = () => (
+export const EmployeeList = ({
+  users,
+  width,
+  handleAddEmployee,
+  handleClickUser,
+}) => {
+  return (
     <div>
       <div className="mt-6 mb-4 flex flex-center">
         <button className="btn-x-lg btn-hovered" onClick={handleAddEmployee}>
@@ -65,38 +49,4 @@ export default function AdminEmployees() {
       </div>
     </div>
   );
-
-  useEffect(() => {
-    let isMounted = true;
-
-    // Listen for window width change
-    window.addEventListener("resize", setWindowWidth);
-
-    // Fetch employees
-    async function fetchData() {
-      const users = await getUsers();
-      if (isMounted) setUsers(users);
-
-      setIsLoading(false);
-    }
-
-    fetchData();
-
-    return () => {
-      isMounted = false;
-      window.removeEventListener("resize", setWindowWidth);
-    }
-  }, []);
-
-  return (
-    <>
-      {isLoading ? (
-        <div className="text-center" style={{ marginTop: "70px" }}>
-          <Loader type="Oval" color="rgb(50, 110, 150)" />
-        </div>
-      ) : (
-        renderEmployees()
-      )}
-    </>
-  );
-}
+};

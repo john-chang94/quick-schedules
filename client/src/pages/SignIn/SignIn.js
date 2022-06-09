@@ -1,8 +1,8 @@
 import { useState, useContext } from 'react';
 import { useHistory } from 'react-router';
-import * as ROUTES from '../constants/routes';
-import { UserContext } from '../contexts/userContext';
-import { signIn } from '../services/auth';
+import * as ROUTES from '../../constants/routes';
+import { UserContext } from '../../contexts/userContext';
+import { signIn } from '../../services/auth';
 
 export default function SignIn() {
     const history = useHistory();

@@ -5,13 +5,13 @@ import * as ROUTES from "./constants/routes";
 import { useUser } from "./contexts/userContext";
 import "react-loader-spinner/dist/loader/css/react-spinner-loader.css";
 
-import Header from "./components/header";
-import Navbar from "./components/navbar";
-import SignIn from "./components/signIn";
-import AdminSignIn from "./components/adminSignIn";
+import { Header } from "./components/Header";
+import { Navbar } from "./components/Navbar";
+import SignIn from "./pages/SignIn/SignIn";
+import AdminSignIn from "./pages/SignIn/AdminSignIn";
 
-import AdminEmployees from "./components/admin/employees";
-import AdminEmployee from "./components/admin/employee";
+import AdminEmployees from "./pages/Admin/Employees/Employees";
+import AdminEmployee from "./pages/Admin/Employee/Employee";
 import AdminNewEmployee from "./components/admin/newEmployee";
 import AdminSchedules from "./components/admin/schedules";
 import AdminRequests from "./components/admin/requests";
@@ -25,7 +25,7 @@ import UserSchedules from "./components/user/schedules";
 import ProtectedRoute from "./helpers/protectedRoute";
 import UserRoute from "./helpers/userRoute";
 import AuthRoute from "./helpers/authRoute";
-import { NotFound } from "./components/notFound";
+import NotFound from "./pages/NotFound/NotFound";
 
 function App() {
   const { verifiedUser } = useUser();

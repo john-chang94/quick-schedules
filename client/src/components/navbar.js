@@ -3,7 +3,7 @@ import { Link } from "react-router-dom";
 import * as ROUTES from "../constants/routes";
 import { UserContext } from '../contexts/userContext';
 
-export default function Navbar() {
+export const Navbar = () => {
     const [dropDown, setDropDown] = useState(false);
     const { verifiedUser } = useContext(UserContext);
 

@@ -3,7 +3,7 @@ import { useHistory } from 'react-router';
 import * as ROUTES from '../constants/routes';
 import { UserContext } from '../contexts/userContext';
 
-export default function Header() {
+export const Header = () => {
     const { verifiedUser, setVerifiedUser } = useContext(UserContext);
     const history = useHistory();
 

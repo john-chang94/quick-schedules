@@ -1,17 +1,17 @@
 import { useState, useEffect, useContext } from "react";
 import { useParams, useHistory } from "react-router";
 import { Link } from "react-router-dom";
-import * as ROUTES from "../../constants/routes";
-import { isAuthenticated } from "../../services/auth";
+import * as ROUTES from "../../../constants/routes";
+import { isAuthenticated } from "../../../services/auth";
 import {
   editPassword,
   editUserGeneral,
   editUserInfo,
   getUser,
   deleteUser,
-} from "../../services/users";
-import { UserContext } from "../../contexts/userContext";
-import { getRoles } from "../../services/roles";
+} from "../../../services/users";
+import { UserContext } from "../../../contexts/userContext";
+import { getRoles } from "../../../services/roles";
 import Loader from "react-loader-spinner";
 
 export default function AdminEmployee() {
