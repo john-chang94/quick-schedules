@@ -37,9 +37,9 @@ export const getRequestsByStatusAndDate = async (status, weekStart, weekEnd) => 
     }
 }
 
-export const updateRequestStatus = async (r_id, body, tokenConfig) => {
+export const updateRequestStatus = async (r_id, status, tokenConfig) => {
     try {
-        const res = await axios.put(`${HTTP.REQUESTS}/${r_id}`, body, tokenConfig);
+        const res = await axios.put(`${HTTP.REQUESTS}/${r_id}`, status, tokenConfig);
         return res.data;
     } catch (err) {
         return { error: err.response.data };
