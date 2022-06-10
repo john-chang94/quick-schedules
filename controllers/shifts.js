@@ -320,7 +320,7 @@ exports.getAllUsersSchedulesByDate = async (req, res) => {
         // Loop through all users' shifts
         for (let user of users) {       
             // Get missing dates in each user's work week
-            let missingDates = getMissingDates(user.shifts, dates);
+            const missingDates = getMissingDates(user.shifts, dates);
             for (let date of missingDates) {
                 // Add missing dates to user's work week
                 user.shifts.push(date);
@@ -343,7 +343,7 @@ exports.getAllUsersSchedulesByDateMobile = async (req, res) => {
         // Use SPLIT_PART to remove '.000Z' in returned dates because they
         // will be rendered incorrectly in FE when creating a new date object.
         // The query above returns '2022-02-18T07:00:00' and
-        // the query below returns '2022-02-18T07:00:00.000Z' ...
+        // the query below returns '2022-02-18T07:00:00.000Z' ... ¯\(°_o)/¯
         // NOTE!! - had to remove SPLIT_PART because dates are INVALID on iOS
         // but now causes time accuracy issues with the '.000Z' on HEROKU ONLY :(
         // Development and production local work fine.. (temp fix below).

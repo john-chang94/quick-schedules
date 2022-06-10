@@ -82,14 +82,14 @@ export default function AdminRequests() {
         <Spinner />
       ) : (
         <div className="mt-5">
-          <RequestsList
+          <RequestsList // Large screens
             requests={requests}
             handleFormatDate={handleFormatDate}
             handleUpdateRequestStatus={handleUpdateRequestStatus}
             isUpdating={isUpdating}
           />
           <div className="requests-cards">
-            <RequestsCards
+            <RequestsCards // Small screens
               requests={requests}
               handleFormatDate={handleFormatDate}
               handleUpdateRequestStatus={handleUpdateRequestStatus}

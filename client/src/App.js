@@ -15,7 +15,7 @@ import AdminEmployee from "./pages/Admin/Employee/Employee";
 import AdminNewEmployee from "./pages/Admin/NewEmployee/NewEmployee";
 import AdminSchedules from "./components/admin/schedules";
 import AdminRequests from "./pages/Admin/Requests/Requests";
-import AdminStore from "./components/admin/store";
+import AdminStore from "./pages/Admin/Store/Store";
 
 import UserProfile from "./components/user/profile";
 import UserAvailability from "./components/user/availability";
