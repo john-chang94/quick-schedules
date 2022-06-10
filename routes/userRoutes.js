@@ -19,7 +19,7 @@ router.get('/users', getAllUsers);
 router.get('/users/:u_id', getUserById);
 router.put('/users/reset-pw/:u_id', authorizeToken, editUserPassword);
 router.put('/users/general/:u_id', authorizeToken, updateUserGeneralValidator, editUserGeneral);
-router.put('/users/info/:u_id', authorizeToken, updateUserSystemValidator, editUserSystem);
+router.put('/users/system/:u_id', authorizeToken, updateUserSystemValidator, editUserSystem);
 router.delete('/users/:u_id', authorizeToken, deleteUser);
 router.post('/users/availability', authorizeToken, addAdvailability);
 router.put('/users/availability/:a_id', authorizeToken, editAvailability);

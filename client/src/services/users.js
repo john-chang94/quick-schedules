@@ -37,9 +37,9 @@ export const editUserGeneral = async (u_id, body, tokenConfig) => {
     }
 }
 
-export const editUserInfo = async (u_id, body, tokenConfig) => {
+export const editUserSystem = async (u_id, body, tokenConfig) => {
     try {
-        const res = await axios.put(`${HTTP.USERS}/info/${u_id}`, body, tokenConfig);
+        const res = await axios.put(`${HTTP.USERS}/system/${u_id}`, body, tokenConfig);
         return res.data;
     } catch (err) {
         return { error: err.response.data };

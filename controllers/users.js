@@ -58,6 +58,27 @@ exports.editUserGeneral = async (req, res) => {
     }
 }
 
+exports.editUserSystem = async (req, res) => {
+    try {
+        const { u_id } = req.params;
+        const { role_id, hourly_pay, started_at, updated_at } = req.body;
+
+        await client.query(
+            `UPDATE users
+                SET role_id = $1,
+                hourly_pay = $2,
+                started_at = $3,
+                updated_at = $4
+            WHERE u_id = $5`,
+            [role_id, hourly_pay, started_at, updated_at, u_id]
+            )
+
+            res.status(200).json({ success: true });
+    } catch (err) {
+        res.status(500).send(err.message);
+    }
+}
+
 exports.editUserPassword = async (req, res) => {
     try {
         const { u_id } = req.params;
@@ -91,27 +112,6 @@ exports.editUserPassword = async (req, res) => {
                 res.status(200).json({ success: true });
             })
         })
-    } catch (err) {
-        res.status(500).send(err.message);
-    }
-}
-
-exports.editUserSystem = async (req, res) => {
-    try {
-        const { u_id } = req.params;
-        const { role_id, hourly_pay, started_at, updated_at } = req.body;
-
-        await client.query(
-            `UPDATE users
-                SET role_id = $1,
-                hourly_pay = $2,
-                started_at = $3,
-                updated_at = $4
-            WHERE u_id = $5`,
-            [role_id, hourly_pay, started_at, updated_at, u_id]
-        )
-
-        res.status(200).json({ success: true });
     } catch (err) {
         res.status(500).send(err.message);
     }
