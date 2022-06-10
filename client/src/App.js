@@ -12,7 +12,7 @@ import AdminSignIn from "./pages/SignIn/AdminSignIn";
 
 import AdminEmployees from "./pages/Admin/Employees/Employees";
 import AdminEmployee from "./pages/Admin/Employee/Employee";
-import AdminNewEmployee from "./components/admin/newEmployee";
+import AdminNewEmployee from "./pages/Admin/NewEmployee/NewEmployee";
 import AdminSchedules from "./components/admin/schedules";
 import AdminRequests from "./components/admin/requests";
 import AdminStore from "./components/admin/store";

@@ -1,6 +1,7 @@
 import React, { useReducer } from "react";
 import { InfoGeneral } from "./InfoGeneral";
 import { EditInfoGeneral } from "./EditInfoGeneral";
+
 import { editUserGeneral, getUser } from "../../../../services/users";
 import { isAuthenticated } from "../../../../services/auth";
 

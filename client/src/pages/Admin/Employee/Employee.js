@@ -2,14 +2,16 @@ import { useState, useEffect, useContext } from "react";
 import { useParams, useHistory } from "react-router";
 import { Link } from "react-router-dom";
 import * as ROUTES from "../../../constants/routes";
+
 import { isAuthenticated } from "../../../services/auth";
 import { getUser, deleteUser } from "../../../services/users";
-import { UserContext } from "../../../contexts/userContext";
 import { getRoles } from "../../../services/roles";
+import { UserContext } from "../../../contexts/userContext";
+
 import { EmployeeInfoGeneral } from "./EmployeeInfoGeneral/EmployeeInfoGeneral";
 import { EmployeeInfoSystem } from "./EmployeeInfoSystem/EmployeeInfoSystem";
-import { Spinner } from "../../../components/Spinner";
 import { EmployeeEditPassword } from "./EmployeeEditPassword";
+import { Spinner } from "../../../components/Spinner";
 
 export default function AdminEmployee() {
   const { u_id } = useParams();

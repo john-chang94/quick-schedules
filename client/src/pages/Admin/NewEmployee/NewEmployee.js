@@ -1,9 +1,9 @@
 import { useEffect, useState, useReducer } from "react";
 import { Link } from "react-router-dom";
-import * as ROUTES from "../../constants/routes";
-import { isAuthenticated } from "../../services/auth";
-import { getRoles } from "../../services/roles";
-import { register } from "../../services/auth";
+import * as ROUTES from "../../../constants/routes";
+import { isAuthenticated } from "../../../services/auth";
+import { getRoles } from "../../../services/roles";
+import { register } from "../../../services/auth";
 
 const initialState = {
   role_id: 6,
@@ -18,9 +18,9 @@ const initialState = {
 
 const reducer = (state, action) => {
   switch (action.type) {
-    case "setValue":
+    case "SET_VALUE":
       return { ...state, [action.field]: action.value };
-    case "reset":
+    case "RESET":
       return initialState;
     default:
       return initialState;
@@ -46,7 +46,7 @@ export default function AdminNewEmployee() {
       setIsSubmitting(false);
     } else {
       setError("");
-      dispatch({ type: "reset" });
+      dispatch({ type: "RESET" });
       setSuccess(true);
       setIsSubmitting(false);
     }
@@ -65,7 +65,7 @@ export default function AdminNewEmployee() {
           className="form-input"
           onChange={({ target }) =>
             dispatch({
-              type: "setValue",
+              type: "SET_VALUE",
               field: "first_name",
               value: target.value,
             })
@@ -80,7 +80,7 @@ export default function AdminNewEmployee() {
           className="form-input"
           onChange={({ target }) =>
             dispatch({
-              type: "setValue",
+              type: "SET_VALUE",
               field: "last_name",
               value: target.value,
             })
@@ -94,7 +94,7 @@ export default function AdminNewEmployee() {
           value={state.email}
           className="form-input"
           onChange={({ target }) =>
-            dispatch({ type: "setValue", field: "email", value: target.value })
+            dispatch({ type: "SET_VALUE", field: "email", value: target.value })
           }
         />
       </div>
@@ -105,7 +105,7 @@ export default function AdminNewEmployee() {
           value={state.phone}
           className="form-input"
           onChange={({ target }) =>
-            dispatch({ type: "setValue", field: "phone", value: target.value })
+            dispatch({ type: "SET_VALUE", field: "phone", value: target.value })
           }
         />
       </div>
@@ -117,7 +117,7 @@ export default function AdminNewEmployee() {
           className="form-input"
           onChange={({ target }) =>
             dispatch({
-              type: "setValue",
+              type: "SET_VALUE",
               field: "password",
               value: target.value,
             })
@@ -132,7 +132,7 @@ export default function AdminNewEmployee() {
           className="form-input"
           onChange={({ target }) =>
             dispatch({
-              type: "setValue",
+              type: "SET_VALUE",
               field: "hourly_pay",
               value: target.value,
             })
@@ -147,7 +147,7 @@ export default function AdminNewEmployee() {
           className="form-input"
           onChange={({ target }) =>
             dispatch({
-              type: "setValue",
+              type: "SET_VALUE",
               field: "started_at",
               value: target.value,
             })
@@ -160,7 +160,7 @@ export default function AdminNewEmployee() {
           value={state.role_id}
           onChange={({ target }) =>
             dispatch({
-              type: "setValue",
+              type: "SET_VALUE",
               field: "role_id",
               value: parseInt(target.value),
             })
