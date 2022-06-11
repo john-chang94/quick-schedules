@@ -26,6 +26,7 @@ import ProtectedRoute from "./helpers/protectedRoute";
 import UserRoute from "./helpers/userRoute";
 import AuthRoute from "./helpers/authRoute";
 import NotFound from "./pages/NotFound/NotFound";
+import SchedulesContextProvider from "./pages/Admin/Schedules/SchedulesContext";
 
 function App() {
   const { verifiedUser } = useUser();
@@ -73,11 +74,13 @@ function App() {
                 path={ROUTES.ADMIN_EMPLOYEE}
                 component={AdminEmployee}
               />
-              <ProtectedRoute
-                user={verifiedUser}
-                path={ROUTES.ADMIN_SCHEDULES}
-                component={AdminSchedules}
-              />
+              <SchedulesContextProvider>
+                <ProtectedRoute
+                  user={verifiedUser}
+                  path={ROUTES.ADMIN_SCHEDULES}
+                  component={AdminSchedules}
+                />
+              </SchedulesContextProvider>
               <ProtectedRoute
                 user={verifiedUser}
                 path={ROUTES.ADMIN_REQUESTS}

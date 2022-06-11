@@ -1,7 +1,6 @@
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { isAuthenticated } from "../../../services/auth";
 import { createPreset, getPresets } from "../../../services/presets";
-import { getTimes } from "../../../services/store";
 import {
   createShift,
   getUsersSchedulesByDate,
@@ -11,7 +10,6 @@ import {
   createCopyOfWeeklySchedule,
   clearWeeklySchedule,
 } from "../../../services/shifts";
-import { getUsersAvailabilities } from "../../../services/users";
 import {
   startOfToday,
   startOfWeek,
@@ -24,26 +22,16 @@ import {
 } from "date-fns";
 import Loader from "react-loader-spinner";
 import { getRequestsByStatusAndDate } from "../../../services/requests";
-import { getStoreHours } from "../../../services/store";
 import SchedulesMobile from "./SchedulesMobile/SchedulesMobile";
+import { useSchedules } from "./SchedulesContext";
 
 export default function AdminSchedules() {
-  const [availabilities, setAvailabilities] = useState([]);
-  const [users, setUsers] = useState([]);
-  const [usersMobile, setUsersMobile] = useState([]);
-  const [requests, setRequests] = useState([]);
-  const [days, setDays] = useState([]);
-  const [times, setTimes] = useState([]);
-  const [presets, setPresets] = useState([]);
-  const [store, setStore] = useState([]);
-  const [isLoading, setIsLoading] = useState(true);
   const [isUpdating, setIsUpdating] = useState(false);
   const [isModifying, setIsModifying] = useState(false);
   const [isLoadingSchedule, setIsLoadingSchedule] = useState(false);
   const [showConfirmTooltip, setShowConfirmTooltip] = useState(false);
   const [showPresetTooltip, setShowPresetTooltip] = useState(false);
   const [showOtherTooltip, setShowOtherTooltip] = useState(false);
-
   // Used for datepicker
   const [dateISO, setDateISO] = useState(format(startOfToday(), "yyyy-MM-dd"));
   // Used for getting time values when saving a shift
@@ -53,6 +41,21 @@ export default function AdminSchedules() {
   const [userId, setUserId] = useState(null);
   const [availabilityIndex, setAvailabilityIndex] = useState(null);
 
+  const {
+    state: {
+      days,
+      times,
+      presets,
+      requests,
+      users,
+      usersMobile,
+      store,
+      availabilities,
+    },
+    dispatch,
+    isLoading,
+  } = useSchedules();
+
   // Sort schedules array for mobile
   // Takes in days array that is returned from getDatesOfTheWeek()
   // Will not work with days state because it is async
@@ -61,7 +64,6 @@ export default function AdminSchedules() {
     for (let i = 0; i < days.length; i++) {
       arr.push({ shift_start: days[i], label: true });
     }
-
     return arr.sort(
       (a, b) => new Date(a.shift_start) - new Date(b.shift_start)
     );
@@ -73,8 +75,7 @@ export default function AdminSchedules() {
     let usersMobile = await getUsersSchedulesByDateMobile(days[0], days[6]);
     usersMobile = handleSortUsersMobile(usersMobile, days);
 
-    setUsers(users);
-    setUsersMobile(usersMobile);
+    dispatch({ type: "SET_ALL_FETCHED", payload: { users, usersMobile } });
   };
 
   // For init load and datepicker
@@ -196,7 +197,7 @@ export default function AdminSchedules() {
       // Refresh schedule
       await handleFetchSchedule();
       // Display following week after copying schedule
-      handleNextWeek();
+      handleClickNextWeek();
       setIsModifying(false);
       setIsLoadingSchedule(false);
     }
@@ -226,7 +227,7 @@ export default function AdminSchedules() {
   };
 
   // Render edit shift (new)
-  const handleShiftClickNew = (u_id, a_i) => {
+  const handleClickShiftNew = (u_id, a_i) => {
     setUserId(u_id);
     setAvailabilityIndex(a_i);
     setShiftStartValue(store.store_open_value);
@@ -234,7 +235,7 @@ export default function AdminSchedules() {
   };
 
   // Render edit shift (update)
-  const handleShiftClickEdit = (u_id, a_i, startStartValue, endStartValue) => {
+  const handleClickShiftEdit = (u_id, a_i, startStartValue, endStartValue) => {
     setUserId(u_id);
     setAvailabilityIndex(a_i);
     setShiftStartValue(startStartValue);
@@ -242,7 +243,7 @@ export default function AdminSchedules() {
   };
 
   // Get new dates for the week and fetch schedule
-  const handleDatePicker = async (date) => {
+  const handleDateChange = async (date) => {
     setIsLoadingSchedule(true);
     const days = await getDatesOfTheWeek(date);
     const users = await getUsersSchedulesByDate(days[0], days[6]);
@@ -252,18 +253,22 @@ export default function AdminSchedules() {
       days[6]
     );
     let usersMobile = await getUsersSchedulesByDateMobile(days[0], days[6]);
-    if (usersMobile.length > 0) usersMobile = handleSortUsersMobile(usersMobile, days);
+    if (usersMobile.length > 0)
+      usersMobile = handleSortUsersMobile(usersMobile, days);
 
-    setDays(days);
-    setUsers(users);
-    setRequests(requests);
-    setUsersMobile(usersMobile);
+    dispatch({
+      type: "SET_ALL_FETCHED",
+      payload: {
+        days,
+        users,
+        requests,
+        usersMobile,
+      },
+    });
     setIsLoadingSchedule(false);
-    console.log(users)
-    console.log(usersMobile)
   };
 
-  const handlePreviousWeek = async () => {
+  const handleClickPrevWeek = async () => {
     setIsLoadingSchedule(true);
     // New Date object will adjust hours based on timezone so use toDate
     let date = subWeeks(toDate(parseISO(dateISO)), 1);
@@ -272,26 +277,12 @@ export default function AdminSchedules() {
     setDateISO(formattedDate);
 
     // Get new dates for the week and fetch schedule
-    const days = await getDatesOfTheWeek(formattedDate);
-    const users = await getUsersSchedulesByDate(days[0], days[6]);
-    const requests = await getRequestsByStatusAndDate(
-      "Approved",
-      days[0],
-      days[6]
-    );
-    let usersMobile = await getUsersSchedulesByDateMobile(days[0], days[6]);
-    if (usersMobile.length > 0) usersMobile = handleSortUsersMobile(usersMobile, days);
-
-    setDays(days);
-    setUsers(users);
-    setRequests(requests);
-    setUsersMobile(usersMobile);
+    handleDateChange(formattedDate);
     setUserId("");
     setAvailabilityIndex("");
-    setIsLoadingSchedule(false);
   };
 
-  const handleNextWeek = async () => {
+  const handleClickNextWeek = async () => {
     setIsLoadingSchedule(true);
     // New Date object will adjust hours based on timezone so use toDate
     let date = addWeeks(toDate(parseISO(dateISO)), 1);
@@ -300,23 +291,9 @@ export default function AdminSchedules() {
     setDateISO(formattedDate);
 
     // Get new dates for the week and fetch schedule
-    const days = await getDatesOfTheWeek(formattedDate);
-    const users = await getUsersSchedulesByDate(days[0], days[6]);
-    const requests = await getRequestsByStatusAndDate(
-      "Approved",
-      days[0],
-      days[6]
-    );
-    let usersMobile = await getUsersSchedulesByDateMobile(days[0], days[6]);
-    if (usersMobile.length > 0) usersMobile = handleSortUsersMobile(usersMobile, days);
-
-    setDays(days);
-    setUsers(users);
-    setRequests(requests);
-    setUsersMobile(usersMobile);
+    handleDateChange(formattedDate);
     setUserId("");
     setAvailabilityIndex("");
-    setIsLoadingSchedule(false);
   };
 
   const handleSelectPreset = (shiftValue) => {
@@ -364,7 +341,7 @@ export default function AdminSchedules() {
 
     // Refresh presets list
     const newPresets = await getPresets();
-    setPresets(newPresets);
+    dispatch({ type: "SET_ALL_FETCHED", payload: { presets: newPresets } });
 
     alert("Preset saved");
   };
@@ -407,7 +384,7 @@ export default function AdminSchedules() {
     const split = init.split("-");
     const newDate = `${split[1]}/${split[2]}/${split[0]}`;
     return newDate;
-  }
+  };
 
   const renderBlank = (u_id, a_i, time) => (
     <td
@@ -416,7 +393,7 @@ export default function AdminSchedules() {
       className={`pointer ${
         time.start_time === "N/A" ? "bg-black" : "hovered"
       }`}
-      onClick={() => handleShiftClickNew(u_id, a_i)}
+      onClick={() => handleClickShiftNew(u_id, a_i)}
     ></td>
   );
 
@@ -425,7 +402,7 @@ export default function AdminSchedules() {
       key={a_i}
       className="pointer schedules-text bg-blue-lighten-4"
       onClick={() =>
-        handleShiftClickEdit(
+        handleClickShiftEdit(
           u_id,
           a_i,
           getTimeValue(shift_start),
@@ -636,7 +613,7 @@ export default function AdminSchedules() {
   const renderController = () => (
     <div className="schedules-controller">
       <div className="select-week">
-        <div className="pointer" onClick={() => handlePreviousWeek()}>
+        <div className="pointer" onClick={() => handleClickPrevWeek()}>
           <em className="text-3">Prev&nbsp;week</em>
           <p>
             <i className="fas fa-angle-double-left" />
@@ -647,11 +624,11 @@ export default function AdminSchedules() {
             type="date"
             className="border-solid-1 border-smooth"
             value={dateISO} // Datepicker must be yyyy-mm-dd format
-            onChange={({ target }) => handleDatePicker(target.value)}
+            onChange={({ target }) => handleDateChange(target.value)}
           />
           <div className="absolute">&nbsp;</div>
         </div>
-        <div className="pointer" onClick={() => handleNextWeek()}>
+        <div className="pointer" onClick={() => handleClickNextWeek()}>
           <em className="text-3">Next&nbsp;week</em>
           <p>
             <i className="fas fa-angle-double-right" />
@@ -756,48 +733,6 @@ export default function AdminSchedules() {
         </tbody>
       </table>
     );
-
-  useEffect(() => {
-    let isMounted = true;
-    async function fetchData() {
-      const times = await getTimes();
-      const availabilities = await getUsersAvailabilities();
-      const presets = await getPresets();
-      const store = await getStoreHours();
-      const days = await getDatesOfTheWeek();
-      const users = await getUsersSchedulesByDate(days[0], days[6]);
-      const requests = await getRequestsByStatusAndDate(
-        "Approved",
-        days[0],
-        days[6]
-      );
-
-      let usersMobile = await getUsersSchedulesByDateMobile(days[0], days[6]);
-      if (usersMobile.length) {
-        usersMobile = handleSortUsersMobile(usersMobile, days);
-      }
-
-      if (isMounted) {
-        setDays(days);
-        setTimes(times);
-        setAvailabilities(availabilities);
-        setPresets(presets);
-        setStore(store);
-        setUsers(users);
-        setRequests(requests);
-        setUsersMobile(usersMobile);
-        setShiftStartValue(store.store_open_value);
-        setShiftEndValue(store.store_close_value);
-        setIsLoading(false);
-        console.log(users)
-        console.log(usersMobile)
-      }
-    }
-
-    fetchData();
-
-    return () => (isMounted = false);
-  }, []);
 
   return (
     <>
