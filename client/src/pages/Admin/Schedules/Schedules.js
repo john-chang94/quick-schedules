@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
-import { isAuthenticated } from "../../services/auth";
-import { createPreset, getPresets } from "../../services/presets";
-import { getTimes } from "../../services/store";
+import { isAuthenticated } from "../../../services/auth";
+import { createPreset, getPresets } from "../../../services/presets";
+import { getTimes } from "../../../services/store";
 import {
   createShift,
   getUsersSchedulesByDate,
@@ -10,8 +10,8 @@ import {
   updateShift,
   createCopyOfWeeklySchedule,
   clearWeeklySchedule,
-} from "../../services/shifts";
-import { getUsersAvailabilities } from "../../services/users";
+} from "../../../services/shifts";
+import { getUsersAvailabilities } from "../../../services/users";
 import {
   startOfToday,
   startOfWeek,
@@ -23,9 +23,9 @@ import {
   toDate,
 } from "date-fns";
 import Loader from "react-loader-spinner";
-import { getRequestsByStatusAndDate } from "../../services/requests";
-import { getStoreHours } from "../../services/store";
-import SchedulesMobile from "./schedulesMobile";
+import { getRequestsByStatusAndDate } from "../../../services/requests";
+import { getStoreHours } from "../../../services/store";
+import SchedulesMobile from "./SchedulesMobile/SchedulesMobile";
 
 export default function AdminSchedules() {
   const [availabilities, setAvailabilities] = useState([]);

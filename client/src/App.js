@@ -7,13 +7,13 @@ import "react-loader-spinner/dist/loader/css/react-spinner-loader.css";
 
 import { Header } from "./components/Header";
 import { Navbar } from "./components/Navbar";
-import SignIn from "./pages/SignIn/SignIn";
-import AdminSignIn from "./pages/SignIn/AdminSignIn";
+import SignIn from "./pages/Auth/SignIn";
+import AdminSignIn from "./pages/Auth/AdminSignIn";
 
 import AdminEmployees from "./pages/Admin/Employees/Employees";
 import AdminEmployee from "./pages/Admin/Employee/Employee";
 import AdminNewEmployee from "./pages/Admin/NewEmployee/NewEmployee";
-import AdminSchedules from "./components/admin/schedules";
+import AdminSchedules from "./pages/Admin/Schedules/Schedules";
 import AdminRequests from "./pages/Admin/Requests/Requests";
 import AdminStore from "./pages/Admin/Store/Store";
 

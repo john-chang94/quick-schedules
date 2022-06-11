@@ -1,9 +1,13 @@
 import React, { useState, useRef } from "react";
 import { format, toDate, parseISO } from "date-fns";
-import { isAuthenticated } from "../../services/auth";
-import { createShift, updateShift, deleteShift } from "../../services/shifts";
-import Loader from "react-loader-spinner";
 import { CSSTransition } from "react-transition-group";
+
+import { createShift, updateShift, deleteShift } from "../../../../services/shifts";
+import { isAuthenticated } from "../../../../services/auth";
+
+import { Spinner } from "../../../../components/Spinner";
+import { SchedulesList } from "./SchedulesList";
+import { AddShiftMobile } from "./AddShiftMobile";
 
 export default function SchedulesMobile({
   usersMobile,
@@ -26,7 +30,7 @@ export default function SchedulesMobile({
   const [error, setError] = useState("");
   const modalRef = useRef();
 
-  const handleEditShift = (user, shiftIndex) => {
+  const handleShowEditShift = (user, shiftIndex) => {
     // Set specific shift time values to match with times array in the select inputs
     setShiftStartValue(getTimeValue(user.shift_start));
     setShiftEndValue(getTimeValue(user.shift_end));
@@ -181,7 +185,7 @@ export default function SchedulesMobile({
   };
 
   const renderShift = (user, shiftIndex) => (
-    <div className="p-1" onClick={() => handleEditShift(user, shiftIndex)}>
+    <div className="p-1" onClick={() => handleShowEditShift(user, shiftIndex)}>
       <p>
         {getTime(user.shift_start)} -&nbsp;
         {getTime(user.shift_end)}
@@ -277,9 +281,7 @@ export default function SchedulesMobile({
         </div>
       </div>
       {isUpdating ? (
-        <div className="my-1 text-center">
-          <Loader type="ThreeDots" color="rgb(50, 110, 150)" height={12} />
-        </div>
+        <Spinner type={"ThreeDots"} height={12} marginTop={0} />
       ) : (
         <div className="w-100 flex justify-evenly">
           <div
@@ -456,8 +458,30 @@ export default function SchedulesMobile({
 
   return (
     <div className="schedules-mobile">
-      {renderAddShift()}
-      {usersMobile.length > 0 && usersMobile.map((user, i) => (
+      {/* {renderAddShift()} */}
+      <AddShiftMobile
+        modalRef={modalRef}
+        users={users}
+        presets={presets}
+        times={times}
+        store={store}
+        // u_id={}
+        // isUpdating={}
+        // setDate={}
+        // setUId={}
+        // shiftStartValue={}
+        // shiftEndValue={}
+        // setShiftStartValue={}
+        // setShiftEndValue={}
+        // showAddShift={}
+        // setShowAddShift={}
+        // handleSelectPreset={}
+        // handleCancelAddShift={}
+        // handleCreateShift={}
+        // handleShowAddShift={}
+        // error={}
+      />
+      {/* {usersMobile.length > 0 && usersMobile.map((user, i) => (
         <div key={i}>
           {user.label ? ( // Render date labels for mobile schedule
             <div className="w-100 border-x bg-x-light-gray text-center">
@@ -469,7 +493,16 @@ export default function SchedulesMobile({
             renderSchedule(user, i)
           )}
         </div>
-      ))}
+      ))} */}
+      <SchedulesList
+        usersMobile={usersMobile}
+        days={days}
+        presets={presets}
+        times={times}
+        store={store}
+        getTimeValue={getTimeValue}
+        handleFetchSchedule={handleFetchSchedule}
+      />
     </div>
   );
 }
