@@ -33,7 +33,7 @@ export default function AdminSchedules() {
   const [showPresetTooltip, setShowPresetTooltip] = useState(false);
   const [showOtherTooltip, setShowOtherTooltip] = useState(false);
   // Used for datepicker
-  const [dateISO, setDateISO] = useState(format(startOfToday(), "yyyy-MM-dd"));
+  const [datepicker, setDatePicker] = useState(format(startOfToday(), "yyyy-MM-dd"));
   // Used for getting time values when saving a shift
   const [shift_start_value, setShiftStartValue] = useState("0 0");
   const [shift_end_value, setShiftEndValue] = useState("0 0");
@@ -75,7 +75,7 @@ export default function AdminSchedules() {
     let usersMobile = await getUsersSchedulesByDateMobile(days[0], days[6]);
     usersMobile = handleSortUsersMobile(usersMobile, days);
 
-    dispatch({ type: "SET_ALL_FETCHED", payload: { users, usersMobile } });
+    dispatch({ type: "SET_ANY", payload: { users, usersMobile } });
   };
 
   // For init load and datepicker
@@ -92,7 +92,7 @@ export default function AdminSchedules() {
       dateToAdd = startOfWeek(subMonths(new Date(year, month, day), 1), {
         weekStartsOn: 1,
       });
-      setDateISO(selectedDate); // For datepicker value
+      setDatePicker(selectedDate);
     } else {
       dateToAdd = startOfWeek(new Date(), { weekStartsOn: 1 });
     }
@@ -195,7 +195,7 @@ export default function AdminSchedules() {
       // Copy shifts from current week to the following week
       await createCopyOfWeeklySchedule(body, tokenConfig);
       // Refresh schedule
-      await handleFetchSchedule();
+      // await handleFetchSchedule();
       // Display following week after copying schedule
       handleClickNextWeek();
       setIsModifying(false);
@@ -257,7 +257,7 @@ export default function AdminSchedules() {
       usersMobile = handleSortUsersMobile(usersMobile, days);
 
     dispatch({
-      type: "SET_ALL_FETCHED",
+      type: "SET_ANY",
       payload: {
         days,
         users,
@@ -271,10 +271,10 @@ export default function AdminSchedules() {
   const handleClickPrevWeek = async () => {
     setIsLoadingSchedule(true);
     // New Date object will adjust hours based on timezone so use toDate
-    let date = subWeeks(toDate(parseISO(dateISO)), 1);
+    let date = subWeeks(toDate(parseISO(datepicker)), 1);
     // Format date so datepicker can read it
     let formattedDate = format(date, "yyyy-MM-dd");
-    setDateISO(formattedDate);
+    setDatePicker(formattedDate);
 
     // Get new dates for the week and fetch schedule
     handleDateChange(formattedDate);
@@ -285,10 +285,10 @@ export default function AdminSchedules() {
   const handleClickNextWeek = async () => {
     setIsLoadingSchedule(true);
     // New Date object will adjust hours based on timezone so use toDate
-    let date = addWeeks(toDate(parseISO(dateISO)), 1);
+    let date = addWeeks(toDate(parseISO(datepicker)), 1);
     // Format date so datepicker can read it
     let formattedDate = format(date, "yyyy-MM-dd");
-    setDateISO(formattedDate);
+    setDatePicker(formattedDate);
 
     // Get new dates for the week and fetch schedule
     handleDateChange(formattedDate);
@@ -341,7 +341,7 @@ export default function AdminSchedules() {
 
     // Refresh presets list
     const newPresets = await getPresets();
-    dispatch({ type: "SET_ALL_FETCHED", payload: { presets: newPresets } });
+    dispatch({ type: "SET_ANY", payload: { presets: newPresets } });
 
     alert("Preset saved");
   };
@@ -623,7 +623,7 @@ export default function AdminSchedules() {
           <input
             type="date"
             className="border-solid-1 border-smooth"
-            value={dateISO} // Datepicker must be yyyy-mm-dd format
+            value={datepicker} // Datepicker must be yyyy-mm-dd format
             onChange={({ target }) => handleDateChange(target.value)}
           />
           <div className="absolute">&nbsp;</div>

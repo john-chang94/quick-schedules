@@ -88,14 +88,12 @@ export default function AdminRequests() {
             handleUpdateRequestStatus={handleUpdateRequestStatus}
             isUpdating={isUpdating}
           />
-          <div className="requests-cards">
-            <RequestsCards // Small screens
-              requests={requests}
-              handleFormatDate={handleFormatDate}
-              handleUpdateRequestStatus={handleUpdateRequestStatus}
-              isUpdating={isUpdating}
-            />
-          </div>
+          <RequestsCards // Small screens
+            requests={requests}
+            handleFormatDate={handleFormatDate}
+            handleUpdateRequestStatus={handleUpdateRequestStatus}
+            isUpdating={isUpdating}
+          />
         </div>
       )}
     </div>

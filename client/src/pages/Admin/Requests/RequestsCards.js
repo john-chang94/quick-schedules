@@ -7,7 +7,7 @@ export const RequestsCards = ({
   isUpdating,
 }) => {
   return (
-    <>
+    <div className="requests-cards">
       {requests.length ? (
         requests.map((request, r_i) => (
           <div
@@ -90,6 +90,6 @@ export const RequestsCards = ({
       ) : (
         <p className="text-center mt-3">None</p>
       )}
-    </>
+    </div>
   );
 };

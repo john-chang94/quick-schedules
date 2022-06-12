@@ -5,7 +5,7 @@ import {
   useContext,
   useReducer,
 } from "react";
-import { startOfWeek } from "date-fns";
+import { startOfWeek, format, startOfToday } from "date-fns";
 
 import {
   getUsersSchedulesByDate,
@@ -26,24 +26,64 @@ export default function SchedulesContextProvider({ children }) {
 
   const reducer = (state, { type, payload }) => {
     switch (type) {
-      case "SET_ALL_FETCHED":
+      case "SET_ANY":
         return {
           ...state,
           ...payload,
+        };
+      case "TOGGLE_IS_LOADING_SCHEDULE":
+        return {
+          ...state,
+          isLoadingSchedule: !state.isLoadingSchedule,
+        };
+      case "TOGGLE_CHANGE_DATE":
+        return {
+          ...state,
+          isModifying: !state.isModifying,
+          isLoadingSchedule: !state.isLoadingSchedule,
+        };
+      case "CLEAR_INDEXES":
+        return {
+          ...state,
+          userId: null,
+          availabilityIndex: null,
+        };
+      case "SET_DATEPICKER":
+        return {
+          ...state,
+          datepicker: payload.datepicker,
         };
       default:
         return initialState;
     }
   };
 
-  const initialState = {};
+  const initialState = {
+    days: [],
+    times: [],
+    presets: [],
+    availabilities: [],
+    store: null,
+    users: [],
+    usersMobile: [],
+    requests: [],
+    isModifying: false,
+    isLoadingSchedule: false,
+    datepicker: format(startOfToday(), "yyyy-MM-dd"),
+    // Used for getting time values when saving a shift
+    shift_start_value: "0 0",
+    shift_end_value: "0 0",
+    // Used to render edit shift mode for selected date and employee only
+    userId: null,
+    availabilityIndex: null,
+  };
 
   const [state, dispatch] = useReducer(reducer, initialState);
 
+  // Get dates in current work week
   const getDatesOfTheWeek = async () => {
     let dateToAdd = startOfWeek(new Date(), { weekStartsOn: 1 });
     let daysArray = [];
-    // Get dates in current work week
     for (let i = 0; i < 7; i++) {
       daysArray.push(dateToAdd.toISOString());
       dateToAdd = new Date(dateToAdd.setDate(dateToAdd.getDate() + 1));
@@ -63,6 +103,50 @@ export default function SchedulesContextProvider({ children }) {
     return arr.sort(
       (a, b) => new Date(a.shift_start) - new Date(b.shift_start)
     );
+  };
+
+  // Fetch shifts for the week (used for refreshing after editing shifts)
+  const handleFetchSchedule = async () => {
+    const users = await getUsersSchedulesByDate(state.days[0], state.days[6]);
+    let usersMobile = await getUsersSchedulesByDateMobile(
+      state.days[0],
+      state.days[6]
+    );
+    usersMobile = handleSortUsersMobile(usersMobile, state.days);
+    if (usersMobile.length > 0) {
+      usersMobile = handleSortUsersMobile(usersMobile, state.days);
+    }
+
+    dispatch({ type: "SET_ANY", payload: { users, usersMobile } });
+  };
+
+  // Get new dates for the week and fetch schedule
+  const handleDateChange = async (date) => {
+    dispatch({ type: "TOGGLE_IS_LOADING_SCHEDULE" });
+    const days = await getDatesOfTheWeek(date);
+    const users = await getUsersSchedulesByDate(days[0], days[6]);
+    const requests = await getRequestsByStatusAndDate(
+      "Approved",
+      days[0],
+      days[6]
+    );
+    let usersMobile = await getUsersSchedulesByDateMobile(days[0], days[6]);
+    if (usersMobile.length > 0) {
+      usersMobile = handleSortUsersMobile(usersMobile, days);
+    }
+
+    dispatch({
+      type: "SET_ANY",
+      payload: {
+        days,
+        users,
+        requests,
+        usersMobile,
+        isLoadingSchedule: false,
+        userId: null,
+        availabilityIndex: null,
+      },
+    });
   };
 
   useEffect(() => {
@@ -86,7 +170,7 @@ export default function SchedulesContextProvider({ children }) {
 
       if (isMounted) {
         dispatch({
-          type: "SET_ALL_FETCHED",
+          type: "SET_ANY",
           payload: {
             users,
             usersMobile,
@@ -113,6 +197,8 @@ export default function SchedulesContextProvider({ children }) {
         state,
         dispatch,
         isLoading,
+        handleFetchSchedule,
+        handleDateChange
       }}
     >
       {children}
