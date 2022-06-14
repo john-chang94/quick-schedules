@@ -31,7 +31,7 @@ export default function AdminSchedules() {
   const [isLoadingSchedule, setIsLoadingSchedule] = useState(false);
   const [showConfirmTooltip, setShowConfirmTooltip] = useState(false);
   const [showPresetTooltip, setShowPresetTooltip] = useState(false);
-  const [showOtherTooltip, setShowOtherTooltip] = useState(false);
+  const [showClashTooltip, setShowClashTooltip] = useState(false);
   // Used for datepicker
   const [datepicker, setDatePicker] = useState(format(startOfToday(), "yyyy-MM-dd"));
   // Used for getting time values when saving a shift
@@ -194,8 +194,6 @@ export default function AdminSchedules() {
 
       // Copy shifts from current week to the following week
       await createCopyOfWeeklySchedule(body, tokenConfig);
-      // Refresh schedule
-      // await handleFetchSchedule();
       // Display following week after copying schedule
       handleClickNextWeek();
       setIsModifying(false);
@@ -223,7 +221,7 @@ export default function AdminSchedules() {
   const handleCancelShift = () => {
     setUserId("");
     setAvailabilityIndex("");
-    setShowOtherTooltip(false);
+    setShowClashTooltip(false);
   };
 
   // Render edit shift (new)
@@ -359,7 +357,7 @@ export default function AdminSchedules() {
       await handleFetchSchedule();
       setUserId("");
       setAvailabilityIndex("");
-      setShowOtherTooltip(false);
+      setShowClashTooltip(false);
       setIsUpdating(false);
     }
   };
@@ -537,7 +535,7 @@ export default function AdminSchedules() {
           >
             <span // Tooltip
               className={`tooltip ${
-                showOtherTooltip && "tooltip-open tooltip-mt-1"
+                showClashTooltip && "tooltip-open tooltip-mt-1"
               }`}
             >
               {shift.shift_end ? "Remove" : "Close"}
@@ -547,8 +545,8 @@ export default function AdminSchedules() {
                 // Render appropriate icon based on shift existing or not
                 shift.shift_end ? "fa-trash-alt" : "fa-times"
               } schedules-text p-1`}
-              onMouseEnter={() => setShowOtherTooltip(true)}
-              onMouseLeave={() => setShowOtherTooltip(false)}
+              onMouseEnter={() => setShowClashTooltip(true)}
+              onMouseLeave={() => setShowClashTooltip(false)}
             />
           </div>
         </div>

@@ -80,7 +80,6 @@ export const SchedulesController = () => {
   };
 
   const handleClickPrevWeek = async () => {
-    dispatch({ type: "TOGGLE_IS_LOADING_SCHEDULE" });
     // New Date object will adjust hours based on timezone so use toDate
     let date = subWeeks(toDate(parseISO(datepicker)), 1);
     // Format date so datepicker can read it
@@ -89,12 +88,9 @@ export const SchedulesController = () => {
       type: "SET_DATEPICKER",
       payload: { datepicker: formattedDate },
     });
-
-    handleDateChange(formattedDate);
   };
 
   const handleClickNextWeek = async () => {
-    dispatch({ type: "TOGGLE_IS_LOADING_SCHEDULE" });
     // New Date object will adjust hours based on timezone so use toDate
     let date = addWeeks(toDate(parseISO(datepicker)), 1);
     // Format date so datepicker can read it
@@ -103,8 +99,6 @@ export const SchedulesController = () => {
       type: "SET_DATEPICKER",
       payload: { datepicker: formattedDate },
     });
-
-    handleDateChange(formattedDate);
   };
 
   // Format date to 'mm/dd/yyyy' without using new Date

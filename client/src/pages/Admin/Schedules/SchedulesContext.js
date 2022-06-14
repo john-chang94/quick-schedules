@@ -4,6 +4,7 @@ import {
   useEffect,
   useContext,
   useReducer,
+  useCallback
 } from "react";
 import { startOfWeek, format, startOfToday } from "date-fns";
 
@@ -120,8 +121,7 @@ export default function SchedulesContextProvider({ children }) {
     dispatch({ type: "SET_ANY", payload: { users, usersMobile } });
   };
 
-  // Get new dates for the week and fetch schedule
-  const handleDateChange = async (date) => {
+  const handleDateChange = useCallback(async(date) => {
     dispatch({ type: "TOGGLE_IS_LOADING_SCHEDULE" });
     const days = await getDatesOfTheWeek(date);
     const users = await getUsersSchedulesByDate(days[0], days[6]);
@@ -147,7 +147,11 @@ export default function SchedulesContextProvider({ children }) {
         availabilityIndex: null,
       },
     });
-  };
+  }, [])
+
+  useEffect(() => {
+    handleDateChange();
+  }, [state.datepicker, handleDateChange])
 
   useEffect(() => {
     let isMounted = true;
