@@ -2,23 +2,19 @@ import React, { useState, useRef } from "react";
 import { format, toDate, parseISO } from "date-fns";
 import { CSSTransition } from "react-transition-group";
 
-import { createShift, updateShift, deleteShift } from "../../../../services/shifts";
+import {
+  createShift,
+  updateShift,
+  deleteShift,
+} from "../../../../services/shifts";
 import { isAuthenticated } from "../../../../services/auth";
 
 import { Spinner } from "../../../../components/Spinner";
-import { SchedulesList } from "./SchedulesListMobile";
+import { SchedulesListMobile } from "./SchedulesListMobile";
 import { AddShiftMobile } from "./AddShiftMobile";
+import { useSchedules } from "../SchedulesContext";
 
-export default function SchedulesMobile({
-  usersMobile,
-  users,
-  days,
-  times,
-  presets,
-  store,
-  getTimeValue,
-  handleFetchSchedule,
-}) {
+export default function SchedulesMobile() {
   const [isUpdating, setIsUpdating] = useState(false);
   const [editShiftIndex, setEditShiftIndex] = useState(null);
   const [dayIndex, setDayIndex] = useState(null); // For saving a shift
@@ -29,6 +25,11 @@ export default function SchedulesMobile({
   const [showAddShift, setShowAddShift] = useState(false);
   const [error, setError] = useState("");
   const modalRef = useRef();
+
+  const {
+    state: { users, usersMobile, days, times, presets, store },
+    handleFetchSchedule,
+  } = useSchedules();
 
   const handleShowEditShift = (user, shiftIndex) => {
     // Set specific shift time values to match with times array in the select inputs
@@ -162,7 +163,7 @@ export default function SchedulesMobile({
     setShiftStartValue(store.store_open_value);
     setShiftEndValue(store.store_close_value);
     setShowAddShift(true);
-  }
+  };
 
   const handleCancelAddShift = () => {
     setShiftStartValue("");
@@ -182,6 +183,14 @@ export default function SchedulesMobile({
 
   const getTime = (shift) => {
     return new Date(shift).toLocaleTimeString().replace(":00 ", " ");
+  };
+
+  const getTimeValue = (shift) => {
+    const date = new Date(shift);
+    const hour = date.getHours();
+    const min = date.getMinutes();
+    const values = `${hour.toString()} ${min.toString()}`;
+    return values;
   };
 
   const renderShift = (user, shiftIndex) => (
@@ -494,7 +503,7 @@ export default function SchedulesMobile({
           )}
         </div>
       ))} */}
-      <SchedulesList
+      <SchedulesListMobile
         usersMobile={usersMobile}
         days={days}
         presets={presets}

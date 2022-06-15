@@ -3,7 +3,7 @@ import { format } from "date-fns";
 import { EditShiftMobile } from "./EditShiftMobile";
 import { ShiftMobile } from "./ShiftMobile";
 
-export const SchedulesList = ({
+export const SchedulesListMobile = ({
   usersMobile,
   days,
   presets,
