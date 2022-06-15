@@ -1,12 +1,12 @@
 import React from "react";
 import { format, addWeeks, subWeeks, parseISO, toDate } from "date-fns";
 
-import { isAuthenticated } from "../../../../services/auth";
-import { useSchedules } from "../SchedulesContext";
+import { isAuthenticated } from "../../../services/auth";
+import { useSchedules } from "./SchedulesContext";
 import {
   clearWeeklySchedule,
   createCopyOfWeeklySchedule,
-} from "../../../../services/shifts";
+} from "../../../services/shifts";
 
 export const SchedulesController = () => {
   const {
@@ -16,10 +16,10 @@ export const SchedulesController = () => {
       requests,
       datepicker,
       isModifying,
-      handleFetchSchedule,
-      handleDateChange,
     },
     dispatch,
+    handleDateChange,
+    handleFetchSchedule
   } = useSchedules();
 
   const handleCopyWeeklySchedule = async () => {
@@ -28,7 +28,7 @@ export const SchedulesController = () => {
     );
     if (doCopy) {
       const tokenConfig = isAuthenticated();
-      dispatch({ type: "TOGGLE_DATE_CHANGE" });
+      dispatch({ type: "TOGGLE_CHANGE_DATE" });
 
       let shifts = [];
       // Copy shifts from current week for all users
@@ -60,8 +60,7 @@ export const SchedulesController = () => {
       // Copy shifts from current week to the following week
       await createCopyOfWeeklySchedule(body, tokenConfig);
       // Display following week after copying schedule
-      handleClickNextWeek();
-      dispatch({ type: "TOGGLE_DATE_CHANGE" });
+      await handleClickNextWeek();
     }
   };
 
@@ -69,25 +68,30 @@ export const SchedulesController = () => {
     const doClear = window.confirm("Clear all shifts for this week?");
     if (doClear) {
       const tokenConfig = isAuthenticated();
-      dispatch({ type: "TOGGLE_DATE_CHANGE" });
+      dispatch({ type: "TOGGLE_CHANGE_DATE" });
 
       // Delete all shifts for the current week
       await clearWeeklySchedule(days[0], days[6], tokenConfig);
       // Refresh schedule
       await handleFetchSchedule();
-      dispatch({ type: "TOGGLE_DATE_CHANGE" });
     }
   };
+
+  // Set datepicker value and fetch data using selected date
+  const handleDatepicker = (date) => {
+    dispatch({
+      type: "SET_DATEPICKER",
+      payload: { datepicker: date },
+    });
+    handleDateChange(date);
+  }
 
   const handleClickPrevWeek = async () => {
     // New Date object will adjust hours based on timezone so use toDate
     let date = subWeeks(toDate(parseISO(datepicker)), 1);
     // Format date so datepicker can read it
     let formattedDate = format(date, "yyyy-MM-dd");
-    dispatch({
-      type: "SET_DATEPICKER",
-      payload: { datepicker: formattedDate },
-    });
+    handleDatepicker(formattedDate);
   };
 
   const handleClickNextWeek = async () => {
@@ -95,10 +99,7 @@ export const SchedulesController = () => {
     let date = addWeeks(toDate(parseISO(datepicker)), 1);
     // Format date so datepicker can read it
     let formattedDate = format(date, "yyyy-MM-dd");
-    dispatch({
-      type: "SET_DATEPICKER",
-      payload: { datepicker: formattedDate },
-    });
+    handleDatepicker(formattedDate);
   };
 
   // Format date to 'mm/dd/yyyy' without using new Date
@@ -125,7 +126,7 @@ export const SchedulesController = () => {
             type="date"
             className="border-solid-1 border-smooth"
             value={datepicker} // Datepicker must be yyyy-mm-dd format
-            onChange={({ target }) => handleDateChange(target.value)}
+            onChange={({ target }) => handleDatepicker(target.value)}
           />
           <div className="absolute">&nbsp;</div>
         </div>

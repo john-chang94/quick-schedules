@@ -24,6 +24,8 @@ import Loader from "react-loader-spinner";
 import { getRequestsByStatusAndDate } from "../../../services/requests";
 import SchedulesMobile from "./SchedulesMobile/SchedulesMobile";
 import { useSchedules } from "./SchedulesContext";
+import { SchedulesController } from "./SchedulesController";
+import { SchedulesList } from "./SchedulesList";
 
 export default function AdminSchedules() {
   const [isUpdating, setIsUpdating] = useState(false);
@@ -109,258 +111,258 @@ export default function AdminSchedules() {
   };
 
   // Can create or update shift based on s_id being provided
-  const handleSaveShift = async (u_id, a_i, s_id) => {
-    setIsUpdating(true);
-    const tokenConfig = isAuthenticated();
-    // Get shift date
-    const date = new Date(days[a_i]);
-    // Get hour and minute for new date object
-    const startTimeHour = shift_start_value.split(" ")[0];
-    const startTimeMinute = shift_start_value.split(" ")[1];
-    // Get hour and minute for new date object
-    const endTimeHour = shift_end_value.split(" ")[0];
-    const endTimeMinute = shift_end_value.split(" ")[1];
-    // Create new date objects with year, month, day, hour, minute
-    const shift_start = new Date(
-      date.getFullYear(),
-      date.getMonth(),
-      date.getDate(),
-      startTimeHour,
-      startTimeMinute
-    ).toLocaleString();
+  // const handleSaveShift = async (u_id, a_i, s_id) => {
+  //   setIsUpdating(true);
+  //   const tokenConfig = isAuthenticated();
+  //   // Get shift date
+  //   const date = new Date(days[a_i]);
+  //   // Get hour and minute for new date object
+  //   const startTimeHour = shift_start_value.split(" ")[0];
+  //   const startTimeMinute = shift_start_value.split(" ")[1];
+  //   // Get hour and minute for new date object
+  //   const endTimeHour = shift_end_value.split(" ")[0];
+  //   const endTimeMinute = shift_end_value.split(" ")[1];
+  //   // Create new date objects with year, month, day, hour, minute
+  //   const shift_start = new Date(
+  //     date.getFullYear(),
+  //     date.getMonth(),
+  //     date.getDate(),
+  //     startTimeHour,
+  //     startTimeMinute
+  //   ).toLocaleString();
 
-    const shift_end = new Date(
-      date.getFullYear(),
-      date.getMonth(),
-      date.getDate(),
-      endTimeHour,
-      endTimeMinute
-    ).toLocaleString();
+  //   const shift_end = new Date(
+  //     date.getFullYear(),
+  //     date.getMonth(),
+  //     date.getDate(),
+  //     endTimeHour,
+  //     endTimeMinute
+  //   ).toLocaleString();
 
-    const body = { u_id, shift_start, shift_end };
+  //   const body = { u_id, shift_start, shift_end };
 
-    if (s_id) {
-      // Update shift if shift id is provided
-      await updateShift(s_id, body, tokenConfig);
-    } else {
-      // Create new shift if no shift id is provided
-      await createShift(body, tokenConfig);
-    }
+  //   if (s_id) {
+  //     // Update shift if shift id is provided
+  //     await updateShift(s_id, body, tokenConfig);
+  //   } else {
+  //     // Create new shift if no shift id is provided
+  //     await createShift(body, tokenConfig);
+  //   }
 
-    // Refresh schedule
-    await handleFetchSchedule();
+  //   // Refresh schedule
+  //   await handleFetchSchedule();
 
-    setUserId("");
-    setAvailabilityIndex("");
-    setShowConfirmTooltip(false);
-    setIsUpdating(false);
-  };
+  //   setUserId("");
+  //   setAvailabilityIndex("");
+  //   setShowConfirmTooltip(false);
+  //   setIsUpdating(false);
+  // };
 
-  const handleCopyWeeklySchedule = async () => {
-    const doCopy = window.confirm(
-      "Copy schedule to next week? Any shifts already saved will be overwritten."
-    );
-    if (doCopy) {
-      const tokenConfig = isAuthenticated();
-      setIsModifying(true);
-      setIsLoadingSchedule(true);
+  // const handleCopyWeeklySchedule = async () => {
+  //   const doCopy = window.confirm(
+  //     "Copy schedule to next week? Any shifts already saved will be overwritten."
+  //   );
+  //   if (doCopy) {
+  //     const tokenConfig = isAuthenticated();
+  //     setIsModifying(true);
+  //     setIsLoadingSchedule(true);
 
-      let shifts = [];
-      // Copy shifts from current week for all users
-      for (let i = 0; i < users.length; i++) {
-        for (let j = 0; j < users[i].shifts.length; j++) {
-          if (users[i].shifts[j].shift_end !== null) {
-            let shift = {
-              u_id: users[i].u_id,
-              shift_start: format(
-                addWeeks(parseISO(users[i].shifts[j].shift_start), 1),
-                "yyyy-MM-dd'T'HH:mm:ss"
-              ),
-              shift_end: format(
-                addWeeks(parseISO(users[i].shifts[j].shift_end), 1),
-                "yyyy-MM-dd'T'HH:mm:ss"
-              ),
-            };
-            shifts.push(shift);
-          }
-        }
-      }
+  //     let shifts = [];
+  //     // Copy shifts from current week for all users
+  //     for (let i = 0; i < users.length; i++) {
+  //       for (let j = 0; j < users[i].shifts.length; j++) {
+  //         if (users[i].shifts[j].shift_end !== null) {
+  //           let shift = {
+  //             u_id: users[i].u_id,
+  //             shift_start: format(
+  //               addWeeks(parseISO(users[i].shifts[j].shift_start), 1),
+  //               "yyyy-MM-dd'T'HH:mm:ss"
+  //             ),
+  //             shift_end: format(
+  //               addWeeks(parseISO(users[i].shifts[j].shift_end), 1),
+  //               "yyyy-MM-dd'T'HH:mm:ss"
+  //             ),
+  //           };
+  //           shifts.push(shift);
+  //         }
+  //       }
+  //     }
 
-      const body = {
-        shifts,
-        weekStart: addWeeks(parseISO(days[0]), 1),
-        weekEnd: addWeeks(parseISO(days[6]), 1),
-      };
+  //     const body = {
+  //       shifts,
+  //       weekStart: addWeeks(parseISO(days[0]), 1),
+  //       weekEnd: addWeeks(parseISO(days[6]), 1),
+  //     };
 
-      // Copy shifts from current week to the following week
-      await createCopyOfWeeklySchedule(body, tokenConfig);
-      // Display following week after copying schedule
-      handleClickNextWeek();
-      setIsModifying(false);
-      setIsLoadingSchedule(false);
-    }
-  };
+  //     // Copy shifts from current week to the following week
+  //     await createCopyOfWeeklySchedule(body, tokenConfig);
+  //     // Display following week after copying schedule
+  //     // handleClickNextWeek();
+  //     setIsModifying(false);
+  //     setIsLoadingSchedule(false);
+  //   }
+  // };
 
-  const handleClearWeeklySchedule = async () => {
-    const doClear = window.confirm("Clear all shifts for this week?");
-    if (doClear) {
-      const tokenConfig = isAuthenticated();
-      setIsModifying(true);
-      setIsLoadingSchedule(true);
+  // const handleClearWeeklySchedule = async () => {
+  //   const doClear = window.confirm("Clear all shifts for this week?");
+  //   if (doClear) {
+  //     const tokenConfig = isAuthenticated();
+  //     setIsModifying(true);
+  //     setIsLoadingSchedule(true);
 
-      // Delete all shifts for the current week
-      await clearWeeklySchedule(days[0], days[6], tokenConfig);
-      // Refresh schedule
-      await handleFetchSchedule();
+  //     // Delete all shifts for the current week
+  //     await clearWeeklySchedule(days[0], days[6], tokenConfig);
+  //     // Refresh schedule
+  //     await handleFetchSchedule();
 
-      setIsModifying(false);
-      setIsLoadingSchedule(false);
-    }
-  };
+  //     setIsModifying(false);
+  //     setIsLoadingSchedule(false);
+  //   }
+  // };
 
-  const handleCancelShift = () => {
-    setUserId("");
-    setAvailabilityIndex("");
-    setShowClashTooltip(false);
-  };
+  // const handleCancelShift = () => {
+  //   setUserId("");
+  //   setAvailabilityIndex("");
+  //   setShowClashTooltip(false);
+  // };
 
-  // Render edit shift (new)
-  const handleClickShiftNew = (u_id, a_i) => {
-    setUserId(u_id);
-    setAvailabilityIndex(a_i);
-    setShiftStartValue(store.store_open_value);
-    setShiftEndValue(store.store_close_value);
-  };
+  // // Render edit shift (new)
+  // const handleClickShiftNew = (u_id, a_i) => {
+  //   setUserId(u_id);
+  //   setAvailabilityIndex(a_i);
+  //   setShiftStartValue(store.store_open_value);
+  //   setShiftEndValue(store.store_close_value);
+  // };
 
-  // Render edit shift (update)
-  const handleClickShiftEdit = (u_id, a_i, startStartValue, endStartValue) => {
-    setUserId(u_id);
-    setAvailabilityIndex(a_i);
-    setShiftStartValue(startStartValue);
-    setShiftEndValue(endStartValue);
-  };
+  // // Render edit shift (update)
+  // const handleClickShiftEdit = (u_id, a_i, startStartValue, endStartValue) => {
+  //   setUserId(u_id);
+  //   setAvailabilityIndex(a_i);
+  //   setShiftStartValue(startStartValue);
+  //   setShiftEndValue(endStartValue);
+  // };
 
   // Get new dates for the week and fetch schedule
-  const handleDateChange = async (date) => {
-    setIsLoadingSchedule(true);
-    const days = await getDatesOfTheWeek(date);
-    const users = await getUsersSchedulesByDate(days[0], days[6]);
-    const requests = await getRequestsByStatusAndDate(
-      "Approved",
-      days[0],
-      days[6]
-    );
-    let usersMobile = await getUsersSchedulesByDateMobile(days[0], days[6]);
-    if (usersMobile.length > 0)
-      usersMobile = handleSortUsersMobile(usersMobile, days);
+  // const handleDateChange = async (date) => {
+  //   setIsLoadingSchedule(true);
+  //   const days = await getDatesOfTheWeek(date);
+  //   const users = await getUsersSchedulesByDate(days[0], days[6]);
+  //   const requests = await getRequestsByStatusAndDate(
+  //     "Approved",
+  //     days[0],
+  //     days[6]
+  //   );
+  //   let usersMobile = await getUsersSchedulesByDateMobile(days[0], days[6]);
+  //   if (usersMobile.length > 0)
+  //     usersMobile = handleSortUsersMobile(usersMobile, days);
 
-    dispatch({
-      type: "SET_ANY",
-      payload: {
-        days,
-        users,
-        requests,
-        usersMobile,
-      },
-    });
-    setIsLoadingSchedule(false);
-  };
+  //   dispatch({
+  //     type: "SET_ANY",
+  //     payload: {
+  //       days,
+  //       users,
+  //       requests,
+  //       usersMobile,
+  //     },
+  //   });
+  //   setIsLoadingSchedule(false);
+  // };
 
-  const handleClickPrevWeek = async () => {
-    setIsLoadingSchedule(true);
-    // New Date object will adjust hours based on timezone so use toDate
-    let date = subWeeks(toDate(parseISO(datepicker)), 1);
-    // Format date so datepicker can read it
-    let formattedDate = format(date, "yyyy-MM-dd");
-    setDatePicker(formattedDate);
+  // const handleClickPrevWeek = async () => {
+  //   setIsLoadingSchedule(true);
+  //   // New Date object will adjust hours based on timezone so use toDate
+  //   let date = subWeeks(toDate(parseISO(datepicker)), 1);
+  //   // Format date so datepicker can read it
+  //   let formattedDate = format(date, "yyyy-MM-dd");
+  //   setDatePicker(formattedDate);
 
-    // Get new dates for the week and fetch schedule
-    handleDateChange(formattedDate);
-    setUserId("");
-    setAvailabilityIndex("");
-  };
+  //   // Get new dates for the week and fetch schedule
+  //   handleDateChange(formattedDate);
+  //   setUserId("");
+  //   setAvailabilityIndex("");
+  // };
 
-  const handleClickNextWeek = async () => {
-    setIsLoadingSchedule(true);
-    // New Date object will adjust hours based on timezone so use toDate
-    let date = addWeeks(toDate(parseISO(datepicker)), 1);
-    // Format date so datepicker can read it
-    let formattedDate = format(date, "yyyy-MM-dd");
-    setDatePicker(formattedDate);
+  // const handleClickNextWeek = async () => {
+  //   setIsLoadingSchedule(true);
+  //   // New Date object will adjust hours based on timezone so use toDate
+  //   let date = addWeeks(toDate(parseISO(datepicker)), 1);
+  //   // Format date so datepicker can read it
+  //   let formattedDate = format(date, "yyyy-MM-dd");
+  //   setDatePicker(formattedDate);
 
-    // Get new dates for the week and fetch schedule
-    handleDateChange(formattedDate);
-    setUserId("");
-    setAvailabilityIndex("");
-  };
+  //   // Get new dates for the week and fetch schedule
+  //   handleDateChange(formattedDate);
+  //   setUserId("");
+  //   setAvailabilityIndex("");
+  // };
 
-  const handleSelectPreset = (shiftValue) => {
-    if (!shiftValue) return;
-    setShiftStartValue(shiftValue.split("-")[0]);
-    setShiftEndValue(shiftValue.split("-")[1]);
-  };
+  // const handleSelectPreset = (shiftValue) => {
+  //   if (!shiftValue) return;
+  //   setShiftStartValue(shiftValue.split("-")[0]);
+  //   setShiftEndValue(shiftValue.split("-")[1]);
+  // };
 
-  const handleSavePreset = async () => {
-    const tokenConfig = isAuthenticated();
-    let level;
-    let shift_start;
-    let shift_end;
-    for (let i = 0; i < presets.length; i++) {
-      // Check if preset already exists
-      if (
-        shift_start_value === presets[i].shift_start_value &&
-        shift_end_value === presets[i].shift_end_value
-      ) {
-        alert("Preset already saved");
-        return;
-      }
-    }
-    // Match shift_start/end && values between times array and times dropdown list
-    for (let i = 0; i < times.length; i++) {
-      if (shift_start_value === times[i].value) {
-        // Assign only start time level for sorting when displayed in the list
-        level = times[i].level;
-        shift_start = times[i].time;
-      }
-      if (shift_end_value === times[i].value) {
-        shift_end = times[i].time;
-      }
-    }
+  // const handleSavePreset = async () => {
+  //   const tokenConfig = isAuthenticated();
+  //   let level;
+  //   let shift_start;
+  //   let shift_end;
+  //   for (let i = 0; i < presets.length; i++) {
+  //     // Check if preset already exists
+  //     if (
+  //       shift_start_value === presets[i].shift_start_value &&
+  //       shift_end_value === presets[i].shift_end_value
+  //     ) {
+  //       alert("Preset already saved");
+  //       return;
+  //     }
+  //   }
+  //   // Match shift_start/end && values between times array and times dropdown list
+  //   for (let i = 0; i < times.length; i++) {
+  //     if (shift_start_value === times[i].value) {
+  //       // Assign only start time level for sorting when displayed in the list
+  //       level = times[i].level;
+  //       shift_start = times[i].time;
+  //     }
+  //     if (shift_end_value === times[i].value) {
+  //       shift_end = times[i].time;
+  //     }
+  //   }
 
-    // Create new preset in db
-    const body = {
-      shift_start,
-      shift_end,
-      shift_start_value,
-      shift_end_value,
-      level,
-    };
-    await createPreset(body, tokenConfig);
+  //   // Create new preset in db
+  //   const body = {
+  //     shift_start,
+  //     shift_end,
+  //     shift_start_value,
+  //     shift_end_value,
+  //     level,
+  //   };
+  //   await createPreset(body, tokenConfig);
 
-    // Refresh presets list
-    const newPresets = await getPresets();
-    dispatch({ type: "SET_ANY", payload: { presets: newPresets } });
+  //   // Refresh presets list
+  //   const newPresets = await getPresets();
+  //   dispatch({ type: "SET_ANY", payload: { presets: newPresets } });
 
-    alert("Preset saved");
-  };
+  //   alert("Preset saved");
+  // };
 
-  const handleRemoveShift = async (s_id) => {
-    const toDelete = window.confirm(
-      "Are you sure you want to remove this shift?"
-    );
-    if (toDelete) {
-      const tokenConfig = isAuthenticated();
-      setIsUpdating(true);
-      await deleteShift(s_id, tokenConfig);
+  // const handleRemoveShift = async (s_id) => {
+  //   const toDelete = window.confirm(
+  //     "Are you sure you want to remove this shift?"
+  //   );
+  //   if (toDelete) {
+  //     const tokenConfig = isAuthenticated();
+  //     setIsUpdating(true);
+  //     await deleteShift(s_id, tokenConfig);
 
-      // Refresh schedule
-      await handleFetchSchedule();
-      setUserId("");
-      setAvailabilityIndex("");
-      setShowClashTooltip(false);
-      setIsUpdating(false);
-    }
-  };
+  //     // Refresh schedule
+  //     await handleFetchSchedule();
+  //     setUserId("");
+  //     setAvailabilityIndex("");
+  //     setShowClashTooltip(false);
+  //     setIsUpdating(false);
+  //   }
+  // };
 
   const getTimeValue = (shift) => {
     const date = new Date(shift);
@@ -370,189 +372,189 @@ export default function AdminSchedules() {
     return values;
   };
 
-  const getTime = (shift) => {
-    return new Date(shift).toLocaleTimeString().replace(":00 ", " ");
-  };
+  // const getTime = (shift) => {
+  //   return new Date(shift).toLocaleTimeString().replace(":00 ", " ");
+  // };
 
   // Format date to 'mm/dd/yyyy' without using new Date
   // Production fetches dates without timezone, while dev
   // fetches with timezone.. so manually parse date
-  const handleFormatDate = (date) => {
-    const init = date.split("T")[0];
-    const split = init.split("-");
-    const newDate = `${split[1]}/${split[2]}/${split[0]}`;
-    return newDate;
-  };
+  // const handleFormatDate = (date) => {
+  //   const init = date.split("T")[0];
+  //   const split = init.split("-");
+  //   const newDate = `${split[1]}/${split[2]}/${split[0]}`;
+  //   return newDate;
+  // };
 
-  const renderBlank = (u_id, a_i, time) => (
-    <td
-      key={a_i}
-      // Keep bg color black if employee is 'N/A' for availability
-      className={`pointer ${
-        time.start_time === "N/A" ? "bg-black" : "hovered"
-      }`}
-      onClick={() => handleClickShiftNew(u_id, a_i)}
-    ></td>
-  );
+  // const renderBlank = (u_id, a_i, time) => (
+  //   <td
+  //     key={a_i}
+  //     // Keep bg color black if employee is 'N/A' for availability
+  //     className={`pointer ${
+  //       time.start_time === "N/A" ? "bg-black" : "hovered"
+  //     }`}
+  //     onClick={() => handleClickShiftNew(u_id, a_i)}
+  //   ></td>
+  // );
 
-  const renderShift = (u_id, a_i, shift_start, shift_end) => (
-    <td
-      key={a_i}
-      className="pointer schedules-text bg-blue-lighten-4"
-      onClick={() =>
-        handleClickShiftEdit(
-          u_id,
-          a_i,
-          getTimeValue(shift_start),
-          getTimeValue(shift_end)
-        )
-      }
-    >
-      {getTime(shift_start)} -&nbsp;
-      {getTime(shift_end)}
-    </td>
-  );
+  // const renderShift = (u_id, a_i, shift_start, shift_end) => (
+  //   <td
+  //     key={a_i}
+  //     className="pointer schedules-text bg-blue-lighten-4"
+  //     onClick={() =>
+  //       handleClickShiftEdit(
+  //         u_id,
+  //         a_i,
+  //         getTimeValue(shift_start),
+  //         getTimeValue(shift_end)
+  //       )
+  //     }
+  //   >
+  //     {getTime(shift_start)} -&nbsp;
+  //     {getTime(shift_end)}
+  //   </td>
+  // );
 
   // Render new shift or edit existing
-  const renderEditShift = (u_id, a_i, shift) => (
-    <td key={a_i} className="bg-blue-grey-lighten-5">
-      <div className="flex justify-evenly mt-1">
-        <p>Preset</p>
-        <select
-          className="w-60 schedules-text"
-          defaultValue="0 0"
-          disabled={isUpdating}
-          onChange={({ target }) => handleSelectPreset(target.value)}
-        >
-          <option value="">Select</option>
-          {presets &&
-            presets.map((preset, i) => (
-              <option
-                key={i}
-                value={`${preset.shift_start_value}-${preset.shift_end_value}`}
-              >
-                {preset.shift_start} - {preset.shift_end}
-              </option>
-            ))}
-        </select>
-      </div>
-      <hr className="my-1" />
-      <div className="flex justify-evenly mb-1">
-        <p>Start</p>
-        <select
-          className="w-60 schedules-text"
-          value={shift_start_value}
-          disabled={isUpdating}
-          onChange={({ target }) => setShiftStartValue(target.value)}
-        >
-          {times &&
-            times.map((time, i) => (
-              <option
-                key={i}
-                value={time.value}
-                disabled={
-                  time.level < parseFloat(store.store_open_level) ||
-                  time.level > parseFloat(store.store_close_level)
-                }
-              >
-                {time.time}
-              </option>
-            ))}
-        </select>
-      </div>
-      <div className="flex justify-evenly mb-1">
-        <p className="mr-1">End</p>
-        <select
-          className="w-60 schedules-text"
-          value={shift_end_value}
-          disabled={isUpdating}
-          onChange={({ target }) => setShiftEndValue(target.value)}
-        >
-          {times &&
-            times.map((time, i) => (
-              <option
-                key={i}
-                value={time.value}
-                disabled={
-                  time.level < parseFloat(store.store_open_level) ||
-                  time.level > parseFloat(store.store_close_level)
-                }
-              >
-                {time.time}
-              </option>
-            ))}
-        </select>
-      </div>
-      {isUpdating ? (
-        <div className="my-1">
-          <Loader type="ThreeDots" color="rgb(50, 110, 150)" height={12} />
-        </div>
-      ) : (
-        // Render action buttons with icons
-        <div className="my-2 w-100 flex justify-evenly">
-          <div
-            style={{ minHeight: "25px" }}
-            className="w-100 pointer-no-dec hovered border-solid-1 bg-white relative flex flex-center"
-            onClick={() => handleSaveShift(u_id, a_i, shift.s_id)}
-          >
-            <span // Tooltip
-              className={`tooltip ${
-                showConfirmTooltip && "tooltip-open tooltip-mt-1"
-              }`}
-            >
-              Confirm
-            </span>
-            <i
-              className="fas fa-check schedules-text p-1"
-              onMouseEnter={() => setShowConfirmTooltip(true)}
-              onMouseLeave={() => setShowConfirmTooltip(false)}
-            />
-          </div>
-          <div
-            style={{ minHeight: "25px" }}
-            className="w-100 pointer-no-dec hovered border-solid-1 bg-white relative flex flex-center"
-            onClick={() => handleSavePreset()}
-          >
-            <span // Tooltip
-              className={`tooltip ${
-                showPresetTooltip && "tooltip-open tooltip-mt-2"
-              }`}
-            >
-              Save preset
-            </span>
-            <i
-              className="fas fa-star schedules-text p-1"
-              onMouseEnter={() => setShowPresetTooltip(true)}
-              onMouseLeave={() => setShowPresetTooltip(false)}
-            />
-          </div>
-          <div
-            style={{ minHeight: "25px" }}
-            className="w-100 pointer-no-dec hovered border-solid-1 bg-white relative flex flex-center"
-            onClick={() =>
-              shift.s_id ? handleRemoveShift(shift.s_id) : handleCancelShift()
-            }
-          >
-            <span // Tooltip
-              className={`tooltip ${
-                showClashTooltip && "tooltip-open tooltip-mt-1"
-              }`}
-            >
-              {shift.shift_end ? "Remove" : "Close"}
-            </span>
-            <i
-              className={`fas ${
-                // Render appropriate icon based on shift existing or not
-                shift.shift_end ? "fa-trash-alt" : "fa-times"
-              } schedules-text p-1`}
-              onMouseEnter={() => setShowClashTooltip(true)}
-              onMouseLeave={() => setShowClashTooltip(false)}
-            />
-          </div>
-        </div>
-      )}
-    </td>
-  );
+  // const renderEditShift = (u_id, a_i, shift) => (
+  //   <td key={a_i} className="bg-blue-grey-lighten-5">
+  //     <div className="flex justify-evenly mt-1">
+  //       <p>Preset</p>
+  //       <select
+  //         className="w-60 schedules-text"
+  //         defaultValue="0 0"
+  //         disabled={isUpdating}
+  //         onChange={({ target }) => handleSelectPreset(target.value)}
+  //       >
+  //         <option value="">Select</option>
+  //         {presets &&
+  //           presets.map((preset, i) => (
+  //             <option
+  //               key={i}
+  //               value={`${preset.shift_start_value}-${preset.shift_end_value}`}
+  //             >
+  //               {preset.shift_start} - {preset.shift_end}
+  //             </option>
+  //           ))}
+  //       </select>
+  //     </div>
+  //     <hr className="my-1" />
+  //     <div className="flex justify-evenly mb-1">
+  //       <p>Start</p>
+  //       <select
+  //         className="w-60 schedules-text"
+  //         value={shift_start_value}
+  //         disabled={isUpdating}
+  //         onChange={({ target }) => setShiftStartValue(target.value)}
+  //       >
+  //         {times &&
+  //           times.map((time, i) => (
+  //             <option
+  //               key={i}
+  //               value={time.value}
+  //               disabled={
+  //                 time.level < parseFloat(store.store_open_level) ||
+  //                 time.level > parseFloat(store.store_close_level)
+  //               }
+  //             >
+  //               {time.time}
+  //             </option>
+  //           ))}
+  //       </select>
+  //     </div>
+  //     <div className="flex justify-evenly mb-1">
+  //       <p className="mr-1">End</p>
+  //       <select
+  //         className="w-60 schedules-text"
+  //         value={shift_end_value}
+  //         disabled={isUpdating}
+  //         onChange={({ target }) => setShiftEndValue(target.value)}
+  //       >
+  //         {times &&
+  //           times.map((time, i) => (
+  //             <option
+  //               key={i}
+  //               value={time.value}
+  //               disabled={
+  //                 time.level < parseFloat(store.store_open_level) ||
+  //                 time.level > parseFloat(store.store_close_level)
+  //               }
+  //             >
+  //               {time.time}
+  //             </option>
+  //           ))}
+  //       </select>
+  //     </div>
+  //     {isUpdating ? (
+  //       <div className="my-1">
+  //         <Loader type="ThreeDots" color="rgb(50, 110, 150)" height={12} />
+  //       </div>
+  //     ) : (
+  //       // Render action buttons with icons
+  //       <div className="my-2 w-100 flex justify-evenly">
+  //         <div
+  //           style={{ minHeight: "25px" }}
+  //           className="w-100 pointer-no-dec hovered border-solid-1 bg-white relative flex flex-center"
+  //           onClick={() => handleSaveShift(u_id, a_i, shift.s_id)}
+  //         >
+  //           <span // Tooltip
+  //             className={`tooltip ${
+  //               showConfirmTooltip && "tooltip-open tooltip-mt-1"
+  //             }`}
+  //           >
+  //             Confirm
+  //           </span>
+  //           <i
+  //             className="fas fa-check schedules-text p-1"
+  //             onMouseEnter={() => setShowConfirmTooltip(true)}
+  //             onMouseLeave={() => setShowConfirmTooltip(false)}
+  //           />
+  //         </div>
+  //         <div
+  //           style={{ minHeight: "25px" }}
+  //           className="w-100 pointer-no-dec hovered border-solid-1 bg-white relative flex flex-center"
+  //           onClick={() => handleSavePreset()}
+  //         >
+  //           <span // Tooltip
+  //             className={`tooltip ${
+  //               showPresetTooltip && "tooltip-open tooltip-mt-2"
+  //             }`}
+  //           >
+  //             Save preset
+  //           </span>
+  //           <i
+  //             className="fas fa-star schedules-text p-1"
+  //             onMouseEnter={() => setShowPresetTooltip(true)}
+  //             onMouseLeave={() => setShowPresetTooltip(false)}
+  //           />
+  //         </div>
+  //         <div
+  //           style={{ minHeight: "25px" }}
+  //           className="w-100 pointer-no-dec hovered border-solid-1 bg-white relative flex flex-center"
+  //           onClick={() =>
+  //             shift.s_id ? handleRemoveShift(shift.s_id) : handleCancelShift()
+  //           }
+  //         >
+  //           <span // Tooltip
+  //             className={`tooltip ${
+  //               showClashTooltip && "tooltip-open tooltip-mt-1"
+  //             }`}
+  //           >
+  //             {shift.shift_end ? "Remove" : "Close"}
+  //           </span>
+  //           <i
+  //             className={`fas ${
+  //               // Render appropriate icon based on shift existing or not
+  //               shift.shift_end ? "fa-trash-alt" : "fa-times"
+  //             } schedules-text p-1`}
+  //             onMouseEnter={() => setShowClashTooltip(true)}
+  //             onMouseLeave={() => setShowClashTooltip(false)}
+  //           />
+  //         </div>
+  //       </div>
+  //     )}
+  //   </td>
+  // );
 
   const renderAvailability = () => (
     <div className="availability">
@@ -608,129 +610,129 @@ export default function AdminSchedules() {
     </div>
   );
 
-  const renderController = () => (
-    <div className="schedules-controller">
-      <div className="select-week">
-        <div className="pointer" onClick={() => handleClickPrevWeek()}>
-          <em className="text-3">Prev&nbsp;week</em>
-          <p>
-            <i className="fas fa-angle-double-left" />
-          </p>
-        </div>
-        <div id="controller-date" className="relative">
-          <input
-            type="date"
-            className="border-solid-1 border-smooth"
-            value={datepicker} // Datepicker must be yyyy-mm-dd format
-            onChange={({ target }) => handleDateChange(target.value)}
-          />
-          <div className="absolute">&nbsp;</div>
-        </div>
-        <div className="pointer" onClick={() => handleClickNextWeek()}>
-          <em className="text-3">Next&nbsp;week</em>
-          <p>
-            <i className="fas fa-angle-double-right" />
-          </p>
-        </div>
-      </div>
+  // const renderController = () => (
+  //   <div className="schedules-controller">
+  //     <div className="select-week">
+  //       <div className="pointer" onClick={() => handleClickPrevWeek()}>
+  //         <em className="text-3">Prev&nbsp;week</em>
+  //         <p>
+  //           <i className="fas fa-angle-double-left" />
+  //         </p>
+  //       </div>
+  //       <div id="controller-date" className="relative">
+  //         <input
+  //           type="date"
+  //           className="border-solid-1 border-smooth"
+  //           value={datepicker} // Datepicker must be yyyy-mm-dd format
+  //           onChange={({ target }) => handleDateChange(target.value)}
+  //         />
+  //         <div className="absolute">&nbsp;</div>
+  //       </div>
+  //       <div className="pointer" onClick={() => handleClickNextWeek()}>
+  //         <em className="text-3">Next&nbsp;week</em>
+  //         <p>
+  //           <i className="fas fa-angle-double-right" />
+  //         </p>
+  //       </div>
+  //     </div>
 
-      <div className="schedules-requests">
-        <div className="mx-3">
-          <p className="text-3">
-            <strong>Approved Requests</strong>
-          </p>
-          {requests.length ? (
-            requests.map((request, i) => (
-              <div key={i}>
-                <p className="schedules-text">
-                  {request.first_name} {request.last_name}:
-                  {request.requested_dates.map((date, r_i) => (
-                    <span key={r_i}>
-                      &nbsp;
-                      {r_i === request.requested_dates.length - 1
-                        ? handleFormatDate(date)
-                        : `${handleFormatDate(date)},`}
-                    </span>
-                  ))}
-                </p>
-              </div>
-            ))
-          ) : (
-            <p className="text-3">None</p>
-          )}
-        </div>
-        <div>
-          <button
-            className={`controller-btn ${!isModifying && "btn-hovered"}`}
-            onClick={handleCopyWeeklySchedule}
-            disabled={isModifying}
-          >
-            Copy
-          </button>
-          <button
-            className={`controller-btn ${!isModifying && "btn-hovered"}`}
-            onClick={handleClearWeeklySchedule}
-            disabled={isModifying}
-          >
-            Clear
-          </button>
-        </div>
-      </div>
-    </div>
-  );
+  //     <div className="schedules-requests">
+  //       <div className="mx-3">
+  //         <p className="text-3">
+  //           <strong>Approved Requests</strong>
+  //         </p>
+  //         {requests.length ? (
+  //           requests.map((request, i) => (
+  //             <div key={i}>
+  //               <p className="schedules-text">
+  //                 {request.first_name} {request.last_name}:
+  //                 {request.requested_dates.map((date, r_i) => (
+  //                   <span key={r_i}>
+  //                     &nbsp;
+  //                     {r_i === request.requested_dates.length - 1
+  //                       ? handleFormatDate(date)
+  //                       : `${handleFormatDate(date)},`}
+  //                   </span>
+  //                 ))}
+  //               </p>
+  //             </div>
+  //           ))
+  //         ) : (
+  //           <p className="text-3">None</p>
+  //         )}
+  //       </div>
+  //       <div>
+  //         <button
+  //           className={`controller-btn ${!isModifying && "btn-hovered"}`}
+  //           onClick={handleCopyWeeklySchedule}
+  //           disabled={isModifying}
+  //         >
+  //           Copy
+  //         </button>
+  //         <button
+  //           className={`controller-btn ${!isModifying && "btn-hovered"}`}
+  //           onClick={handleClearWeeklySchedule}
+  //           disabled={isModifying}
+  //         >
+  //           Clear
+  //         </button>
+  //       </div>
+  //     </div>
+  //   </div>
+  // );
 
-  const renderSchedule = () =>
-    isLoadingSchedule ? (
-      <div className="text-center" style={{ marginTop: "70px" }}>
-        <Loader type="Oval" color="rgb(50, 110, 150)" />
-      </div>
-    ) : (
-      <table className="schedules-table w-100 border-collapse text-center table-fixed schedules-text">
-        <thead>
-          <tr>
-            <th className="bg-x-light-gray">Name</th>
-            {days &&
-              days.map((day, i) => (
-                <th key={i} className="bg-x-light-gray">
-                  <p>{new Date(day).toString().split(" ")[0]}</p>
-                  <p style={{ fontWeight: "normal" }}>
-                    <em>{new Date(day).toLocaleDateString()}</em>
-                  </p>
-                </th>
-              ))}
-          </tr>
-        </thead>
-        <tbody>
-          {users &&
-            users.map((user, u_i) => (
-              <tr key={u_i}>
-                <td className="py-1">
-                  <p>
-                    <strong>
-                      {user.first_name} {user.last_name}
-                    </strong>
-                  </p>
-                  <em>{user.level === 2 ? "A. Manager" : user.title}</em>
-                </td>
-                {user.availability.map((time, a_i) =>
-                  // Only render edit mode for the selected date and employee
-                  userId === user.u_id && availabilityIndex === a_i
-                    ? renderEditShift(user.u_id, a_i, user.shifts[a_i])
-                    : // Render shifts if they exist during the selected week
-                    user.shifts[a_i].shift_end === null
-                    ? renderBlank(user.u_id, a_i, time)
-                    : renderShift(
-                        user.u_id,
-                        a_i,
-                        user.shifts[a_i].shift_start,
-                        user.shifts[a_i].shift_end
-                      )
-                )}
-              </tr>
-            ))}
-        </tbody>
-      </table>
-    );
+  // const renderSchedule = () =>
+  //   isLoadingSchedule ? (
+  //     <div className="text-center" style={{ marginTop: "70px" }}>
+  //       <Loader type="Oval" color="rgb(50, 110, 150)" />
+  //     </div>
+  //   ) : (
+  //     <table className="schedules-table w-100 border-collapse text-center table-fixed schedules-text">
+  //       <thead>
+  //         <tr>
+  //           <th className="bg-x-light-gray">Name</th>
+  //           {days &&
+  //             days.map((day, i) => (
+  //               <th key={i} className="bg-x-light-gray">
+  //                 <p>{new Date(day).toString().split(" ")[0]}</p>
+  //                 <p style={{ fontWeight: "normal" }}>
+  //                   <em>{new Date(day).toLocaleDateString()}</em>
+  //                 </p>
+  //               </th>
+  //             ))}
+  //         </tr>
+  //       </thead>
+  //       <tbody>
+  //         {users &&
+  //           users.map((user, u_i) => (
+  //             <tr key={u_i}>
+  //               <td className="py-1">
+  //                 <p>
+  //                   <strong>
+  //                     {user.first_name} {user.last_name}
+  //                   </strong>
+  //                 </p>
+  //                 <em>{user.level === 2 ? "A. Manager" : user.title}</em>
+  //               </td>
+  //               {user.availability.map((time, a_i) =>
+  //                 // Only render edit mode for the selected date and employee
+  //                 userId === user.u_id && availabilityIndex === a_i
+  //                   ? renderEditShift(user.u_id, a_i, user.shifts[a_i])
+  //                   : // Render shifts if they exist during the selected week
+  //                   user.shifts[a_i].shift_end === null
+  //                   ? renderBlank(user.u_id, a_i, time)
+  //                   : renderShift(
+  //                       user.u_id,
+  //                       a_i,
+  //                       user.shifts[a_i].shift_start,
+  //                       user.shifts[a_i].shift_end
+  //                     )
+  //               )}
+  //             </tr>
+  //           ))}
+  //       </tbody>
+  //     </table>
+  //   );
 
   return (
     <>
@@ -740,8 +742,10 @@ export default function AdminSchedules() {
         </div>
       ) : (
         <div>
-          {renderController()}
-          {renderSchedule()}
+          {/* {renderController()} */}
+          <SchedulesController />
+          {/* {renderSchedule()} */}
+          <SchedulesList />
           {renderAvailability()}
           {!isLoadingSchedule && (
             <SchedulesMobile

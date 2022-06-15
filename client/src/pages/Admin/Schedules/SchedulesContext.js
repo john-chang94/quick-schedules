@@ -4,9 +4,8 @@ import {
   useEffect,
   useContext,
   useReducer,
-  useCallback
 } from "react";
-import { startOfWeek, format, startOfToday } from "date-fns";
+import { startOfWeek, format, startOfToday, subMonths } from "date-fns";
 
 import {
   getUsersSchedulesByDate,
@@ -43,16 +42,28 @@ export default function SchedulesContextProvider({ children }) {
           isModifying: !state.isModifying,
           isLoadingSchedule: !state.isLoadingSchedule,
         };
-      case "CLEAR_INDEXES":
+      case "ON_CLICK_SHIFT_NEW":
         return {
           ...state,
-          userId: null,
-          availabilityIndex: null,
+          ...payload,
+          shift_start_value: state.store.store_open_value,
+          shift_end_value: state.store.store_close_value,
+        };
+      case "ON_CLICK_SHIFT_EDIT":
+        return {
+          ...state,
+          ...payload,
         };
       case "SET_DATEPICKER":
         return {
           ...state,
           datepicker: payload.datepicker,
+        };
+      case "CLEAR_INDEXES":
+        return {
+          ...state,
+          userId: null,
+          availabilityIndex: null,
         };
       default:
         return initialState;
@@ -81,9 +92,22 @@ export default function SchedulesContextProvider({ children }) {
 
   const [state, dispatch] = useReducer(reducer, initialState);
 
-  // Get dates in current work week
-  const getDatesOfTheWeek = async () => {
-    let dateToAdd = startOfWeek(new Date(), { weekStartsOn: 1 });
+  // For init load and date change
+  const getDatesOfTheWeek = async (selectedDate) => {
+    let dateToAdd;
+    if (selectedDate) {
+      // Create new date with separate identifiers because instantiating
+      // a new date string without a time will assume UTC time
+      let year = selectedDate.split("-")[0];
+      let month = selectedDate.split("-")[1];
+      let day = selectedDate.split("-")[2];
+      // Subtract one month because they are counted from zero
+      dateToAdd = startOfWeek(subMonths(new Date(year, month, day), 1), {
+        weekStartsOn: 1,
+      });
+    } else {
+      dateToAdd = startOfWeek(new Date(), { weekStartsOn: 1 });
+    }
     let daysArray = [];
     for (let i = 0; i < 7; i++) {
       daysArray.push(dateToAdd.toISOString());
@@ -113,7 +137,6 @@ export default function SchedulesContextProvider({ children }) {
       state.days[0],
       state.days[6]
     );
-    usersMobile = handleSortUsersMobile(usersMobile, state.days);
     if (usersMobile.length > 0) {
       usersMobile = handleSortUsersMobile(usersMobile, state.days);
     }
@@ -121,7 +144,8 @@ export default function SchedulesContextProvider({ children }) {
     dispatch({ type: "SET_ANY", payload: { users, usersMobile } });
   };
 
-  const handleDateChange = useCallback(async(date) => {
+  // Fetch data whenever the date is changed
+  const handleDateChange = async (date) => {
     dispatch({ type: "TOGGLE_IS_LOADING_SCHEDULE" });
     const days = await getDatesOfTheWeek(date);
     const users = await getUsersSchedulesByDate(days[0], days[6]);
@@ -142,16 +166,13 @@ export default function SchedulesContextProvider({ children }) {
         users,
         requests,
         usersMobile,
+        isModifying: false,
         isLoadingSchedule: false,
         userId: null,
         availabilityIndex: null,
       },
     });
-  }, [])
-
-  useEffect(() => {
-    handleDateChange();
-  }, [state.datepicker, handleDateChange])
+  };
 
   useEffect(() => {
     let isMounted = true;
@@ -201,8 +222,8 @@ export default function SchedulesContextProvider({ children }) {
         state,
         dispatch,
         isLoading,
+        handleDateChange,
         handleFetchSchedule,
-        handleDateChange
       }}
     >
       {children}

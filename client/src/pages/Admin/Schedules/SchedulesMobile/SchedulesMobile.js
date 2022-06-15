@@ -6,7 +6,7 @@ import { createShift, updateShift, deleteShift } from "../../../../services/shif
 import { isAuthenticated } from "../../../../services/auth";
 
 import { Spinner } from "../../../../components/Spinner";
-import { SchedulesList } from "./SchedulesList";
+import { SchedulesList } from "./SchedulesListMobile";
 import { AddShiftMobile } from "./AddShiftMobile";
 
 export default function SchedulesMobile({
