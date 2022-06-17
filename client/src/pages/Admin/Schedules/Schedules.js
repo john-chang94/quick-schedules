@@ -1,7 +1,7 @@
 import React from "react";
-import Loader from "react-loader-spinner";
-
 import { useSchedules } from "./SchedulesContext";
+import { Spinner } from "../../../components/Spinner";
+
 import { SchedulesController } from "./SchedulesController";
 import { SchedulesList } from "./SchedulesList";
 import { SchedulesAvailability } from "./SchedulesAvailability";
@@ -13,9 +13,7 @@ export default function AdminSchedules() {
   return (
     <>
       {isLoading ? (
-        <div className="text-center" style={{ marginTop: "70px" }}>
-          <Loader type="Oval" color="rgb(50, 110, 150)" />
-        </div>
+        <Spinner />
       ) : (
         <div>
           <SchedulesController />

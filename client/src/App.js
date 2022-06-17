@@ -17,7 +17,7 @@ import AdminSchedules from "./pages/Admin/Schedules/Schedules";
 import AdminRequests from "./pages/Admin/Requests/Requests";
 import AdminStore from "./pages/Admin/Store/Store";
 
-import UserProfile from "./components/user/profile";
+import UserProfile from "./pages/User/Profile/Profile";
 import UserAvailability from "./components/user/availability";
 import UserRequests from "./components/user/requests";
 import UserSchedules from "./components/user/schedules";
