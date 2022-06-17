@@ -36,6 +36,11 @@ export default function SchedulesContextProvider({ children }) {
           ...state,
           isLoadingSchedule: !state.isLoadingSchedule,
         };
+      case "TOGGLE_SHOW_ADD_SHIFT":
+        return {
+          ...state,
+          showAddShift: !state.showAddShift
+        }
       case "TOGGLE_CHANGE_DATE":
         return {
           ...state,
@@ -81,6 +86,7 @@ export default function SchedulesContextProvider({ children }) {
     requests: [],
     isModifying: false,
     isLoadingSchedule: false,
+    showAddShift: false,
     datepicker: format(startOfToday(), "yyyy-MM-dd"),
     // Used for getting time values when saving a shift
     shift_start_value: "0 0",

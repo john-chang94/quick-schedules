@@ -8,7 +8,7 @@ import { SchedulesAvailability } from "./SchedulesAvailability";
 import SchedulesMobile from "./SchedulesMobile/SchedulesMobile";
 
 export default function AdminSchedules() {
-  const { isLoading, isLoadingSchedule } = useSchedules();
+  const { isLoading } = useSchedules();
 
   return (
     <>
@@ -21,7 +21,7 @@ export default function AdminSchedules() {
           <SchedulesController />
           <SchedulesList />
           <SchedulesAvailability />
-          {!isLoadingSchedule && <SchedulesMobile />}
+          <SchedulesMobile />
         </div>
       )}
     </>

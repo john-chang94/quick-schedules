@@ -1,28 +1,113 @@
-import React from "react";
+import React, { useState } from "react";
+import { toDate, parseISO } from "date-fns";
 import { CSSTransition } from "react-transition-group";
 
-export const AddShiftMobile = ({
-  modalRef,
-  users,
-  presets,
-  times,
-  store,
-  u_id,
-  isUpdating,
-  setDate,
-  setUId,
-  shiftStartValue,
-  shiftEndValue,
-  setShiftStartValue,
-  setShiftEndValue,
-  showAddShift,
-  setShowAddShift,
-  handleSelectPreset,
-  handleCancelAddShift,
-  handleCreateShift,
-  handleShowAddShift,
-  error
-}) => {
+import { useSchedules } from "../SchedulesContext";
+import { isAuthenticated } from "../../../../services/auth";
+import { createShift } from "../../../../services/shifts";
+
+export const AddShiftMobile = ({ modalRef }) => {
+  const [u_id, setUId] = useState("");
+  const [date, setDate] = useState("");
+  const [error, setError] = useState("");
+  const [isUpdating, setIsUpdating] = useState(false);
+
+  const {
+    state: {
+      users,
+      presets,
+      times,
+      store,
+      shift_start_value,
+      shift_end_value,
+      showAddShift,
+    },
+    dispatch,
+    handleFetchSchedule,
+  } = useSchedules();
+
+  const handleCreateShift = async () => {
+    // Return error if form is not filled out
+    if (!u_id || !date || !shift_start_value || !shift_end_value) {
+      return setError("Employee and shift required");
+    }
+
+    setIsUpdating(true);
+    const tokenConfig = isAuthenticated();
+    const newDate = toDate(parseISO(date));
+
+    // Get hour and minute for new date object
+    const startTimeHour = shift_start_value.split(" ")[0];
+    const startTimeMinute = shift_start_value.split(" ")[1];
+    // Get hour and minute for new date object
+    const endTimeHour = shift_end_value.split(" ")[0];
+    const endTimeMinute = shift_end_value.split(" ")[1];
+    // Create new date objects with year, month, day, hour, minute
+    const shift_start = toDate(
+      new Date(
+        newDate.getFullYear(),
+        newDate.getMonth(),
+        newDate.getDate(),
+        startTimeHour,
+        startTimeMinute
+      )
+    ).toLocaleString();
+
+    const shift_end = toDate(
+      new Date(
+        newDate.getFullYear(),
+        newDate.getMonth(),
+        newDate.getDate(),
+        endTimeHour,
+        endTimeMinute
+      )
+    ).toLocaleString();
+
+    const body = { u_id, shift_start, shift_end };
+    await createShift(body, tokenConfig);
+
+    await handleFetchSchedule();
+
+    // setEditShiftIndex(null);
+    setIsUpdating(false);
+    dispatch({ type: "TOGGLE_SHOW_ADD_SHIFT" });
+  };
+
+  const handleShowAddShift = () => {
+    dispatch({
+      type: "SET_ANY",
+      payload: {
+        shift_start_value: store.store_open_value,
+        shift_end_value: store.store_close_value,
+        showAddShift: true,
+      },
+    });
+  };
+
+  const handleCancelAddShift = () => {
+    dispatch({
+      type: "SET_ANY",
+      payload: {
+        shift_start_value: "",
+        shift_end_value: "",
+        showAddShift: false,
+      },
+    });
+    setUId("");
+    setError("");
+  };
+
+  const handleSelectPreset = (shiftValue) => {
+    if (!shiftValue) return;
+    dispatch({
+      type: "SET_ANY",
+      payload: {
+        shift_start_value: shiftValue.split("-")[0],
+        shift_end_value: shiftValue.split("-")[1],
+      },
+    });
+  };
+
   return (
     <>
       <CSSTransition
@@ -35,7 +120,7 @@ export const AddShiftMobile = ({
         <div ref={modalRef}>
           <div // Dimmed overlay with active modal
             className="modal-container"
-            onClick={() => setShowAddShift(false)}
+            onClick={() => dispatch({ type: "TOGGLE_SHOW_ADD_SHIFT" })}
           ></div>
           <div className="modal">
             <div className="p-3">
@@ -79,9 +164,14 @@ export const AddShiftMobile = ({
               <div className="flex my-2">
                 <p className="mr-1 schedules-mobile-text">Start</p>
                 <select
-                  value={shiftStartValue}
+                  value={shift_start_value}
                   disabled={isUpdating}
-                  onChange={({ target }) => setShiftStartValue(target.value)}
+                  onChange={({ target }) =>
+                    dispatch({
+                      type: "SET_ANY",
+                      payload: { shift_start_value: target.value },
+                    })
+                  }
                 >
                   {times &&
                     times.map((time, i) => (
@@ -101,9 +191,14 @@ export const AddShiftMobile = ({
               <div className="flex my-2">
                 <p className="mr-1 schedules-mobile-text">End</p>
                 <select
-                  value={shiftEndValue}
+                  value={shift_end_value}
                   disabled={isUpdating}
-                  onChange={({ target }) => setShiftEndValue(target.value)}
+                  onChange={({ target }) =>
+                    dispatch({
+                      type: "SET_ANY",
+                      payload: { shift_end_value: target.value },
+                    })
+                  }
                 >
                   {times &&
                     times.map((time, i) => (

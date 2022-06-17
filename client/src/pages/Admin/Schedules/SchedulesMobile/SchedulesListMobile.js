@@ -1,31 +1,36 @@
 import React, { useState } from "react";
 import { format } from "date-fns";
+import { useSchedules } from "../SchedulesContext";
+
 import { EditShiftMobile } from "./EditShiftMobile";
 import { ShiftMobile } from "./ShiftMobile";
 
-export const SchedulesListMobile = ({
-  usersMobile,
-  days,
-  presets,
-  times,
-  store,
-  getTimeValue,
-  handleFetchSchedule,
-}) => {
-  const [shiftStartValue, setShiftStartValue] = useState("");
-  const [shiftEndValue, setShiftEndValue] = useState("");
+export const SchedulesListMobile = () => {
   const [dayIndex, setDayIndex] = useState(null); // For saving a shift
   const [editShiftIndex, setEditShiftIndex] = useState(null);
-  const [isUpdating, setIsUpdating] = useState(false);
-  const [showAddShift, setShowAddShift] = useState(false);
-  const [error, setError] = useState("");
-  const [u_id, setUId] = useState(null);
-  const [date, setDate] = useState("");
+
+  const {
+    state: { usersMobile, days },
+    dispatch,
+  } = useSchedules();
+
+  const getTimeValue = (shift) => {
+    const date = new Date(shift);
+    const hour = date.getHours();
+    const min = date.getMinutes();
+    const values = `${hour.toString()} ${min.toString()}`;
+    return values;
+  };
 
   const handleShowEditShift = (user, shiftIndex) => {
     // Set specific shift time values to match with times array in the select inputs
-    setShiftStartValue(getTimeValue(user.shift_start));
-    setShiftEndValue(getTimeValue(user.shift_end));
+    dispatch({
+      type: "SET_ANY",
+      payload: {
+        shift_start_value: getTimeValue(user.shift_start),
+        shift_end_value: getTimeValue(user.shift_end),
+      },
+    });
     // Enable edit shift component to render
     setEditShiftIndex(shiftIndex);
     // Get date to be saved when submitting
@@ -38,27 +43,6 @@ export const SchedulesListMobile = ({
         setDayIndex(i);
       }
     }
-  };
-
-  const handleSelectPreset = (shiftValue) => {
-    // Cancel if user clicks on default value 'select'
-    if (!shiftValue) return;
-    setShiftStartValue(shiftValue.split("-")[0]);
-    setShiftEndValue(shiftValue.split("-")[1]);
-  };
-
-  const handleShowAddShift = () => {
-    setShiftStartValue(store.store_open_value);
-    setShiftEndValue(store.store_close_value);
-    setShowAddShift(true);
-  }
-
-  const handleCancelAddShift = () => {
-    setShiftStartValue("");
-    setShiftEndValue("");
-    setUId("");
-    setError("");
-    setShowAddShift(false);
   };
 
   const getDay = (shift) => {
@@ -94,26 +78,12 @@ export const SchedulesListMobile = ({
             </div>
             <div className="w-80 border-solid-1">
               {editShiftIndex === i ? (
-                // ? renderEditShift(user)
                 <EditShiftMobile
-                  dayIndex={dayIndex}
                   user={user}
-                  presets={presets}
-                  days={days}
-                  times={times}
-                  store={store}
-                  isUpdating={isUpdating}
-                  setIsUpdating={setIsUpdating}
-                  handleSelectPreset={handleSelectPreset}
-                  shiftStartValue={shiftStartValue}
-                  shiftEndValue={shiftEndValue}
-                  setShiftStartValue={setShiftStartValue}
-                  setShiftEndValue={setShiftEndValue}
+                  dayIndex={dayIndex}
                   setEditShiftIndex={setEditShiftIndex}
-                  handleFetchSchedule={handleFetchSchedule}
                 />
               ) : (
-                // : renderShift(user, i)}
                 <ShiftMobile
                   user={user}
                   shiftIndex={i}

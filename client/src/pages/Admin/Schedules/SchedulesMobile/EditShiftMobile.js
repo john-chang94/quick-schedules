@@ -1,28 +1,27 @@
-import React from "react";
+import React, { useState } from "react";
 import { toDate } from "date-fns";
 
 import { isAuthenticated } from "../../../../services/auth";
 import { deleteShift, updateShift } from "../../../../services/shifts";
 
 import { Spinner } from "../../../../components/Spinner";
+import { useSchedules } from "../SchedulesContext";
 
-export const EditShiftMobile = ({
-  user,
-  presets,
-  days,
-  times,
-  store,
-  dayIndex,
-  isUpdating,
-  setIsUpdating,
-  handleSelectPreset,
-  shiftStartValue,
-  shiftEndValue,
-  setShiftStartValue,
-  setShiftEndValue,
-  setEditShiftIndex,
-  handleFetchSchedule
-}) => {
+export const EditShiftMobile = ({ user, dayIndex, setEditShiftIndex }) => {
+  const [isUpdating, setIsUpdating] = useState(false);
+
+  const {
+    state: {
+      presets,
+      days,
+      times,
+      store,
+      shift_start_value,
+      shift_end_value,
+    },
+    dispatch,
+    handleFetchSchedule,
+  } = useSchedules();
 
   const handleSaveShift = async (u_id, s_id) => {
     setIsUpdating(true);
@@ -31,11 +30,11 @@ export const EditShiftMobile = ({
     const date = toDate(new Date(days[dayIndex]));
 
     // Get hour and minute in INT data type for date object
-    const startTimeHour = parseInt(shiftStartValue.split(" ")[0]);
-    const startTimeMinute = parseInt(shiftStartValue.split(" ")[1]);
+    const startTimeHour = parseInt(shift_start_value.split(" ")[0]);
+    const startTimeMinute = parseInt(shift_start_value.split(" ")[1]);
     // Get hour and minute in INT data type for date object
-    const endTimeHour = parseInt(shiftEndValue.split(" ")[0]);
-    const endTimeMinute = parseInt(shiftEndValue.split(" ")[1]);
+    const endTimeHour = parseInt(shift_end_value.split(" ")[0]);
+    const endTimeMinute = parseInt(shift_end_value.split(" ")[1]);
     // Create new date objects with year, month, day, hour, minute
     const shift_start = toDate(
       new Date(
@@ -80,6 +79,17 @@ export const EditShiftMobile = ({
     }
   };
 
+  const handleSelectPreset = (shiftValue) => {
+    if (!shiftValue) return;
+    dispatch({
+      type: "SET_ANY",
+      payload: {
+        shift_start_value: shiftValue.split("-")[0],
+        shift_end_value: shiftValue.split("-")[1],
+      },
+    });
+  };
+
   return (
     <div className="bg-blue-grey-lighten-5 p-1">
       <div className="flex justify-evenly">
@@ -116,9 +126,14 @@ export const EditShiftMobile = ({
           <div className="flex justify-evenly mb-1">
             <p className="mr-1 schedules-mobile-text">Start</p>
             <select
-              value={shiftStartValue}
+              value={shift_start_value}
               disabled={isUpdating}
-              onChange={({ target }) => setShiftStartValue(target.value)}
+              onChange={({ target }) =>
+                dispatch({
+                  type: "SET_ANY",
+                  payload: { shift_start_value: target.value },
+                })
+              }
             >
               {times &&
                 times.map((time, i) => (
@@ -138,9 +153,14 @@ export const EditShiftMobile = ({
           <div className="flex justify-evenly mb-1">
             <p className="mr-1 schedules-mobile-text">End</p>
             <select
-              value={shiftEndValue}
+              value={shift_end_value}
               disabled={isUpdating}
-              onChange={({ target }) => setShiftEndValue(target.value)}
+              onChange={({ target }) =>
+                dispatch({
+                  type: "SET_ANY",
+                  payload: { shift_end_value: target.value },
+                })
+              }
             >
               {times &&
                 times.map((time, i) => (
