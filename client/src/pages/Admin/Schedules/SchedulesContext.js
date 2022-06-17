@@ -39,8 +39,8 @@ export default function SchedulesContextProvider({ children }) {
       case "TOGGLE_SHOW_ADD_SHIFT":
         return {
           ...state,
-          showAddShift: !state.showAddShift
-        }
+          showAddShift: !state.showAddShift,
+        };
       case "TOGGLE_CHANGE_DATE":
         return {
           ...state,
@@ -58,11 +58,6 @@ export default function SchedulesContextProvider({ children }) {
         return {
           ...state,
           ...payload,
-        };
-      case "SET_DATEPICKER":
-        return {
-          ...state,
-          datepicker: payload.datepicker,
         };
       case "CLEAR_INDEXES":
         return {
@@ -100,20 +95,15 @@ export default function SchedulesContextProvider({ children }) {
 
   // For init load and date change
   const getDatesOfTheWeek = async (selectedDate) => {
-    let dateToAdd;
-    if (selectedDate) {
-      // Create new date with separate identifiers because instantiating
-      // a new date string without a time will assume UTC time
-      let year = selectedDate.split("-")[0];
-      let month = selectedDate.split("-")[1];
-      let day = selectedDate.split("-")[2];
-      // Subtract one month because they are counted from zero
-      dateToAdd = startOfWeek(subMonths(new Date(year, month, day), 1), {
-        weekStartsOn: 1,
-      });
-    } else {
-      dateToAdd = startOfWeek(new Date(), { weekStartsOn: 1 });
-    }
+    // Create new date with separate identifiers because instantiating
+    // a new date string without a time will roll back a day
+    let year = selectedDate.split("-")[0];
+    let month = selectedDate.split("-")[1];
+    let day = selectedDate.split("-")[2];
+    // Subtract one month because they are counted from zero
+    let dateToAdd = startOfWeek(subMonths(new Date(year, month, day), 1), {
+      weekStartsOn: 1,
+    });
     let daysArray = [];
     for (let i = 0; i < 7; i++) {
       daysArray.push(dateToAdd.toISOString());
@@ -128,15 +118,15 @@ export default function SchedulesContextProvider({ children }) {
   // Will not work with days state because it is async
   const handleSortUsersMobile = (arr, days) => {
     // Add date labels for mobile schedules display
-    for (let i = 0; i < days.length; i++) {
-      arr.push({ shift_start: days[i], label: true });
+    for (let day of days) {
+      arr.push({ shift_start: days[day], label: true });
     }
     return arr.sort(
       (a, b) => new Date(a.shift_start) - new Date(b.shift_start)
     );
   };
 
-  // Fetch shifts for the week (used for refreshing after editing shifts)
+  // Fetch schedule after editing a shift
   const handleFetchSchedule = async () => {
     const users = await getUsersSchedulesByDate(state.days[0], state.days[6]);
     let usersMobile = await getUsersSchedulesByDateMobile(
@@ -150,7 +140,7 @@ export default function SchedulesContextProvider({ children }) {
     dispatch({ type: "SET_ANY", payload: { users, usersMobile } });
   };
 
-  // Fetch data whenever the date is changed
+  // Fetch schedule when changing dates
   const handleDateChange = async (date) => {
     dispatch({ type: "TOGGLE_IS_LOADING_SCHEDULE" });
     const days = await getDatesOfTheWeek(date);
@@ -183,7 +173,7 @@ export default function SchedulesContextProvider({ children }) {
   useEffect(() => {
     let isMounted = true;
     async function fetchData() {
-      const days = await getDatesOfTheWeek();
+      const days = await getDatesOfTheWeek(format(new Date(), "yyyy-MM-dd"));
       const times = await getTimes();
       const presets = await getPresets();
       const availabilities = await getUsersAvailabilities();

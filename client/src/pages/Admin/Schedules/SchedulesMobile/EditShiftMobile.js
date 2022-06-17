@@ -70,12 +70,10 @@ export const EditShiftMobile = ({ user, dayIndex, setEditShiftIndex }) => {
     );
     if (toDelete) {
       const tokenConfig = isAuthenticated();
-      setIsUpdating(true);
       await deleteShift(s_id, tokenConfig);
 
-      await handleFetchSchedule();
       setEditShiftIndex(null);
-      setIsUpdating(false);
+      await handleFetchSchedule();
     }
   };
 

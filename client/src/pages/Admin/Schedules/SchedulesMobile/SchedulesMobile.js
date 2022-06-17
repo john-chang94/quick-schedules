@@ -1,11 +1,9 @@
-import React, { useRef } from "react";
+import React from "react";
 import { useSchedules } from "../SchedulesContext";
 import { SchedulesListMobile } from "./SchedulesListMobile";
 import { AddShiftMobile } from "./AddShiftMobile";
 
 export default function SchedulesMobile() {
-  const modalRef = useRef();
-
   const {
     state: {
       isLoadingSchedule,
@@ -15,7 +13,7 @@ export default function SchedulesMobile() {
   return (
     !isLoadingSchedule && (
       <div className="schedules-mobile">
-        <AddShiftMobile modalRef={modalRef} />
+        <AddShiftMobile />
         <SchedulesListMobile />
       </div>
     )

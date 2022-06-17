@@ -80,7 +80,7 @@ export const SchedulesController = () => {
   // Set datepicker value and fetch data using selected date
   const handleDatepicker = (date) => {
     dispatch({
-      type: "SET_DATEPICKER",
+      type: "SET_ANY",
       payload: { datepicker: date },
     });
     handleDateChange(date);

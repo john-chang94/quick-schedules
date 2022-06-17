@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useRef } from "react";
 import { toDate, parseISO } from "date-fns";
 import { CSSTransition } from "react-transition-group";
 
@@ -6,7 +6,7 @@ import { useSchedules } from "../SchedulesContext";
 import { isAuthenticated } from "../../../../services/auth";
 import { createShift } from "../../../../services/shifts";
 
-export const AddShiftMobile = ({ modalRef }) => {
+export const AddShiftMobile = () => {
   const [u_id, setUId] = useState("");
   const [date, setDate] = useState("");
   const [error, setError] = useState("");
@@ -25,6 +25,8 @@ export const AddShiftMobile = ({ modalRef }) => {
     dispatch,
     handleFetchSchedule,
   } = useSchedules();
+
+  const modalRef = useRef();
 
   const handleCreateShift = async () => {
     // Return error if form is not filled out
@@ -68,7 +70,6 @@ export const AddShiftMobile = ({ modalRef }) => {
 
     await handleFetchSchedule();
 
-    // setEditShiftIndex(null);
     setIsUpdating(false);
     dispatch({ type: "TOGGLE_SHOW_ADD_SHIFT" });
   };
