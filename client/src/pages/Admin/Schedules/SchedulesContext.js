@@ -119,7 +119,7 @@ export default function SchedulesContextProvider({ children }) {
   const handleSortUsersMobile = (arr, days) => {
     // Add date labels for mobile schedules display
     for (let day of days) {
-      arr.push({ shift_start: days[day], label: true });
+      arr.push({ shift_start: day, label: true });
     }
     return arr.sort(
       (a, b) => new Date(a.shift_start) - new Date(b.shift_start)

@@ -20,7 +20,7 @@ import AdminStore from "./pages/Admin/Store/Store";
 import UserProfile from "./pages/User/Profile/Profile";
 import UserAvailability from "./components/user/availability";
 import UserRequests from "./components/user/requests";
-import UserSchedules from "./components/user/schedules";
+import UserSchedules from "./pages/User/Schedules/Schedules";
 
 import ProtectedRoute from "./helpers/protectedRoute";
 import UserRoute from "./helpers/userRoute";
