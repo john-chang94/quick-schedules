@@ -1,14 +1,10 @@
-import { useEffect, useReducer, useState, useContext, useRef } from "react";
+import { useEffect, useReducer, useContext} from "react";
 import { UserContext } from "../../../contexts/userContext";
 import { isAuthenticated } from "../../../services/auth";
-import Loader from "react-loader-spinner";
 import {
-  createRequest,
   deleteRequest,
   getRequesetsByUser,
 } from "../../../services/requests";
-import { format } from "date-fns";
-import { CSSTransition } from "react-transition-group";
 import { RequestsList } from "./RequestsList";
 import { RequestsCards } from "./RequestsCards";
 import { Spinner } from "../../../components/Spinner";
@@ -103,12 +99,10 @@ export default function UserRequests() {
             </button>
           </div>
           <div className="mt-5">
-            {/* {renderRequests()} */}
             <RequestsList
               state={state}
               handleDeleteRequest={handleDeleteRequest}
             />
-            {/* {renderRequestsCards()} */}
             <RequestsCards
               state={state}
               handleDeleteRequest={handleDeleteRequest}

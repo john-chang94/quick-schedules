@@ -106,10 +106,9 @@ export const NewRequest = ({ state, dispatch, verifiedUser }) => {
     </div>
   );
 
-  // Render datepickers based on numOfDateInputs
+  // Render datepickers based on dates array length
   const renderDateElements = () => {
     let dateElements = [];
-    // Render based on number of values that are stored in dates array
     for (let i = 0; i < numOfDateInputs; i++) {
       if (numOfDateInputs > 1 && i === numOfDateInputs - 1) {
         // Render additional datepickers
@@ -120,7 +119,6 @@ export const NewRequest = ({ state, dispatch, verifiedUser }) => {
       }
     }
 
-    // Return datepickers to render
     return dateElements;
   };
 
