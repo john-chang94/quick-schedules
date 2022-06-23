@@ -10,7 +10,7 @@ export const getRequests = async () => {
     }
 }
 
-export const getRequestsByUserUser = async (u_id) => {
+export const getRequesetsByUser = async (u_id) => {
     try {
         const res = await axios.get(`${HTTP.REQUESTS}/${u_id}`);
         return res.data;
