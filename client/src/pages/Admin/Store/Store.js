@@ -46,22 +46,18 @@ export default function AdminStore() {
     return () => (isMounted = false);
   }, []);
 
+  if (isLoading) return <Spinner />;
+
   return (
-    <>
-      {isLoading ? (
-        <Spinner />
-      ) : (
-        <div className="store p-1">
-          <StoreHours
-            store={store}
-            times={times}
-            storeFirstTime={storeFirstTime}
-            setStore={setStore}
-          />
-          <hr className="my-3" />
-          <StorePresets presets={presets} setPresets={setPresets} />
-        </div>
-      )}
-    </>
+    <div className="store p-1">
+      <StoreHours
+        store={store}
+        times={times}
+        storeFirstTime={storeFirstTime}
+        setStore={setStore}
+      />
+      <hr className="my-3" />
+      <StorePresets presets={presets} setPresets={setPresets} />
+    </div>
   );
 }

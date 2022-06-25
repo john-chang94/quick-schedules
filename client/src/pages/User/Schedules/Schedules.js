@@ -11,23 +11,19 @@ export default function UserSchedules() {
     isLoading,
   } = useSchedules();
 
+  if (isLoading) return <Spinner />;
+
   return (
-    <div>
-      {isLoading ? (
+    <>
+      <SchedulesController />
+      {isLoadingSchedule ? (
         <Spinner />
       ) : (
-        <div>
-          <SchedulesController />
-          {isLoadingSchedule ? (
-            <Spinner />
-          ) : (
-            <>
-              <SchedulesList />
-              <SchedulesMobile />
-            </>
-          )}
-        </div>
+        <>
+          <SchedulesList />
+          <SchedulesMobile />
+        </>
       )}
-    </div>
+    </>
   );
 }

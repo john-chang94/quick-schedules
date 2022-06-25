@@ -1,13 +1,13 @@
 import { useEffect, useState, useContext, useReducer } from "react";
-import { UserContext } from "../../contexts/userContext";
-import { isAuthenticated } from "../../services/auth";
+import { UserContext } from "../../../contexts/userContext";
+import { isAuthenticated } from "../../../services/auth";
 import Loader from "react-loader-spinner";
-import EditAvailability from "./editAvailability";
+import EditAvailability from "./EditAvailability";
 import {
   editUserAvailability,
   getUserAvailability,
-} from "../../services/users";
-import { getStoreHours, getTimes } from "../../services/store";
+} from "../../../services/users";
+import { getStoreHours, getTimes } from "../../../services/store";
 
 const initialState = {
   monStart: "",

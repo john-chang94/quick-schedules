@@ -10,18 +10,14 @@ import SchedulesMobile from "./SchedulesMobile/SchedulesMobile";
 export default function AdminSchedules() {
   const { isLoading } = useSchedules();
 
+  if (isLoading) return <Spinner />;
+
   return (
     <>
-      {isLoading ? (
-        <Spinner />
-      ) : (
-        <div>
-          <SchedulesController />
-          <SchedulesList />
-          <SchedulesAvailability />
-          <SchedulesMobile />
-        </div>
-      )}
+      <SchedulesController />
+      <SchedulesList />
+      <SchedulesAvailability />
+      <SchedulesMobile />
     </>
   );
 }

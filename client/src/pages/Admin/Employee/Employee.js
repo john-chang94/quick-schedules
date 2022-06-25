@@ -53,6 +53,8 @@ export default function AdminEmployee() {
     return () => (isMounted = false);
   }, [u_id]);
 
+  if (isLoading) return <Spinner />;
+
   return (
     <div className="employee-container">
       <div>
@@ -60,41 +62,37 @@ export default function AdminEmployee() {
           <i className="fas fa-arrow-left"></i> Back
         </Link>
       </div>
-      {isLoading ? (
-        <Spinner />
-      ) : (
-        <div className="mt-3 w-50 sm-w-100">
-          {user && (
-            <div>
-              <EmployeeInfoGeneral
-                user={user}
-                verifiedUser={verifiedUser}
-                setUser={setUser}
-              />
-              <hr className="my-4" />
-              <EmployeeInfoSystem
-                user={user}
-                verifiedUser={verifiedUser}
-                setUser={setUser}
-                roles={roles}
-              />
-              <hr className="my-4" />
-              {verifiedUser && // Render update p/w component only if viewing own account
-                verifiedUser.u_id === user.u_id && (
-                  <EmployeeEditPassword user={user} />
-                )}
-            </div>
-          )}
-          <div className="mt-8 text-center">
-            <button
-              className="btn-md red btn-hovered pointer-no-dec"
-              onClick={handleRemoveUser}
-            >
-              Remove
-            </button>
+      <div className="mt-3 w-50 sm-w-100">
+        {user && (
+          <div>
+            <EmployeeInfoGeneral
+              user={user}
+              verifiedUser={verifiedUser}
+              setUser={setUser}
+            />
+            <hr className="my-4" />
+            <EmployeeInfoSystem
+              user={user}
+              verifiedUser={verifiedUser}
+              setUser={setUser}
+              roles={roles}
+            />
+            <hr className="my-4" />
+            {verifiedUser && // Render update p/w component only if viewing own account
+              verifiedUser.u_id === user.u_id && (
+                <EmployeeEditPassword user={user} />
+              )}
           </div>
+        )}
+        <div className="mt-8 text-center">
+          <button
+            className="btn-md red btn-hovered pointer-no-dec"
+            onClick={handleRemoveUser}
+          >
+            Remove
+          </button>
         </div>
-      )}
+      </div>
     </div>
   );
 }

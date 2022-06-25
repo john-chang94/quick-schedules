@@ -42,21 +42,17 @@ export default function AdminEmployees() {
     return () => {
       isMounted = false;
       window.removeEventListener("resize", setWindowWidth);
-    }
+    };
   }, []);
 
+  if (isLoading) return <Spinner />;
+
   return (
-    <>
-      {isLoading ? (
-        <Spinner />
-      ) : (
-        <EmployeeList
-          users={users}
-          width={width}
-          handleAddEmployee={handleAddEmployee}
-          handleClickUser={handleClickUser}
-        />
-      )}
-    </>
+    <EmployeeList
+      users={users}
+      width={width}
+      handleAddEmployee={handleAddEmployee}
+      handleClickUser={handleClickUser}
+    />
   );
 }

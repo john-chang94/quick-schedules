@@ -67,23 +67,21 @@ export default function UserProfile() {
     return () => (isMounted = false);
   }, [verifiedUser]);
 
+  if (state.isLoading) return <Spinner />;
+
   return (
     <div className="profile-container">
-      {state.isLoading ? (
-        <Spinner />
-      ) : (
-        <div className="w-50 sm-w-100">
-          {state.showEditGeneral ? (
-            <ProfileEditGeneral state={state} dispatch={dispatch} />
-          ) : (
-            <ProfileInfoGeneral user={state.user} dispatch={dispatch} />
-          )}
-          <hr className="my-4" />
-          <ProfileEditPassword state={state} dispatch={dispatch} />
+      <div className="w-50 sm-w-100">
+        {state.showEditGeneral ? (
+          <ProfileEditGeneral state={state} dispatch={dispatch} />
+        ) : (
+          <ProfileInfoGeneral user={state.user} dispatch={dispatch} />
+        )}
+        <hr className="my-4" />
+        <ProfileEditPassword state={state} dispatch={dispatch} />
 
-          {state.error ? <p className="red">{state.error}</p> : null}
-        </div>
-      )}
+        {state.error ? <p className="red">{state.error}</p> : null}
+      </div>
     </div>
   );
 }

@@ -1,10 +1,7 @@
-import { useEffect, useReducer, useContext} from "react";
+import { useEffect, useReducer, useContext } from "react";
 import { UserContext } from "../../../contexts/userContext";
 import { isAuthenticated } from "../../../services/auth";
-import {
-  deleteRequest,
-  getRequesetsByUser,
-} from "../../../services/requests";
+import { deleteRequest, getRequesetsByUser } from "../../../services/requests";
 import { RequestsList } from "./RequestsList";
 import { RequestsCards } from "./RequestsCards";
 import { Spinner } from "../../../components/Spinner";
@@ -79,37 +76,35 @@ export default function UserRequests() {
     return () => (isMounted = false);
   }, [verifiedUser]);
 
+  if (state.isLoading) return <Spinner />;
+
   return (
     <div className="requests-container relative">
-      {state.isLoading ? (
-        <Spinner />
-      ) : (
-        <div className="w-100">
-          <NewRequest
-            state={state}
-            dispatch={dispatch}
-            verifiedUser={verifiedUser}
-          />
-          <div className="my-3 text-center">
-            <button
-              className="btn-lg btn-hovered"
-              onClick={() => dispatch({ type: "TOGGLE_NEW_REQUEST" })}
-            >
-              <p>New Request</p>
-            </button>
-          </div>
-          <div className="mt-5">
-            <RequestsList
-              state={state}
-              handleDeleteRequest={handleDeleteRequest}
-            />
-            <RequestsCards
-              state={state}
-              handleDeleteRequest={handleDeleteRequest}
-            />
-          </div>
+      <div className="w-100">
+        <NewRequest
+          state={state}
+          dispatch={dispatch}
+          verifiedUser={verifiedUser}
+        />
+        <div className="my-3 text-center">
+          <button
+            className="btn-lg btn-hovered"
+            onClick={() => dispatch({ type: "TOGGLE_NEW_REQUEST" })}
+          >
+            <p>New Request</p>
+          </button>
         </div>
-      )}
+        <div className="mt-5">
+          <RequestsList
+            state={state}
+            handleDeleteRequest={handleDeleteRequest}
+          />
+          <RequestsCards
+            state={state}
+            handleDeleteRequest={handleDeleteRequest}
+          />
+        </div>
+      </div>
     </div>
   );
 }
