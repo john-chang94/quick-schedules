@@ -137,7 +137,15 @@ export default function SchedulesContextProvider({ children }) {
       usersMobile = handleSortUsersMobile(usersMobile, state.days);
     }
 
-    dispatch({ type: "SET_ANY", payload: { users, usersMobile } });
+    dispatch({
+      type: "SET_ANY",
+      payload: {
+        users,
+        usersMobile,
+        isLoadingSchedule: false,
+        isModifying: false,
+      },
+    });
   };
 
   // Fetch schedule when changing dates
